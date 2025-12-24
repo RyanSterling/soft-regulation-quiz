@@ -1,0 +1,9 @@
+# Wrangler files
+.wrangler/
+.dev.vars
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
