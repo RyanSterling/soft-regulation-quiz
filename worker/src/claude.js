@@ -212,3 +212,111 @@ function buildUserMessage(result, scores, answers, hasPain, medicalClearance, fr
 
   return lines.join('\n');
 }
+
+/**
+ * Analyze quiz responses using Claude
+ * Used by admin dashboard to answer questions about the data
+ */
+export async function analyzeResponses(env, question, responses) {
+  try {
+    const anthropic = new Anthropic({
+      apiKey: env.CLAUDE_API_KEY
+    });
+
+    // Build system prompt for data analysis
+    const systemPrompt = `You are a data analyst helping interpret quiz response data. You have access to quiz responses and need to answer questions about trends, patterns, and insights.
+
+Guidelines:
+- Be concise and direct (2-3 sentences max)
+- Include specific numbers and percentages when relevant
+- Focus on actionable insights
+- Use natural, conversational language`;
+
+    // Summarize responses data for context
+    const dataSummary = summarizeResponses(responses);
+
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 300,
+      temperature: 0.3,
+      system: systemPrompt,
+      messages: [
+        {
+          role: 'user',
+          content: `Here's the quiz data:\n\n${dataSummary}\n\nQuestion: ${question}`
+        }
+      ]
+    });
+
+    const answer = message.content[0]?.text || 'Unable to analyze data';
+
+    return { answer, error: null };
+
+  } catch (error) {
+    console.error('Claude API error in analyzeResponses:', error);
+    return {
+      answer: null,
+      error: error.message
+    };
+  }
+}
+
+/**
+ * Summarize responses data for Claude
+ */
+function summarizeResponses(responses) {
+  const total = responses.length;
+
+  if (total === 0) {
+    return 'No responses yet.';
+  }
+
+  // Calculate key metrics
+  const sensitized = responses.filter(r => r.result === 'sensitized').length;
+  const withPain = responses.filter(r => r.has_chronic_pain).length;
+  const waitlistOptedIn = responses.filter(r => r.waitlist_opted_in).length;
+
+  // Score averages
+  const avgTrigger = (responses.reduce((sum, r) => sum + r.score_trigger, 0) / total).toFixed(1);
+  const avgRecovery = (responses.reduce((sum, r) => sum + r.score_recovery, 0) / total).toFixed(1);
+  const avgBaseline = (responses.reduce((sum, r) => sum + r.score_baseline, 0) / total).toFixed(1);
+
+  // UTM sources
+  const utmSources = responses.reduce((acc, r) => {
+    const source = r.utm_source || 'Direct';
+    acc[source] = (acc[source] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Medical clearance breakdown (for those with pain)
+  const withPainResponses = responses.filter(r => r.has_chronic_pain);
+  const clearanceBreakdown = withPainResponses.reduce((acc, r) => {
+    const clearance = r.medical_clearance || 'unknown';
+    acc[clearance] = (acc[clearance] || 0) + 1;
+    return acc;
+  }, {});
+
+  const lines = [
+    `Total responses: ${total}`,
+    `Result breakdown: ${sensitized} sensitized (${((sensitized / total) * 100).toFixed(1)}%), ${total - sensitized} not sensitized`,
+    `Chronic pain: ${withPain} (${((withPain / total) * 100).toFixed(1)}%)`,
+    `Waitlist opt-ins: ${waitlistOptedIn} (${((waitlistOptedIn / total) * 100).toFixed(1)}%)`,
+    ``,
+    `Average scores:`,
+    `- Trigger: ${avgTrigger}/12`,
+    `- Recovery: ${avgRecovery}/12`,
+    `- Baseline: ${avgBaseline}/12`,
+    ``,
+    `Traffic sources: ${Object.entries(utmSources).map(([s, c]) => `${s} (${c})`).join(', ')}`,
+    ``
+  ];
+
+  if (withPain > 0) {
+    lines.push(`Medical clearance (${withPain} with pain):`);
+    Object.entries(clearanceBreakdown).forEach(([status, count]) => {
+      lines.push(`- ${status}: ${count}`);
+    });
+  }
+
+  return lines.join('\n');
+}

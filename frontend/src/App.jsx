@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Quiz from './components/Quiz';
+import AdminLayout from './components/AdminLayout';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Quiz />} />
-        {/* Admin dashboard route will be added later */}
-        <Route path="/admin" element={<div className="p-8 text-center">Admin Dashboard - Coming Soon</div>} />
+        <Route path="/admin" element={<AdminLayout />} />
       </Routes>
     </BrowserRouter>
   );

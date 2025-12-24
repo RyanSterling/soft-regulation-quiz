@@ -1,8 +1,9 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { generateInsight } from './claude.js';
+import { generateInsight, analyzeResponses } from './claude.js';
 import { sendWebhook } from './webhook.js';
 import { checkRateLimit } from './rateLimit.js';
+import { createClient } from '@supabase/supabase-js';
 
 const app = new Hono();
 
@@ -110,6 +111,48 @@ app.post('/webhook', async (c) => {
   } catch (error) {
     console.error('Error in webhook:', error);
     return c.json({ error: 'Internal server error', success: false }, 200);
+  }
+});
+
+// Analyze responses using AI (for admin dashboard)
+app.post('/analyze-responses', async (c) => {
+  try {
+    const body = await c.req.json();
+    const { question } = body;
+
+    if (!question) {
+      return c.json({ error: 'Question is required' }, 400);
+    }
+
+    // Initialize Supabase client
+    const supabase = createClient(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_SERVICE_KEY
+    );
+
+    // Fetch all responses from Supabase
+    const { data: responses, error } = await supabase
+      .from('responses')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return c.json({ error: 'Failed to fetch responses' }, 500);
+    }
+
+    // Analyze with Claude
+    const result = await analyzeResponses(c.env, question, responses);
+
+    if (result.error) {
+      return c.json({ error: result.error }, 500);
+    }
+
+    return c.json({ answer: result.answer });
+
+  } catch (error) {
+    console.error('Error in analyze-responses:', error);
+    return c.json({ error: 'Internal server error' }, 500);
   }
 });
 
