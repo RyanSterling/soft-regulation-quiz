@@ -34,16 +34,15 @@ app.post('/generate-insight', async (c) => {
     }
 
     // Check rate limits (both email and IP)
-    // TEMPORARILY DISABLED FOR TESTING
-    // const clientIP = c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || 'unknown';
-    // const rateLimitResult = await checkRateLimit(c.env, email, clientIP);
+    const clientIP = c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || 'unknown';
+    const rateLimitResult = await checkRateLimit(c.env, email, clientIP);
 
-    // if (!rateLimitResult.allowed) {
-    //   return c.json({
-    //     error: 'Rate limit exceeded. Please try again later.',
-    //     details: rateLimitResult.reason
-    //   }, 429);
-    // }
+    if (!rateLimitResult.allowed) {
+      return c.json({
+        error: rateLimitResult.reason,
+        type: rateLimitResult.type
+      }, 429);
+    }
 
     // Generate AI insight using Claude
     const aiResult = await generateInsight(c.env, {

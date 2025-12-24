@@ -2,14 +2,14 @@
  * Rate limiting logic
  *
  * Dual protection:
- * 1. Email-based: Max 3 submissions per email per 24 hours
- * 2. IP-based: Max 1 submission per IP per hour
+ * 1. Email-based: Max 2 submissions per email per 24 hours
+ * 2. IP-based: Max 3 submissions per IP per hour
  */
 
-const EMAIL_LIMIT = 3;
+const EMAIL_LIMIT = 2;
 const EMAIL_WINDOW = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
-const IP_LIMIT = 1;
+const IP_LIMIT = 3;
 const IP_WINDOW = 60 * 60 * 1000; // 1 hour in milliseconds
 
 /**
@@ -22,7 +22,7 @@ export async function checkRateLimit(env, email, ip) {
     if (!emailCheck.allowed) {
       return {
         allowed: false,
-        reason: `Email rate limit exceeded. Maximum ${EMAIL_LIMIT} submissions per 24 hours.`,
+        reason: `You've already taken this quiz twice. If you need help, please contact support.`,
         type: 'email'
       };
     }
@@ -34,7 +34,7 @@ export async function checkRateLimit(env, email, ip) {
     if (!ipCheck.allowed) {
       return {
         allowed: false,
-        reason: `IP rate limit exceeded. Maximum ${IP_LIMIT} submission per hour.`,
+        reason: `Too many quiz submissions from your network. Please try again in an hour.`,
         type: 'ip'
       };
     }

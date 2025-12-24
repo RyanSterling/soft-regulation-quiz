@@ -144,6 +144,16 @@ export default function Quiz() {
           freeText,
           email
         });
+
+        // Check if rate limited
+        if (insightResult.rateLimited) {
+          // Show rate limit error and stop submission
+          alert(insightResult.error);
+          setCurrentStep(STEPS.EMAIL);
+          setIsSubmitting(false);
+          return;
+        }
+
         aiResult = {
           whatThisMeans: insightResult.whatThisMeans,
           whatToDo: insightResult.whatToDo,

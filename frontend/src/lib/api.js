@@ -46,16 +46,30 @@ export async function generateInsight(quizData) {
       })
     });
 
+    const data = await response.json();
+
+    // Handle rate limit errors (429)
+    if (response.status === 429) {
+      return {
+        whatThisMeans: null,
+        whatToDo: null,
+        closingMessage: null,
+        error: data.error || 'Rate limit exceeded',
+        rateLimited: true,
+        rateLimitType: data.type
+      };
+    }
+
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
     }
 
-    const data = await response.json();
     return {
       whatThisMeans: data.whatThisMeans,
       whatToDo: data.whatToDo,
       closingMessage: data.closingMessage,
-      error: null
+      error: null,
+      rateLimited: false
     };
 
   } catch (error) {
@@ -64,7 +78,8 @@ export async function generateInsight(quizData) {
       whatThisMeans: null,
       whatToDo: null,
       closingMessage: null,
-      error: error.message
+      error: error.message,
+      rateLimited: false
     };
   }
 }
