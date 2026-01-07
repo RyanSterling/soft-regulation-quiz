@@ -146,7 +146,7 @@ export async function getAllResponses(filters = {}) {
   try {
     let query = supabase
       .from('responses')
-      .select('*')
+      .select('*', { count: 'exact' })
       .order('created_at', { ascending: false });
 
     // Apply filters if provided
@@ -175,10 +175,56 @@ export async function getAllResponses(filters = {}) {
       query = query.lte('created_at', filters.endDate);
     }
 
-    const { data, error } = await query;
+    // First, get the count to know how many rows we need to fetch
+    const { count } = await query;
 
-    if (error) throw error;
-    return { data, error: null };
+    // If count is greater than 1000, we need to paginate
+    // Otherwise, just fetch all at once with a reasonable limit
+    let allData = [];
+    const pageSize = 1000;
+
+    if (count > 1000) {
+      // Fetch in batches
+      let page = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        let batchQuery = supabase
+          .from('responses')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .range(page * pageSize, (page + 1) * pageSize - 1);
+
+        // Re-apply all filters to each batch
+        if (filters.result) batchQuery = batchQuery.eq('result', filters.result);
+        if (filters.has_chronic_pain !== undefined) batchQuery = batchQuery.eq('has_chronic_pain', filters.has_chronic_pain);
+        if (filters.medical_clearance) batchQuery = batchQuery.eq('medical_clearance', filters.medical_clearance);
+        if (filters.cta_type) batchQuery = batchQuery.eq('cta_type', filters.cta_type);
+        if (filters.waitlist_opted_in !== undefined) batchQuery = batchQuery.eq('waitlist_opted_in', filters.waitlist_opted_in);
+        if (filters.email) batchQuery = batchQuery.ilike('email', `%${filters.email}%`);
+        if (filters.startDate) batchQuery = batchQuery.gte('created_at', filters.startDate);
+        if (filters.endDate) batchQuery = batchQuery.lte('created_at', filters.endDate);
+
+        const { data: batchData, error: batchError } = await batchQuery;
+
+        if (batchError) throw batchError;
+
+        if (batchData && batchData.length > 0) {
+          allData = [...allData, ...batchData];
+          page++;
+          hasMore = batchData.length === pageSize;
+        } else {
+          hasMore = false;
+        }
+      }
+    } else {
+      // For datasets under 1000, just fetch with a high limit
+      const { data, error } = await query.limit(count || 10000);
+      if (error) throw error;
+      allData = data || [];
+    }
+
+    return { data: allData, error: null };
   } catch (error) {
     console.error('Error fetching responses:', error);
     return { data: null, error };
