@@ -9,7 +9,7 @@ export default function Results({
 
   const fallbackWhatToDo = "Lowering your baseline requires showing your body new, slower, softer experiences. This takes time and consistency.";
 
-  const fallbackClosingMessage = "We'll be sending you follow-up guidance and insights over the next few days. Keep an eye on your inbox.";
+  const fallbackClosingMessage = "I'll be in touch with ongoing support and information to help you along the way. Keep an eye on your inbox.";
 
   const whatThisMeans = aiContent?.whatThisMeans || fallbackWhatThisMeans;
   const whatToDo = aiContent?.whatToDo || fallbackWhatToDo;

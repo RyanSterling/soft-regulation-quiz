@@ -55,9 +55,10 @@ Structure:
 ## Section 3: "Closing Message"
 A final, encouraging paragraph that directs them to check their email:
 - Write 1-2 warm, validating sentences
-- Mention they'll receive follow-up guidance and insights via email over the coming days
+- Mention they'll receive ongoing support and information via email
 - Keep it brief and encouraging
-- Example tone: "We'll be sending you some follow-up guidance over the next few days. Keep an eye on your inbox."
+- DO NOT promise personalized or custom guidance
+- Example tone: "I'll be in touch with ongoing support and information to help you along the way. Keep an eye on your inbox."
 
 CRITICAL FORMATTING RULES (MUST FOLLOW):
 - NEVER use em dashes (—) or en dashes (–) or hyphen dashes for emphasis or pauses
