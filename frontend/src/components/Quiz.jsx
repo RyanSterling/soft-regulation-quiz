@@ -34,6 +34,7 @@ export default function Quiz() {
 
   // Results data
   const [result, setResult] = useState(null);
+  const [scores, setScores] = useState(null);
   const [aiContent, setAiContent] = useState(null);
 
   // UTM and session tracking
@@ -122,6 +123,7 @@ export default function Quiz() {
       const calculatedResult = determineResult(calculatedScores);
 
       setResult(calculatedResult);
+      setScores(calculatedScores);
 
       // Determine CTA type for database storage
       const hasPain = answers.q10 || false;
@@ -267,6 +269,7 @@ export default function Quiz() {
     return (
       <Results
         result={result}
+        scores={scores}
         aiContent={aiContent}
       />
     );

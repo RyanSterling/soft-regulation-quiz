@@ -1,5 +1,8 @@
+import ScoreVisualization from './ScoreVisualization';
+
 export default function Results({
   result,
+  scores,
   aiContent
 }) {
   // Fallback content if AI fails
@@ -67,6 +70,9 @@ export default function Results({
         {/* Light background section */}
         <div style={{ position: 'relative', zIndex: 1, paddingBottom: '3rem' }}>
           <div className="space-y-8">
+
+          {/* Score Visualization - conditionally rendered */}
+          {scores && <ScoreVisualization scores={scores} result={result} />}
 
           {/* What This Means Section */}
           <div>

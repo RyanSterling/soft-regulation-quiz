@@ -3,6 +3,7 @@ import { EMAIL_FIELD } from '../data/ctaContent';
 
 export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubmitting }) {
   const [error, setError] = useState('');
+  const [privacyConsent, setPrivacyConsent] = useState(false);
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -17,6 +18,11 @@ export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubm
 
     if (!validateEmail(value)) {
       setError('Please enter a valid email address');
+      return;
+    }
+
+    if (!privacyConsent) {
+      setError('Please agree to the Privacy Policy to continue');
       return;
     }
 
@@ -78,8 +84,51 @@ export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubm
               fontFamily: 'Inter, sans-serif',
               color: '#77716E'
             }}>
-              We'll send your personalized results and follow-up tips to this email.
+              You'll see your results on the next screen. We'll send follow-up education and resources to this email.
             </p>
+
+            {/* Privacy Consent Checkbox */}
+            <div className="flex items-start gap-3 mt-6">
+              <input
+                type="checkbox"
+                id="privacy-consent"
+                checked={privacyConsent}
+                onChange={(e) => {
+                  setPrivacyConsent(e.target.checked);
+                  setError('');
+                }}
+                disabled={isSubmitting}
+                className="mt-1 cursor-pointer"
+                style={{
+                  width: '18px',
+                  height: '18px',
+                  accentColor: '#4D1E22'
+                }}
+              />
+              <label
+                htmlFor="privacy-consent"
+                className="text-sm cursor-pointer"
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  color: '#6D6B6B',
+                  lineHeight: '1.5'
+                }}
+              >
+                I agree to the{' '}
+                <a
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: '#4D1E22',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Privacy Policy
+                </a>
+                {' '}and consent to my data being processed to provide quiz results.
+              </label>
+            </div>
           </div>
 
           {/* Navigation Buttons */}
