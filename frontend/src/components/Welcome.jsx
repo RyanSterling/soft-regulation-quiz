@@ -50,6 +50,38 @@ export default function Welcome({ onStart }) {
             {WELCOME_CONTENT.buttonText}
           </button>
         </div>
+
+        {/* Legal Disclaimer */}
+        <div className="pt-6 px-4">
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            color: '#77716E',
+            fontSize: '0.875rem',
+            lineHeight: '1.5'
+          }}>
+            By taking this quiz, you agree to our{' '}
+            <a
+              href="https://www.maggiesterling.com/terms-of-service"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:opacity-80"
+              style={{ color: '#77716E' }}
+            >
+              Terms of Service
+            </a>
+            {' '}and{' '}
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:opacity-80"
+              style={{ color: '#77716E' }}
+            >
+              Privacy Policy
+            </a>
+            . This quiz provides educational information only and is not medical or psychological treatment.
+          </p>
+        </div>
       </div>
     </div>
   );
