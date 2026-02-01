@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
-import { getAllResponses } from '../lib/supabase';
+import { getResponsesPaginated } from '../lib/supabase';
+
+const PAGE_SIZE = 50;
 
 export default function Responses() {
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [filters, setFilters] = useState({
     result: '',
     has_chronic_pain: '',
@@ -12,10 +17,10 @@ export default function Responses() {
   });
 
   useEffect(() => {
-    loadResponses();
+    loadResponses(null, 0);
   }, []);
 
-  const loadResponses = async (filterOverride = null) => {
+  const loadResponses = async (filterOverride = null, page = currentPage) => {
     setLoading(true);
     try {
       const filterToUse = filterOverride || filters;
@@ -28,13 +33,15 @@ export default function Responses() {
       }
       if (filterToUse.medical_clearance) cleanFilters.medical_clearance = filterToUse.medical_clearance;
 
-      const { data, error } = await getAllResponses(cleanFilters);
+      const { data, count, totalPages: pages, error } = await getResponsesPaginated(cleanFilters, page, PAGE_SIZE);
       if (error) {
         console.error('Error fetching responses:', error);
         return;
       }
-      console.log('Loaded responses:', data?.length || 0);
       setResponses(data || []);
+      setTotalCount(count);
+      setTotalPages(pages);
+      setCurrentPage(page);
     } catch (error) {
       console.error('Error loading responses:', error);
     } finally {
@@ -43,7 +50,15 @@ export default function Responses() {
   };
 
   const applyFilters = (newFilters) => {
-    loadResponses(newFilters);
+    setCurrentPage(0);
+    loadResponses(newFilters, 0);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      loadResponses(null, newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const formatDate = (dateString) => {
@@ -164,7 +179,11 @@ export default function Responses() {
           className="text-sm font-medium"
           style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B' }}
         >
-          Showing <span style={{ color: '#101827', fontWeight: 'bold' }}>{responses.length}</span> responses
+          Showing{' '}
+          <span style={{ color: '#101827', fontWeight: 'bold' }}>
+            {totalCount > 0 ? currentPage * PAGE_SIZE + 1 : 0}-{Math.min((currentPage + 1) * PAGE_SIZE, totalCount)}
+          </span>{' '}
+          of <span style={{ color: '#101827', fontWeight: 'bold' }}>{totalCount}</span> responses
         </p>
       </div>
 
@@ -188,6 +207,15 @@ export default function Responses() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }
@@ -423,6 +451,71 @@ function ScoreBox({ label, score, max }) {
       >
         {score}<span className="text-sm" style={{ color: '#9CA3AF' }}>/{max}</span>
       </p>
+    </div>
+  );
+}
+
+function Pagination({ currentPage, totalPages, onPageChange }) {
+  const getVisiblePages = () => {
+    const pages = [];
+    const start = Math.max(0, currentPage - 2);
+    const end = Math.min(totalPages - 1, currentPage + 2);
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
+  return (
+    <div className="bg-white rounded-xl p-4 shadow-sm flex items-center justify-between">
+      <p
+        className="text-sm"
+        style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B' }}
+      >
+        Page {currentPage + 1} of {totalPages}
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 0}
+          className="px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+          style={{
+            fontFamily: 'Inter, sans-serif',
+            borderColor: '#D1D5DB',
+            color: currentPage === 0 ? '#9CA3AF' : '#374151'
+          }}
+        >
+          Previous
+        </button>
+
+        {getVisiblePages().map((page) => (
+          <button
+            key={page}
+            onClick={() => onPageChange(page)}
+            className="w-9 h-9 rounded-lg text-sm font-medium transition-colors"
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              backgroundColor: page === currentPage ? '#4D1E22' : 'transparent',
+              color: page === currentPage ? 'white' : '#6D6B6B'
+            }}
+          >
+            {page + 1}
+          </button>
+        ))}
+
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage >= totalPages - 1}
+          className="px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+          style={{
+            fontFamily: 'Inter, sans-serif',
+            borderColor: '#D1D5DB',
+            color: currentPage >= totalPages - 1 ? '#9CA3AF' : '#374151'
+          }}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

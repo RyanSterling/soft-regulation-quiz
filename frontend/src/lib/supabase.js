@@ -232,6 +232,61 @@ export async function getAllResponses(filters = {}) {
 }
 
 /**
+ * Get paginated responses (for admin dashboard with pagination)
+ */
+export async function getResponsesPaginated(filters = {}, page = 0, pageSize = 50) {
+  try {
+    let query = supabase
+      .from('responses')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false });
+
+    // Apply filters if provided
+    if (filters.result) {
+      query = query.eq('result', filters.result);
+    }
+    if (filters.has_chronic_pain !== undefined) {
+      query = query.eq('has_chronic_pain', filters.has_chronic_pain);
+    }
+    if (filters.medical_clearance) {
+      query = query.eq('medical_clearance', filters.medical_clearance);
+    }
+    if (filters.cta_type) {
+      query = query.eq('cta_type', filters.cta_type);
+    }
+    if (filters.waitlist_opted_in !== undefined) {
+      query = query.eq('waitlist_opted_in', filters.waitlist_opted_in);
+    }
+    if (filters.email) {
+      query = query.ilike('email', `%${filters.email}%`);
+    }
+    if (filters.startDate) {
+      query = query.gte('created_at', filters.startDate);
+    }
+    if (filters.endDate) {
+      query = query.lte('created_at', filters.endDate);
+    }
+
+    // Apply pagination
+    query = query.range(page * pageSize, (page + 1) * pageSize - 1);
+
+    const { data, count, error } = await query;
+
+    if (error) throw error;
+
+    return {
+      data: data || [],
+      count: count || 0,
+      totalPages: Math.ceil((count || 0) / pageSize),
+      error: null
+    };
+  } catch (error) {
+    console.error('Error fetching paginated responses:', error);
+    return { data: [], count: 0, totalPages: 0, error };
+  }
+}
+
+/**
  * Get analytics summary (for admin dashboard)
  */
 export async function getAnalyticsSummary(startDate, endDate) {

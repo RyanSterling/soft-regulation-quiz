@@ -20,6 +20,7 @@ export default function Analytics() {
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
+  const [showAllYoutubeVideos, setShowAllYoutubeVideos] = useState(false);
 
   useEffect(() => {
     loadAnalytics();
@@ -215,17 +216,11 @@ export default function Analytics() {
       {/* YouTube Campaign Breakdown */}
       {Object.keys(stats.youtubeCampaigns).length > 0 && (
         <ChartCard title="YouTube Video Breakdown">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={Object.entries(stats.youtubeCampaigns).map(([campaign, count]) => ({ campaign, count }))}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="campaign" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" fill={COLORS.accent3} />
-            </BarChart>
-          </ResponsiveContainer>
+          <YouTubeBreakdownTable
+            campaigns={stats.youtubeCampaigns}
+            showAll={showAllYoutubeVideos}
+            onToggle={() => setShowAllYoutubeVideos(!showAllYoutubeVideos)}
+          />
         </ChartCard>
       )}
 
@@ -304,6 +299,74 @@ function ChartCard({ title, children }) {
         {title}
       </h3>
       {children}
+    </div>
+  );
+}
+
+function YouTubeBreakdownTable({ campaigns, showAll, onToggle }) {
+  const sortedCampaigns = Object.entries(campaigns)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+
+  const displayedCampaigns = showAll ? sortedCampaigns : sortedCampaigns.slice(0, 8);
+  const totalVideos = sortedCampaigns.length;
+  const hasMore = totalVideos > 8;
+
+  return (
+    <div>
+      <table className="w-full">
+        <thead>
+          <tr style={{ borderBottom: '1px solid #E5E7EB' }}>
+            <th
+              className="text-left py-3 px-4 font-medium"
+              style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.875rem' }}
+            >
+              Video Campaign
+            </th>
+            <th
+              className="text-right py-3 px-4 font-medium"
+              style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.875rem' }}
+            >
+              Completions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {displayedCampaigns.map((campaign, index) => (
+            <tr
+              key={campaign.name}
+              style={{
+                borderBottom: index < displayedCampaigns.length - 1 ? '1px solid #F3F4F6' : 'none'
+              }}
+            >
+              <td
+                className="py-3 px-4"
+                style={{ fontFamily: 'Inter, sans-serif', color: '#101827', fontSize: '0.9375rem' }}
+              >
+                {campaign.name}
+              </td>
+              <td
+                className="py-3 px-4 text-right font-semibold"
+                style={{ fontFamily: 'Inter, sans-serif', color: '#101827', fontSize: '0.9375rem' }}
+              >
+                {campaign.count}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {hasMore && (
+        <div className="mt-4 pt-4" style={{ borderTop: '1px solid #E5E7EB' }}>
+          <button
+            onClick={onToggle}
+            className="text-sm font-medium hover:underline"
+            style={{ fontFamily: 'Inter, sans-serif', color: '#4D1E22' }}
+          >
+            {showAll ? 'Show top 8 only' : `View all ${totalVideos} videos`}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
