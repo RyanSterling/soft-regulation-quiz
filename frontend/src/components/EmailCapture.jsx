@@ -10,7 +10,8 @@ export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubm
     return re.test(email);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    if (e) e.preventDefault();
     if (!value || !value.trim()) {
       setError('Email is required');
       return;
@@ -39,6 +40,7 @@ export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubm
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#EFEDEC' }}>
       <div className="flex-1 pt-20 pb-8 px-4">
         <div className="max-w-3xl mx-auto flex flex-col h-full">
+          <form onSubmit={handleSubmit}>
           {/* Question Text */}
           <div className="space-y-4 mb-auto">
             <h2 style={{
@@ -134,6 +136,7 @@ export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubm
           {/* Navigation Buttons */}
           <div className="flex justify-between items-center mt-8">
             <button
+              type="button"
               onClick={onBack}
               disabled={isSubmitting}
               className="font-medium transition-colors disabled:opacity-50"
@@ -146,7 +149,7 @@ export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubm
             </button>
 
             <button
-              onClick={handleSubmit}
+              type="submit"
               disabled={isSubmitting}
               className="px-8 py-3 font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
@@ -159,6 +162,7 @@ export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubm
               {isSubmitting ? 'Processing...' : 'Get My Results'}
             </button>
           </div>
+          </form>
         </div>
       </div>
     </div>
