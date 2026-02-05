@@ -11,7 +11,7 @@ const app = new Hono();
 app.use('/*', cors({
   origin: '*', // In production, restrict this to your domain
   allowMethods: ['POST', 'GET', 'OPTIONS'],
-  allowHeaders: ['Content-Type'],
+  allowHeaders: ['Content-Type', 'x-bypass-key'],
 }));
 
 // Health check endpoint
@@ -34,9 +34,13 @@ app.post('/generate-insight', async (c) => {
       return c.json({ error: 'Missing required fields' }, 400);
     }
 
+    // Check for rate limit bypass (for testing)
+    const bypassKey = c.req.header('x-bypass-key');
+    const validBypass = bypassKey && c.env.RATE_LIMIT_BYPASS_KEY && bypassKey === c.env.RATE_LIMIT_BYPASS_KEY;
+
     // Check rate limits (both email and IP)
     const clientIP = c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || 'unknown';
-    const rateLimitResult = await checkRateLimit(c.env, email, clientIP);
+    const rateLimitResult = validBypass ? { allowed: true } : await checkRateLimit(c.env, email, clientIP);
 
     if (!rateLimitResult.allowed) {
       return c.json({

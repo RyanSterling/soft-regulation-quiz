@@ -15,11 +15,13 @@ export async function generateInsight(quizData) {
   try {
     const { result, scores, answers, hasPain, medicalClearance, freeText, email } = quizData;
 
+    const bypassKey = new URLSearchParams(window.location.search).get('bypass');
+    const headers = { 'Content-Type': 'application/json' };
+    if (bypassKey) headers['x-bypass-key'] = bypassKey;
+
     const response = await fetch(`${WORKER_URL}/generate-insight`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers,
       body: JSON.stringify({
         email,
         result,
