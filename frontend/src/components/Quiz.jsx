@@ -13,6 +13,7 @@ import { getUtmParams } from '../lib/utm';
 import { generateSessionId } from '../lib/session';
 import { saveResponse, trackQuizStart, markQuizCompleted } from '../lib/supabase';
 import { generateInsight, sendWebhook } from '../lib/api';
+import { trackQuizCompleted, trackSensitizedResult } from '../lib/pixel';
 
 const STEPS = {
   WELCOME: 'welcome',
@@ -134,37 +135,41 @@ export default function Quiz() {
       const quizData = prepareQuizData(answers, email, freeText, utmParams);
       quizData.cta_type = determinedCtaType;
 
-      // Generate AI content (non-blocking)
+      // Generate AI content only for sensitized users who provided context
       let aiResult = null;
-      try {
-        const insightResult = await generateInsight({
-          result: calculatedResult,
-          scores: calculatedScores,
-          answers: quizData,
-          hasPain,
-          medicalClearance,
-          freeText,
-          email
-        });
+      const shouldUseAI = calculatedResult === 'sensitized' && freeText && freeText.trim().length > 0;
 
-        // Check if rate limited
-        if (insightResult.rateLimited) {
-          // Show rate limit error and stop submission
-          alert(insightResult.error);
-          setCurrentStep(STEPS.EMAIL);
-          setIsSubmitting(false);
-          return;
+      if (shouldUseAI) {
+        try {
+          const insightResult = await generateInsight({
+            result: calculatedResult,
+            scores: calculatedScores,
+            answers: quizData,
+            hasPain,
+            medicalClearance,
+            freeText,
+            email
+          });
+
+          // Check if rate limited
+          if (insightResult.rateLimited) {
+            // Show rate limit error and stop submission
+            alert(insightResult.error);
+            setCurrentStep(STEPS.EMAIL);
+            setIsSubmitting(false);
+            return;
+          }
+
+          aiResult = {
+            whatThisMeans: insightResult.whatThisMeans,
+            whatToDo: insightResult.whatToDo,
+            closingMessage: insightResult.closingMessage
+          };
+          setAiContent(aiResult);
+        } catch (error) {
+          console.error('AI insight generation failed:', error);
+          // Continue without AI insight
         }
-
-        aiResult = {
-          whatThisMeans: insightResult.whatThisMeans,
-          whatToDo: insightResult.whatToDo,
-          closingMessage: insightResult.closingMessage
-        };
-        setAiContent(aiResult);
-      } catch (error) {
-        console.error('AI insight generation failed:', error);
-        // Continue without AI insight
       }
 
       // Save response to Supabase (store combined content as ai_insight for now)
@@ -194,6 +199,12 @@ export default function Quiz() {
 
       // Show results
       setCurrentStep(STEPS.RESULTS);
+
+      // Fire Facebook Pixel events
+      trackQuizCompleted(calculatedResult, calculatedScores);
+      if (calculatedResult === 'sensitized') {
+        trackSensitizedResult(calculatedScores);
+      }
 
     } catch (error) {
       console.error('Error submitting quiz:', error);
