@@ -5,7 +5,7 @@
 
 export const WELCOME_CONTENT = {
   title: 'Is Your Nervous System Sensitized?',
-  subhead: 'Most people think they just need to relax more or find the right tool. But if your nervous system has become sensitized, that\'s why nothing has worked. Take this 2-minute quiz to find out.',
+  subhead: 'Most people think they just need to relax more or find the right tool. But if your nervous system has become sensitized, that\'s why nothing has worked. Take this 60-second quiz to find out.',
   buttonText: 'Take the Quiz'
 };
 

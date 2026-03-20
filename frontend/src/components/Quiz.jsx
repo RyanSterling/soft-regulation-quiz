@@ -237,7 +237,7 @@ export default function Quiz() {
             onBack={handleBack}
             showBack={currentQuestionIndex > 0}
             current={currentQuestionIndex + 1}
-            total={totalQuestions + 2}
+            total={totalQuestions}
             onTransitionStart={() => setIsTransitioning(true)}
           />
         </div>
