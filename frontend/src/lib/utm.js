@@ -5,14 +5,16 @@
 
 /**
  * Extract UTM parameters from URL
- * We only track utm_source and utm_campaign (keeping it simple)
+ * Tracks: utm_source, utm_campaign, utm_content, utm_term (for Facebook ads)
  */
 export function extractUtmParams() {
   const params = new URLSearchParams(window.location.search);
 
   return {
     utm_source: params.get('utm_source') || null,
-    utm_campaign: params.get('utm_campaign') || null
+    utm_campaign: params.get('utm_campaign') || null,
+    utm_content: params.get('utm_content') || null,
+    utm_term: params.get('utm_term') || null
   };
 }
 
@@ -21,7 +23,7 @@ export function extractUtmParams() {
  * This ensures they persist even if the user refreshes the page during the quiz
  */
 export function storeUtmParams(utmParams) {
-  if (utmParams.utm_source || utmParams.utm_campaign) {
+  if (utmParams.utm_source || utmParams.utm_campaign || utmParams.utm_content || utmParams.utm_term) {
     sessionStorage.setItem('quiz_utm_params', JSON.stringify(utmParams));
   }
 }
@@ -36,10 +38,10 @@ export function getStoredUtmParams() {
       return JSON.parse(stored);
     } catch (error) {
       console.error('Error parsing stored UTM params:', error);
-      return { utm_source: null, utm_campaign: null };
+      return { utm_source: null, utm_campaign: null, utm_content: null, utm_term: null };
     }
   }
-  return { utm_source: null, utm_campaign: null };
+  return { utm_source: null, utm_campaign: null, utm_content: null, utm_term: null };
 }
 
 /**
@@ -56,8 +58,8 @@ export function clearStoredUtmParams() {
 export function getUtmParams() {
   const urlParams = extractUtmParams();
 
-  // If URL has UTM params, use and store them
-  if (urlParams.utm_source || urlParams.utm_campaign) {
+  // If URL has any UTM params, use and store them
+  if (urlParams.utm_source || urlParams.utm_campaign || urlParams.utm_content || urlParams.utm_term) {
     storeUtmParams(urlParams);
     return urlParams;
   }

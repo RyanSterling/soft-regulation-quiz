@@ -91,7 +91,7 @@ export async function generateInsight(quizData) {
  */
 export async function sendWebhook(webhookData) {
   try {
-    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign } = webhookData;
+    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign, utmContent, utmTerm } = webhookData;
 
     const response = await fetch(`${WORKER_URL}/webhook`, {
       method: 'POST',
@@ -106,7 +106,9 @@ export async function sendWebhook(webhookData) {
         waitlistOptedIn,
         tag,
         utmSource,
-        utmCampaign
+        utmCampaign,
+        utmContent,
+        utmTerm
       })
     });
 

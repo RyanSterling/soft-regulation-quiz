@@ -193,7 +193,9 @@ export default function Quiz() {
           waitlistOptedIn: false,
           tag: null,
           utmSource: utmParams.utm_source,
-          utmCampaign: utmParams.utm_campaign
+          utmCampaign: utmParams.utm_campaign,
+          utmContent: utmParams.utm_content,
+          utmTerm: utmParams.utm_term
         });
       }
 

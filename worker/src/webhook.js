@@ -4,7 +4,7 @@
  */
 export async function sendWebhook(env, data) {
   try {
-    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign } = data;
+    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign, utmContent, utmTerm } = data;
 
     const primaryUrl = env.N8N_WEBHOOK_URL;
     const secondaryUrl = env.N8N_WEBHOOK_URL_SECONDARY; // Optional: for testing self-hosted
@@ -24,6 +24,8 @@ export async function sendWebhook(env, data) {
       tag: tag || null,
       utm_source: utmSource || null,
       utm_campaign: utmCampaign || null,
+      utm_content: utmContent || null,
+      utm_term: utmTerm || null,
       timestamp: new Date().toISOString()
     };
 

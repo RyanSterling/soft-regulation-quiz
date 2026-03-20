@@ -255,10 +255,14 @@ function ResponseCard({ response, isExpanded, onToggle, formatDate }) {
               <span style={{ fontFamily: 'Inter, sans-serif' }}>
                 Score: {response.score_total}/36
               </span>
-              {response.utm_source && (
+              {(response.utm_source || response.utm_campaign || response.utm_content || response.utm_term) && (
                 <span style={{ fontFamily: 'Inter, sans-serif' }}>
-                  Source: {response.utm_source}
-                  {response.utm_campaign && ` (${response.utm_campaign})`}
+                  UTM: {[
+                    response.utm_source,
+                    response.utm_campaign,
+                    response.utm_content,
+                    response.utm_term
+                  ].filter(Boolean).join(' / ')}
                 </span>
               )}
             </div>

@@ -65,6 +65,8 @@ export function prepareQuizData(answers, email, freeText, utmParams = {}) {
     medical_clearance: answers.q11 || null,
     free_text_response: freeText || null,
     utm_source: utmParams.utm_source || null,
-    utm_campaign: utmParams.utm_campaign || null
+    utm_campaign: utmParams.utm_campaign || null,
+    utm_content: utmParams.utm_content || null,
+    utm_term: utmParams.utm_term || null
   };
 }

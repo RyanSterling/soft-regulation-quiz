@@ -60,7 +60,9 @@ export async function trackQuizStart(sessionId, utmParams = {}) {
       .insert([{
         session_id: sessionId,
         utm_source: utmParams.utm_source || null,
-        utm_campaign: utmParams.utm_campaign || null
+        utm_campaign: utmParams.utm_campaign || null,
+        utm_content: utmParams.utm_content || null,
+        utm_term: utmParams.utm_term || null
       }])
       .select()
       .single();

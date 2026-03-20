@@ -20,7 +20,7 @@ export default function Analytics() {
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
-  const [showAllYoutubeVideos, setShowAllYoutubeVideos] = useState(false);
+  const [showAllUtmEntries, setShowAllUtmEntries] = useState(false);
 
   useEffect(() => {
     loadAnalytics();
@@ -67,14 +67,18 @@ export default function Analytics() {
       return acc;
     }, {});
 
-    // YouTube campaign breakdown
-    const youtubeCampaigns = data
-      .filter(r => r.utm_source === 'youtube' && r.utm_campaign)
-      .reduce((acc, r) => {
-        const campaign = r.utm_campaign;
-        acc[campaign] = (acc[campaign] || 0) + 1;
-        return acc;
-      }, {});
+    // UTM tracking data (for Facebook ads and other sources)
+    const utmTrackedResponses = data
+      .filter(r => r.utm_source || r.utm_campaign || r.utm_content || r.utm_term)
+      .map(r => ({
+        email: r.email,
+        date: new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        utm_source: r.utm_source || '-',
+        utm_campaign: r.utm_campaign || '-',
+        utm_content: r.utm_content || '-',
+        utm_term: r.utm_term || '-',
+        result: r.result
+      }));
 
     // Timeline data (submissions by day)
     const timeline = calculateTimeline(data);
@@ -87,7 +91,7 @@ export default function Analytics() {
       sensitized: sensitized.length,
       notSensitized: notSensitized.length,
       utmSources,
-      youtubeCampaigns,
+      utmTrackedResponses,
       timeline
     });
   };
@@ -213,13 +217,13 @@ export default function Analytics() {
         </ResponsiveContainer>
       </ChartCard>
 
-      {/* YouTube Campaign Breakdown */}
-      {Object.keys(stats.youtubeCampaigns).length > 0 && (
-        <ChartCard title="YouTube Video Breakdown">
-          <YouTubeBreakdownTable
-            campaigns={stats.youtubeCampaigns}
-            showAll={showAllYoutubeVideos}
-            onToggle={() => setShowAllYoutubeVideos(!showAllYoutubeVideos)}
+      {/* UTM Tracking Table (for Facebook Ads) */}
+      {stats.utmTrackedResponses.length > 0 && (
+        <ChartCard title="Ad Tracking Details">
+          <UtmTrackingTable
+            entries={stats.utmTrackedResponses}
+            showAll={showAllUtmEntries}
+            onToggle={() => setShowAllUtmEntries(!showAllUtmEntries)}
           />
         </ChartCard>
       )}
@@ -303,58 +307,83 @@ function ChartCard({ title, children }) {
   );
 }
 
-function YouTubeBreakdownTable({ campaigns, showAll, onToggle }) {
-  const sortedCampaigns = Object.entries(campaigns)
-    .map(([name, count]) => ({ name, count }))
-    .sort((a, b) => b.count - a.count);
-
-  const displayedCampaigns = showAll ? sortedCampaigns : sortedCampaigns.slice(0, 8);
-  const totalVideos = sortedCampaigns.length;
-  const hasMore = totalVideos > 8;
+function UtmTrackingTable({ entries, showAll, onToggle }) {
+  const displayedEntries = showAll ? entries : entries.slice(0, 10);
+  const totalEntries = entries.length;
+  const hasMore = totalEntries > 10;
 
   return (
     <div>
-      <table className="w-full">
-        <thead>
-          <tr style={{ borderBottom: '1px solid #E5E7EB' }}>
-            <th
-              className="text-left py-3 px-4 font-medium"
-              style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.875rem' }}
-            >
-              Video Campaign
-            </th>
-            <th
-              className="text-right py-3 px-4 font-medium"
-              style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.875rem' }}
-            >
-              Completions
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {displayedCampaigns.map((campaign, index) => (
-            <tr
-              key={campaign.name}
-              style={{
-                borderBottom: index < displayedCampaigns.length - 1 ? '1px solid #F3F4F6' : 'none'
-              }}
-            >
-              <td
-                className="py-3 px-4"
-                style={{ fontFamily: 'Inter, sans-serif', color: '#101827', fontSize: '0.9375rem' }}
-              >
-                {campaign.name}
-              </td>
-              <td
-                className="py-3 px-4 text-right font-semibold"
-                style={{ fontFamily: 'Inter, sans-serif', color: '#101827', fontSize: '0.9375rem' }}
-              >
-                {campaign.count}
-              </td>
+      <p
+        className="text-sm mb-4"
+        style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B' }}
+      >
+        {totalEntries} responses with UTM tracking
+      </p>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[700px]">
+          <thead>
+            <tr style={{ borderBottom: '1px solid #E5E7EB' }}>
+              <th className="text-left py-3 px-3 font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.75rem' }}>
+                Date
+              </th>
+              <th className="text-left py-3 px-3 font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.75rem' }}>
+                Source
+              </th>
+              <th className="text-left py-3 px-3 font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.75rem' }}>
+                Campaign
+              </th>
+              <th className="text-left py-3 px-3 font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.75rem' }}>
+                Content
+              </th>
+              <th className="text-left py-3 px-3 font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.75rem' }}>
+                Term
+              </th>
+              <th className="text-left py-3 px-3 font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.75rem' }}>
+                Result
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {displayedEntries.map((entry, index) => (
+              <tr
+                key={index}
+                style={{
+                  borderBottom: index < displayedEntries.length - 1 ? '1px solid #F3F4F6' : 'none'
+                }}
+              >
+                <td className="py-2 px-3" style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '0.8125rem' }}>
+                  {entry.date}
+                </td>
+                <td className="py-2 px-3" style={{ fontFamily: 'Inter, sans-serif', color: '#101827', fontSize: '0.8125rem' }}>
+                  {entry.utm_source}
+                </td>
+                <td className="py-2 px-3" style={{ fontFamily: 'Inter, sans-serif', color: '#101827', fontSize: '0.8125rem' }}>
+                  {entry.utm_campaign}
+                </td>
+                <td className="py-2 px-3" style={{ fontFamily: 'Inter, sans-serif', color: '#101827', fontSize: '0.8125rem' }}>
+                  {entry.utm_content}
+                </td>
+                <td className="py-2 px-3" style={{ fontFamily: 'Inter, sans-serif', color: '#101827', fontSize: '0.8125rem' }}>
+                  {entry.utm_term}
+                </td>
+                <td className="py-2 px-3">
+                  <span
+                    className="px-2 py-0.5 rounded text-xs font-medium"
+                    style={{
+                      backgroundColor: entry.result === 'sensitized' ? '#FEE2E2' : '#E0E7FF',
+                      color: entry.result === 'sensitized' ? '#991B1B' : '#3730A3',
+                      fontFamily: 'Inter, sans-serif'
+                    }}
+                  >
+                    {entry.result === 'sensitized' ? 'Sensitized' : 'Not Sens.'}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {hasMore && (
         <div className="mt-4 pt-4" style={{ borderTop: '1px solid #E5E7EB' }}>
@@ -363,7 +392,7 @@ function YouTubeBreakdownTable({ campaigns, showAll, onToggle }) {
             className="text-sm font-medium hover:underline"
             style={{ fontFamily: 'Inter, sans-serif', color: '#4D1E22' }}
           >
-            {showAll ? 'Show top 8 only' : `View all ${totalVideos} videos`}
+            {showAll ? 'Show recent 10 only' : `View all ${totalEntries} entries`}
           </button>
         </div>
       )}

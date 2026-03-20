@@ -86,7 +86,7 @@ app.post('/generate-insight', async (c) => {
 app.post('/webhook', async (c) => {
   try {
     const body = await c.req.json();
-    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign } = body;
+    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign, utmContent, utmTerm } = body;
 
     // Validate required fields
     if (!email || !result) {
@@ -102,7 +102,9 @@ app.post('/webhook', async (c) => {
       waitlistOptedIn,
       tag,
       utmSource,
-      utmCampaign
+      utmCampaign,
+      utmContent,
+      utmTerm
     });
 
     if (webhookResult.error) {
