@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Responses from './Responses';
 import Analytics from './Analytics';
+import FacebookAds from './FacebookAds';
 import AIAnalyzer from './AIAnalyzer';
 import Settings from './Settings';
 
@@ -142,6 +143,17 @@ export default function AdminLayout() {
               Analytics
             </button>
             <button
+              onClick={() => setActiveTab('facebook-ads')}
+              className="pb-4 px-1 font-medium transition-colors"
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                color: activeTab === 'facebook-ads' ? '#4D1E22' : '#6D6B6B',
+                borderBottom: activeTab === 'facebook-ads' ? '2px solid #4D1E22' : 'none'
+              }}
+            >
+              Facebook Ads
+            </button>
+            <button
               onClick={() => setActiveTab('ai-analyzer')}
               className="pb-4 px-1 font-medium transition-colors"
               style={{
@@ -171,6 +183,7 @@ export default function AdminLayout() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'responses' && <Responses />}
         {activeTab === 'analytics' && <Analytics />}
+        {activeTab === 'facebook-ads' && <FacebookAds />}
         {activeTab === 'ai-analyzer' && <AIAnalyzer />}
         {activeTab === 'settings' && <Settings />}
       </div>
