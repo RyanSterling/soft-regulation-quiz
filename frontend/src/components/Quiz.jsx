@@ -195,7 +195,8 @@ export default function Quiz() {
           utmSource: utmParams.utm_source,
           utmCampaign: utmParams.utm_campaign,
           utmContent: utmParams.utm_content,
-          utmTerm: utmParams.utm_term
+          utmTerm: utmParams.utm_term,
+          deploymentSource: import.meta.env.VITE_DEPLOYMENT_SOURCE || 'organic'
         });
       }
 
