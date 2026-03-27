@@ -13,7 +13,8 @@ export default function Responses() {
   const [filters, setFilters] = useState({
     result: '',
     has_chronic_pain: '',
-    medical_clearance: ''
+    medical_clearance: '',
+    deployment_source: ''
   });
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function Responses() {
         cleanFilters.has_chronic_pain = filterToUse.has_chronic_pain === 'true';
       }
       if (filterToUse.medical_clearance) cleanFilters.medical_clearance = filterToUse.medical_clearance;
+      if (filterToUse.deployment_source) cleanFilters.deployment_source = filterToUse.deployment_source;
 
       const { data, count, totalPages: pages, error } = await getResponsesPaginated(cleanFilters, page, PAGE_SIZE);
       if (error) {
@@ -100,7 +102,7 @@ export default function Responses() {
         >
           Filters
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label
               className="block mb-2 text-sm font-medium"
@@ -168,6 +170,29 @@ export default function Responses() {
               <option value="yes_confident">Confident</option>
               <option value="seen_but_unsure">Unsure</option>
               <option value="not_evaluated">Not Evaluated</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              className="block mb-2 text-sm font-medium"
+              style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B' }}
+            >
+              Traffic Source
+            </label>
+            <select
+              value={filters.deployment_source}
+              onChange={(e) => {
+                const newFilters = { ...filters, deployment_source: e.target.value };
+                setFilters(newFilters);
+                applyFilters(newFilters);
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2"
+              style={{ fontFamily: 'Inter, sans-serif', color: '#101827' }}
+            >
+              <option value="">All</option>
+              <option value="organic">Organic</option>
+              <option value="facebook-ads">Facebook Ads</option>
             </select>
           </div>
         </div>

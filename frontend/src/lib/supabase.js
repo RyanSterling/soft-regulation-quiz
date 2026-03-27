@@ -62,7 +62,8 @@ export async function trackQuizStart(sessionId, utmParams = {}) {
         utm_source: utmParams.utm_source || null,
         utm_campaign: utmParams.utm_campaign || null,
         utm_content: utmParams.utm_content || null,
-        utm_term: utmParams.utm_term || null
+        utm_term: utmParams.utm_term || null,
+        deployment_source: import.meta.env.VITE_DEPLOYMENT_SOURCE || 'organic'
       }])
       .select()
       .single();
@@ -176,6 +177,9 @@ export async function getAllResponses(filters = {}) {
     if (filters.endDate) {
       query = query.lte('created_at', filters.endDate);
     }
+    if (filters.deployment_source) {
+      query = query.eq('deployment_source', filters.deployment_source);
+    }
 
     // First, get the count to know how many rows we need to fetch
     const { count } = await query;
@@ -206,6 +210,7 @@ export async function getAllResponses(filters = {}) {
         if (filters.email) batchQuery = batchQuery.ilike('email', `%${filters.email}%`);
         if (filters.startDate) batchQuery = batchQuery.gte('created_at', filters.startDate);
         if (filters.endDate) batchQuery = batchQuery.lte('created_at', filters.endDate);
+        if (filters.deployment_source) batchQuery = batchQuery.eq('deployment_source', filters.deployment_source);
 
         const { data: batchData, error: batchError } = await batchQuery;
 
@@ -267,6 +272,9 @@ export async function getResponsesPaginated(filters = {}, page = 0, pageSize = 5
     }
     if (filters.endDate) {
       query = query.lte('created_at', filters.endDate);
+    }
+    if (filters.deployment_source) {
+      query = query.eq('deployment_source', filters.deployment_source);
     }
 
     // Apply pagination
