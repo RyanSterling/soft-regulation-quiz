@@ -65,10 +65,32 @@ export const EDUCATIONAL_CONTENT = {
   resources: {
     title: 'Learn more',
     links: [
-      { text: 'Boulder Back Pain Study (JAMA, 2021)', url: 'https://jamanetwork.com/journals/jamapsychiatry/fullarticle/2784694', description: 'Landmark research on mind-body treatment' },
-      { text: 'Lorimer Moseley TEDx Talk', url: 'https://www.youtube.com/watch?v=gwd-wLdIHjs', description: 'Why things hurt — pain science explained' },
-      { text: 'Curable Health Blog', url: 'https://www.curablehealth.com/blog', description: 'Articles on neuroplastic symptoms' },
-      { text: 'Pain Science Overview', url: 'https://www.painscience.com/articles/central-sensitization.php', description: 'Understanding central sensitization' }
+      {
+        text: 'How Chronic Pain & Illness Develop',
+        url: 'https://www.youtube.com/watch?v=Nv-Ol3l4QX4',
+        description: 'Understanding the nervous system\'s role in chronic symptoms',
+        thumbnail: 'https://img.youtube.com/vi/Nv-Ol3l4QX4/mqdefault.jpg',
+        type: 'video'
+      },
+      {
+        text: 'Lorimer Moseley TEDx Talk',
+        url: 'https://www.youtube.com/watch?v=gwd-wLdIHjs',
+        description: 'Why things hurt — pain science explained',
+        thumbnail: 'https://img.youtube.com/vi/gwd-wLdIHjs/mqdefault.jpg',
+        type: 'video'
+      },
+      {
+        text: 'Boulder Back Pain Study (JAMA, 2021)',
+        url: 'https://jamanetwork.com/journals/jamapsychiatry/fullarticle/2784694',
+        description: 'Landmark research showing 66% pain-free after mind-body treatment',
+        type: 'article'
+      },
+      {
+        text: 'Curable Health Blog',
+        url: 'https://www.curablehealth.com/blog',
+        description: 'Articles on neuroplastic symptoms and recovery',
+        type: 'article'
+      }
     ]
   }
 };

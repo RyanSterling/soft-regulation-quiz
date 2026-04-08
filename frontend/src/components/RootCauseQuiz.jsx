@@ -547,15 +547,46 @@ export default function RootCauseQuiz() {
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block p-3 rounded-lg transition-colors hover:bg-gray-50"
+                        className="block rounded-lg transition-colors hover:bg-gray-100 overflow-hidden"
                         style={{ backgroundColor: '#F9FAFB' }}
                       >
-                        <span className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#4D1E22', fontSize: '0.95rem' }}>
-                          {link.text}
-                        </span>
-                        <span className="block text-sm mt-0.5" style={{ fontFamily: 'Inter, sans-serif', color: '#8B8886' }}>
-                          {link.description}
-                        </span>
+                        {link.thumbnail ? (
+                          <div className="flex">
+                            <div className="relative flex-shrink-0" style={{ width: '120px', height: '68px' }}>
+                              <img
+                                src={link.thumbnail}
+                                alt=""
+                                className="w-full h-full object-cover"
+                              />
+                              {link.type === 'video' && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="w-8 h-8 bg-black bg-opacity-70 rounded-full flex items-center justify-center">
+                                    <svg className="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                    </svg>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            <div className="p-3 flex-1">
+                              <span className="font-medium block" style={{ fontFamily: 'Inter, sans-serif', color: '#4D1E22', fontSize: '0.9rem' }}>
+                                {link.text}
+                              </span>
+                              <span className="block text-sm mt-0.5" style={{ fontFamily: 'Inter, sans-serif', color: '#8B8886' }}>
+                                {link.description}
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-3">
+                            <span className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#4D1E22', fontSize: '0.95rem' }}>
+                              {link.text}
+                            </span>
+                            <span className="block text-sm mt-0.5" style={{ fontFamily: 'Inter, sans-serif', color: '#8B8886' }}>
+                              {link.description}
+                            </span>
+                          </div>
+                        )}
                       </a>
                     ))}
                   </div>
