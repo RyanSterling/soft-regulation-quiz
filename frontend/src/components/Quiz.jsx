@@ -197,12 +197,8 @@ export default function Quiz() {
           utmCampaign: utmParams.utm_campaign,
           utmContent: utmParams.utm_content,
           utmTerm: utmParams.utm_term,
-<<<<<<< HEAD
-          deploymentSource: import.meta.env.VITE_DEPLOYMENT_SOURCE || 'organic'
-=======
           deploymentSource: import.meta.env.VITE_DEPLOYMENT_SOURCE || 'organic',
           trafficSource: getTrafficSource()
->>>>>>> dd1565e (Add root cause quiz with enhanced results screen)
         });
       }
 
