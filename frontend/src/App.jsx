@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Quiz from './components/Quiz';
+import RootCauseQuiz from './components/RootCauseQuiz';
 import AdminLayout from './components/AdminLayout';
 import Privacy from './pages/Privacy';
 import Footer from './components/Footer';
@@ -17,6 +18,12 @@ function App() {
         <Route path="/privacy" element={
           <>
             <Privacy />
+            <Footer />
+          </>
+        } />
+        <Route path="/root-cause" element={
+          <>
+            <RootCauseQuiz />
             <Footer />
           </>
         } />

@@ -1,7 +1,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { generateInsight, analyzeResponses } from './claude.js';
-import { sendWebhook } from './webhook.js';
+import { generateRootCauseAssessment } from './claudeRootCause.js';
+import { sendWebhook, sendRootCauseWebhook } from './webhook.js';
 import { checkRateLimit } from './rateLimit.js';
 import { createClient } from '@supabase/supabase-js';
 
@@ -86,7 +87,7 @@ app.post('/generate-insight', async (c) => {
 app.post('/webhook', async (c) => {
   try {
     const body = await c.req.json();
-    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign, utmContent, utmTerm, deploymentSource } = body;
+    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign, utmContent, utmTerm, deploymentSource, trafficSource } = body;
 
     // Validate required fields
     if (!email || !result) {
@@ -105,7 +106,8 @@ app.post('/webhook', async (c) => {
       utmCampaign,
       utmContent,
       utmTerm,
-      deploymentSource
+      deploymentSource,
+      trafficSource
     });
 
     if (webhookResult.error) {
@@ -117,6 +119,83 @@ app.post('/webhook', async (c) => {
 
   } catch (error) {
     console.error('Error in webhook:', error);
+    return c.json({ error: 'Internal server error', success: false }, 200);
+  }
+});
+
+// Generate root cause assessment using Claude API (FIT criteria)
+app.post('/generate-rootcause-assessment', async (c) => {
+  try {
+    const body = await c.req.json();
+    const { email, answers, freeText } = body;
+
+    // Validate required fields
+    if (!email || !answers) {
+      return c.json({ error: 'Missing required fields' }, 400);
+    }
+
+    // Generate AI assessment using Claude
+    const aiResult = await generateRootCauseAssessment(c.env, {
+      answers,
+      freeText,
+      email
+    });
+
+    if (aiResult.error) {
+      console.error('Claude API error:', aiResult.error);
+      return c.json({
+        likelihood: 'unclear',
+        fitIndicators: null,
+        assessment: null,
+        explanation: null,
+        nextSteps: null,
+        error: 'AI service unavailable'
+      }, 200);
+    }
+
+    return c.json({
+      likelihood: aiResult.likelihood,
+      fitIndicators: aiResult.fitIndicators,
+      assessment: aiResult.assessment,
+      explanation: aiResult.explanation,
+      nextSteps: aiResult.nextSteps
+    });
+
+  } catch (error) {
+    console.error('Error in generate-rootcause-assessment:', error);
+    return c.json({ error: 'Internal server error' }, 500);
+  }
+});
+
+// Send webhook to n8n for root cause quiz (ConvertKit tagging with symptom field)
+app.post('/rootcause-webhook', async (c) => {
+  try {
+    const body = await c.req.json();
+    const { email, symptoms, likelihood, utmSource, utmCampaign } = body;
+
+    // Validate required fields
+    if (!email) {
+      return c.json({ error: 'Missing required fields' }, 400);
+    }
+
+    // Send to n8n webhook
+    const webhookResult = await sendRootCauseWebhook(c.env, {
+      email,
+      symptoms,
+      likelihood,
+      utmSource,
+      utmCampaign
+    });
+
+    if (webhookResult.error) {
+      console.error('Root cause webhook error:', webhookResult.error);
+      return c.json({ error: 'Webhook failed', success: false }, 200);
+    }
+
+    return c.json({ success: true });
+
+  } catch (error) {
+    console.error('Error in rootcause-webhook:', error);
     return c.json({ error: 'Internal server error', success: false }, 200);
   }
 });

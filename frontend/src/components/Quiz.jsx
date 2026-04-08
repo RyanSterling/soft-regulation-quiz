@@ -10,6 +10,7 @@ import { QUESTIONS, getVisibleQuestions, getTotalQuestionCount } from '../data/q
 import { getCtaType } from '../data/ctaContent';
 import { calculateScores, determineResult, prepareQuizData } from '../lib/scoring';
 import { getUtmParams } from '../lib/utm';
+import { getTrafficSource } from '../lib/trafficSource';
 import { generateSessionId } from '../lib/session';
 import { saveResponse, trackQuizStart, markQuizCompleted } from '../lib/supabase';
 import { generateInsight, sendWebhook } from '../lib/api';
@@ -196,7 +197,12 @@ export default function Quiz() {
           utmCampaign: utmParams.utm_campaign,
           utmContent: utmParams.utm_content,
           utmTerm: utmParams.utm_term,
+<<<<<<< HEAD
           deploymentSource: import.meta.env.VITE_DEPLOYMENT_SOURCE || 'organic'
+=======
+          deploymentSource: import.meta.env.VITE_DEPLOYMENT_SOURCE || 'organic',
+          trafficSource: getTrafficSource()
+>>>>>>> dd1565e (Add root cause quiz with enhanced results screen)
         });
       }
 

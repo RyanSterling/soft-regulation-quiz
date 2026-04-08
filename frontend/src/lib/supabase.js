@@ -346,3 +346,29 @@ export async function checkEmailRateLimit(email) {
     return { allowed: true, count: 0, error }; // Allow on error to not block legitimate users
   }
 }
+
+/**
+ * Save a root cause quiz response to the database
+ */
+export async function saveRootCauseResponse(responseData) {
+  try {
+    const { data, error } = await supabase
+      .from('rootcause_responses')
+      .insert([{
+        email: responseData.email,
+        answers: responseData.answers,
+        ai_assessment: responseData.ai_assessment,
+        free_text_response: responseData.free_text_response,
+        utm_source: responseData.utm_source,
+        utm_campaign: responseData.utm_campaign
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error saving root cause response:', error);
+    return { data: null, error };
+  }
+}

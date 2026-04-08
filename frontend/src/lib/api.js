@@ -87,11 +87,93 @@ export async function generateInsight(quizData) {
 }
 
 /**
+ * Generate root cause assessment from Claude API (via Cloudflare Worker)
+ */
+export async function generateRootCauseAssessment(quizData) {
+  try {
+    const { email, answers, freeText } = quizData;
+
+    const response = await fetch(`${WORKER_URL}/generate-rootcause-assessment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        answers,
+        freeText
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    return {
+      likelihood: data.likelihood,
+      fitIndicators: data.fitIndicators,
+      assessment: data.assessment,
+      explanation: data.explanation,
+      nextSteps: data.nextSteps,
+      error: null
+    };
+
+  } catch (error) {
+    console.error('Error generating root cause assessment:', error);
+    return {
+      likelihood: 'unclear',
+      fitIndicators: null,
+      assessment: null,
+      explanation: null,
+      nextSteps: null,
+      error: error.message
+    };
+  }
+}
+
+/**
+ * Send root cause webhook to n8n (via Cloudflare Worker)
+ * Sends symptoms to ConvertKit custom field
+ */
+export async function sendRootCauseWebhook(webhookData) {
+  try {
+    const { email, symptoms, likelihood, utmSource, utmCampaign } = webhookData;
+
+    const response = await fetch(`${WORKER_URL}/rootcause-webhook`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        symptoms,
+        likelihood,
+        utmSource,
+        utmCampaign
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Webhook error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { success: data.success, error: null };
+
+  } catch (error) {
+    console.error('Error sending root cause webhook:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Send webhook to n8n (via Cloudflare Worker)
  */
 export async function sendWebhook(webhookData) {
   try {
-    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign, utmContent, utmTerm, deploymentSource } = webhookData;
+    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign, utmContent, utmTerm, deploymentSource, trafficSource } = webhookData;
 
     const response = await fetch(`${WORKER_URL}/webhook`, {
       method: 'POST',
@@ -109,7 +191,8 @@ export async function sendWebhook(webhookData) {
         utmCampaign,
         utmContent,
         utmTerm,
-        deploymentSource
+        deploymentSource,
+        trafficSource
       })
     });
 
