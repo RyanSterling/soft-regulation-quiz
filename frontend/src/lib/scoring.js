@@ -28,11 +28,11 @@ export function calculateScores(answers) {
 
 /**
  * Determine result based on scores
- * - If baseline >= 8 OR total >= 27: "sensitized"
+ * - If baseline >= 7 OR total >= 24: "sensitized"
  * - Else: "not_sensitized"
  */
 export function determineResult(scores) {
-  if (scores.baseline >= 8 || scores.total >= 27) {
+  if (scores.baseline >= 7 || scores.total >= 24) {
     return 'sensitized';
   }
   return 'not_sensitized';

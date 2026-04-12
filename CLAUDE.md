@@ -51,7 +51,7 @@ A self-hosted quiz application that helps people determine if their nervous syst
 - **Total Score**: Sum of all three (range: 9-36)
 
 **Result Logic**:
-- If `baseline_score >= 9` OR `total_score >= 27`: "sensitized"
+- If `baseline_score >= 7` OR `total_score >= 24`: "sensitized"
 - Else: "not_sensitized"
 
 ### 3. Medical Clearance Paths & Eligibility
