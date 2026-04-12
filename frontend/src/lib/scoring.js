@@ -20,6 +20,9 @@ export function calculateScores(answers) {
   const anxiousResponseWeight = ((answers.q10 || 0) + (answers.q11 || 0)) * 1.5;
   baseline += anxiousResponseWeight;
 
+  // Round to integers for database storage
+  baseline = Math.round(baseline);
+
   // Total score (includes weighted anxious response)
   const total = trigger + recovery + baseline;
 
