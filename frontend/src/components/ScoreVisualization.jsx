@@ -3,14 +3,23 @@ export default function ScoreVisualization({ scores, result }) {
 
   const { total } = scores;
 
-  // Calculate position on scale (9-36 range maps to 0-100%)
+  // Calculate position on scale
+  // New scoring: Q1-Q9 (9-36) + Q10-Q11 weighted (0-12) = 9-48 max
   const minScore = 9;
-  const maxScore = 36;
-  const position = ((total - minScore) / (maxScore - minScore)) * 100;
+  const maxScore = 48;
+  let position = ((total - minScore) / (maxScore - minScore)) * 100;
 
-  // Sensitization threshold is at 24 out of 36
-  // That's 55.56% along the scale from 9 to 36
-  const thresholdPosition = ((24 - minScore) / (maxScore - minScore)) * 100;
+  // Sensitization threshold visual position (kept at ~55% for visual consistency)
+  const thresholdPosition = 55;
+
+  // If result is "sensitized", ensure marker appears past the threshold
+  // This handles both weighted scoring and the anxious responder override
+  if (result === 'sensitized' && position < thresholdPosition + 5) {
+    position = thresholdPosition + 10; // Place slightly past threshold
+  }
+
+  // Cap position at 95% to keep marker visible
+  position = Math.min(position, 95);
 
   // Determine contextual message based on position
   const getMessage = () => {
