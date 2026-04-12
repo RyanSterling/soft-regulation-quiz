@@ -8,9 +8,9 @@ export default function ScoreVisualization({ scores, result }) {
   const maxScore = 36;
   const position = ((total - minScore) / (maxScore - minScore)) * 100;
 
-  // Sensitization threshold is at 27 out of 36
-  // That's 66.67% along the scale from 9 to 36
-  const thresholdPosition = ((27 - minScore) / (maxScore - minScore)) * 100;
+  // Sensitization threshold is at 24 out of 36
+  // That's 55.56% along the scale from 9 to 36
+  const thresholdPosition = ((24 - minScore) / (maxScore - minScore)) * 100;
 
   // Determine contextual message based on position
   const getMessage = () => {
