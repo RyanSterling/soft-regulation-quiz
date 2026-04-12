@@ -4,6 +4,7 @@
 
 /**
  * Calculate quiz scores from answers
+ * Q10 and Q11 (anxious response) add 1.5x weight to baseline
  */
 export function calculateScores(answers) {
   // Trigger score: Q1 + Q2 + Q3
@@ -13,9 +14,13 @@ export function calculateScores(answers) {
   const recovery = (answers.q4 || 0) + (answers.q5 || 0) + (answers.q6 || 0);
 
   // Baseline score: Q7 + Q8 + Q9
-  const baseline = (answers.q7 || 0) + (answers.q8 || 0) + (answers.q9 || 0);
+  let baseline = (answers.q7 || 0) + (answers.q8 || 0) + (answers.q9 || 0);
 
-  // Total score
+  // Q10 and Q11 (anxious response) add 1.5x weight to baseline
+  const anxiousResponseWeight = ((answers.q10 || 0) + (answers.q11 || 0)) * 1.5;
+  baseline += anxiousResponseWeight;
+
+  // Total score (includes weighted anxious response)
   const total = trigger + recovery + baseline;
 
   return {
@@ -27,11 +32,20 @@ export function calculateScores(answers) {
 }
 
 /**
- * Determine result based on scores
+ * Determine result based on scores and answers
+ * - If Q10 AND Q11 both >= 3 ("Often"): automatic "sensitized" (anxious responder override)
  * - If baseline >= 7 OR total >= 24: "sensitized"
  * - Else: "not_sensitized"
  */
-export function determineResult(scores) {
+export function determineResult(scores, answers = {}) {
+  // Anxious responder override: if both Q10 and Q11 are "Often" or higher
+  const q10Score = answers.q10 || 0;
+  const q11Score = answers.q11 || 0;
+  if (q10Score >= 3 && q11Score >= 3) {
+    return 'sensitized';
+  }
+
+  // Standard threshold logic
   if (scores.baseline >= 7 || scores.total >= 24) {
     return 'sensitized';
   }
@@ -43,7 +57,7 @@ export function determineResult(scores) {
  */
 export function prepareQuizData(answers, email, freeText, utmParams = {}) {
   const scores = calculateScores(answers);
-  const result = determineResult(scores);
+  const result = determineResult(scores, answers);
 
   return {
     email,
@@ -61,8 +75,10 @@ export function prepareQuizData(answers, email, freeText, utmParams = {}) {
     q7_answer: answers.q7,
     q8_answer: answers.q8,
     q9_answer: answers.q9,
-    has_chronic_pain: answers.q10 || false,
-    medical_clearance: answers.q11 || null,
+    q10_answer: answers.q10 || null,
+    q11_answer: answers.q11 || null,
+    has_chronic_pain: answers.q12 || false,
+    medical_clearance: answers.q13 || null,
     free_text_response: freeText || null,
     utm_source: utmParams.utm_source || null,
     utm_campaign: utmParams.utm_campaign || null,

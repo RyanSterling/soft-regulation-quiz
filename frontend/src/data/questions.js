@@ -84,9 +84,25 @@ export const QUESTIONS = [
     options: SCALE_OPTIONS
   },
 
-  // Chronic Pain Screening (Q10)
+  // Anxious Response Pattern (Q10-11) - Heavy weight in scoring
   {
     id: 'q10',
+    category: 'anxious_response',
+    text: 'Do you find yourself constantly checking your body, researching your symptoms, or seeking reassurance—even though it only brings temporary relief?',
+    type: 'scale',
+    options: SCALE_OPTIONS
+  },
+  {
+    id: 'q11',
+    category: 'anxious_response',
+    text: 'Do you live in a state of chronic fear about your symptoms, spending significant mental energy worrying, monitoring, or running through worst-case scenarios?',
+    type: 'scale',
+    options: SCALE_OPTIONS
+  },
+
+  // Chronic Pain Screening (Q12 - was Q10)
+  {
+    id: 'q12',
     category: 'pain',
     text: 'Are you dealing with chronic pain or persistent physical symptoms—things like back pain, nerve pain, headaches, fibromyalgia, or other pain that hasn\'t gone away?',
     type: 'yesno',
@@ -96,13 +112,13 @@ export const QUESTIONS = [
     ]
   },
 
-  // Medical Clearance (Q11 - conditional, only if Q10 = Yes)
+  // Medical Clearance (Q13 - conditional, only if Q12 = Yes)
   {
-    id: 'q11',
+    id: 'q13',
     category: 'clearance',
     text: 'Have you ruled out structural damage, disease, or other medical causes for your pain—and do you trust that nothing major is being missed?',
     type: 'choice',
-    conditional: { questionId: 'q10', value: true },
+    conditional: { questionId: 'q12', value: true },
     options: [
       { value: 'yes_confident', label: 'Yes, I\'ve been checked out and I\'m confident my symptoms are nervous system related' },
       { value: 'seen_but_unsure', label: 'I\'ve seen doctors but part of me still thinks something is being missed' },

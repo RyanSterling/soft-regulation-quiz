@@ -38,8 +38,11 @@ A self-hosted quiz application that helps people determine if their nervous syst
 
 ### 1. Quiz Flow
 - Welcome screen
-- 11 questions (Q1-Q9 core, Q10 chronic pain screening, Q11 conditional)
-- Q11 only appears if Q10 = "Yes"
+- 13 questions total:
+  - Q1-Q9: Core nervous system assessment (scale questions)
+  - Q10-Q11: Anxious response pattern (scale questions)
+  - Q12: Chronic pain screening (yes/no)
+  - Q13: Medical clearance (conditional, only if Q12 = Yes)
 - Free-text field (optional context)
 - Email capture (required)
 - Results screen with personalized AI insight
@@ -47,16 +50,23 @@ A self-hosted quiz application that helps people determine if their nervous syst
 ### 2. Scoring System
 - **Trigger Score**: Q1 + Q2 + Q3 (range: 3-12)
 - **Recovery Score**: Q4 + Q5 + Q6 (range: 3-12)
-- **Baseline Score**: Q7 + Q8 + Q9 (range: 3-12)
-- **Total Score**: Sum of all three (range: 9-36)
+- **Baseline Score**: Q7 + Q8 + Q9 + (Q10 + Q11) × 1.5 (range: 3-24)
+- **Total Score**: Sum of all above
 
 **Result Logic**:
+- If Q10 >= 3 ("Often") AND Q11 >= 3 ("Often"): "sensitized" (anxious responder override)
 - If `baseline_score >= 7` OR `total_score >= 24`: "sensitized"
 - Else: "not_sensitized"
 
+**Anxious Response Questions (Q10-Q11):**
+- Q10: Compulsive checking/researching/reassurance-seeking
+- Q11: Chronic fear and mental energy spent on symptoms
+- Both questions add 1.5× weight to baseline score
+- If both are "Often" or higher, automatic "sensitized" regardless of other scores
+
 ### 3. Medical Clearance Paths & Eligibility
 
-Based on Q10 (chronic pain) and Q11 (medical clearance) answers:
+Based on Q12 (chronic pain) and Q13 (medical clearance) answers:
 
 **Path 1: No Chronic Pain** → **ELIGIBLE**
 - Show full results with personalized "What This Means" and "What To Do"
@@ -108,8 +118,8 @@ The admin dashboard must show detailed medical clearance breakdown:
 - Conversion rate (eligible users who joined waitlist)
 
 **Chronic Pain Breakdown:**
-- Total users with chronic pain (Q10 = yes)
-- Total users without chronic pain (Q10 = no)
+- Total users with chronic pain (Q12 = yes)
+- Total users without chronic pain (Q12 = no)
 
 **Of Users WITH Chronic Pain:**
 - Count with "yes_confident" clearance (eligible - path 2)
@@ -555,9 +565,10 @@ System prompt for insights: `worker/src/claude.js`
 
 ## Testing Checklist
 
-- [ ] Q11 only shows when Q10 = "Yes"
-- [ ] Progress bar adjusts for conditional Q11
+- [ ] Q13 only shows when Q12 = "Yes"
+- [ ] Progress bar adjusts for conditional Q13
 - [ ] Scoring logic produces correct results
+- [ ] Anxious responder override works (Q10 + Q11 both "Often" = sensitized)
 - [ ] All three CTA variations display correctly
 - [ ] Waitlist mode works
 - [ ] Live mode works (default CTA only)

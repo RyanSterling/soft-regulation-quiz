@@ -122,14 +122,14 @@ export default function Quiz() {
     try {
       // Calculate scores and result
       const calculatedScores = calculateScores(answers);
-      const calculatedResult = determineResult(calculatedScores);
+      const calculatedResult = determineResult(calculatedScores, answers);
 
       setResult(calculatedResult);
       setScores(calculatedScores);
 
       // Determine CTA type for database storage
-      const hasPain = answers.q10 || false;
-      const medicalClearance = answers.q11 || null;
+      const hasPain = answers.q12 || false;
+      const medicalClearance = answers.q13 || null;
       const determinedCtaType = getCtaType(hasPain, medicalClearance);
 
       // Prepare quiz data for submission
