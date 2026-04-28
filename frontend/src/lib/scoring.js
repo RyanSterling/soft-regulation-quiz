@@ -35,6 +35,26 @@ export function calculateScores(answers) {
 }
 
 /**
+ * Get severity level for sensitized results
+ * Provides differentiated messaging based on score intensity
+ */
+export function getSeverityLevel(scores, result) {
+  if (result !== 'sensitized') {
+    return { level: 'dysregulated', label: 'Dysregulated' };
+  }
+
+  const { total } = scores;
+
+  if (total >= 39) {
+    return { level: 'highly_sensitized', label: 'Highly Sensitized' };
+  } else if (total >= 31) {
+    return { level: 'moderately_sensitized', label: 'Moderately Sensitized' };
+  } else {
+    return { level: 'mildly_sensitized', label: 'Mildly Sensitized' };
+  }
+}
+
+/**
  * Determine result based on scores and answers
  * - If Q10 AND Q11 both >= 3 ("Often"): automatic "sensitized" (anxious responder override)
  * - If baseline >= 7 OR total >= 24: "sensitized"

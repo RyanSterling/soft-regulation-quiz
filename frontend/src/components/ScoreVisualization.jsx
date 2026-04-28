@@ -12,25 +12,28 @@ export default function ScoreVisualization({ scores, result }) {
   // Sensitization threshold visual position (kept at ~55% for visual consistency)
   const thresholdPosition = 55;
 
-  // If result is "sensitized", ensure marker appears past the threshold
-  // This handles both weighted scoring and the anxious responder override
-  if (result === 'sensitized' && position < thresholdPosition + 5) {
-    position = thresholdPosition + 10; // Place slightly past threshold
-  }
-
   // Cap position at 95% to keep marker visible
   position = Math.min(position, 95);
 
-  // Determine contextual message based on position
+  // Determine contextual message based on result and score
   const getMessage = () => {
-    if (result === 'sensitized') {
-      return "Your nervous system has crossed into sensitization and needs support.";
-    } else if (position >= thresholdPosition - 10) {
-      return "You're approaching the sensitization threshold. Now is a good time to address these patterns.";
-    } else if (position >= 40) {
-      return "Your nervous system is showing signs of dysregulation that could benefit from attention.";
+    if (result !== 'sensitized') {
+      if (position >= 45) {
+        return "You're approaching sensitization. Now is a good time to address these patterns.";
+      } else if (position >= 35) {
+        return "Your nervous system is showing signs of dysregulation.";
+      } else {
+        return "Your nervous system is showing early warning signs.";
+      }
+    }
+
+    // Sensitized messages based on score intensity
+    if (total >= 39) {
+      return "Your nervous system is highly sensitized and needs consistent support to reset.";
+    } else if (total >= 31) {
+      return "Your nervous system has crossed into sensitization and needs attention.";
     } else {
-      return "Your nervous system is showing early warning signs of dysregulation.";
+      return "Your nervous system has crossed the sensitization threshold—early intervention is key.";
     }
   };
 

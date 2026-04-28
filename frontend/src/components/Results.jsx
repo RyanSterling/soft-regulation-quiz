@@ -1,10 +1,13 @@
 import ScoreVisualization from './ScoreVisualization';
+import { getSeverityLevel } from '../lib/scoring';
 
 export default function Results({
   result,
   scores,
   aiContent
 }) {
+  // Get severity level for sensitized results
+  const severity = scores ? getSeverityLevel(scores, result) : null;
   // Fallback content if AI fails
   const fallbackWhatThisMeans = result === 'sensitized'
     ? "Your alarm system has become too touchy. It's going off for things that aren't actually dangerous because you've spent so long in survival mode that your body now interprets almost everything as a threat."
@@ -61,8 +64,8 @@ export default function Results({
               fontSize: '1.5rem'
             }}>
               {result === 'sensitized'
-                ? 'Your nervous system is likely sensitized'
-                : 'Your nervous system is dysregulated but not quite desensitized yet'}
+                ? `Your nervous system is likely ${severity?.label.toLowerCase() || 'sensitized'}`
+                : 'Your nervous system is dysregulated but not quite sensitized yet'}
             </p>
           </div>
         </div>
