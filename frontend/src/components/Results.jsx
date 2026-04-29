@@ -1,4 +1,5 @@
 import ScoreVisualization from './ScoreVisualization';
+import SalesSection from './SalesSection';
 import { getSeverityLevel } from '../lib/scoring';
 
 export default function Results({
@@ -135,6 +136,9 @@ export default function Results({
               </div>
             </div>
           </div>
+
+          {/* Sales Section - Course CTA */}
+          <SalesSection />
 
           {/* Medical Disclaimer */}
           <div className="mt-12 pt-8 border-t" style={{ borderColor: '#E6E4E1' }}>
