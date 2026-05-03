@@ -208,3 +208,40 @@ export async function sendWebhook(webhookData) {
     return { success: false, error: error.message };
   }
 }
+
+/**
+ * Send coaching pre-screening webhook to n8n (via Cloudflare Worker)
+ * Only called for PASS and REVIEW outcomes
+ */
+export async function sendCoachingWebhook(webhookData) {
+  try {
+    const { email, outcome, score, answers, freeText, utmSource, utmCampaign } = webhookData;
+
+    const response = await fetch(`${WORKER_URL}/coaching-webhook`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        outcome,
+        score,
+        answers,
+        freeText,
+        utmSource,
+        utmCampaign
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Coaching webhook error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { success: data.success, error: null };
+
+  } catch (error) {
+    console.error('Error sending coaching webhook:', error);
+    return { success: false, error: error.message };
+  }
+}

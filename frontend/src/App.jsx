@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Quiz from './components/Quiz';
 import RootCauseQuiz from './components/RootCauseQuiz';
+import CoachingQuiz from './components/CoachingQuiz';
+import CoachingAdmin from './components/CoachingAdmin';
 import AdminLayout from './components/AdminLayout';
 import Privacy from './pages/Privacy';
 import Footer from './components/Footer';
@@ -28,6 +30,13 @@ function App() {
           </>
         } />
         <Route path="/admin" element={<AdminLayout />} />
+        <Route path="/coaching" element={
+          <>
+            <CoachingQuiz />
+            <Footer />
+          </>
+        } />
+        <Route path="/coaching/admin" element={<CoachingAdmin />} />
       </Routes>
     </BrowserRouter>
   );

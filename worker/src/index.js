@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { generateInsight, analyzeResponses } from './claude.js';
 import { generateRootCauseAssessment } from './claudeRootCause.js';
 import { sendWebhook, sendRootCauseWebhook } from './webhook.js';
+import { sendCoachingWebhook } from './coachingWebhook.js';
 import { checkRateLimit } from './rateLimit.js';
 import { createClient } from '@supabase/supabase-js';
 
@@ -196,6 +197,47 @@ app.post('/rootcause-webhook', async (c) => {
 
   } catch (error) {
     console.error('Error in rootcause-webhook:', error);
+    return c.json({ error: 'Internal server error', success: false }, 200);
+  }
+});
+
+// Send webhook to n8n for coaching pre-screening (ConvertKit tagging)
+// Only called for PASS and REVIEW outcomes (not FAIL)
+app.post('/coaching-webhook', async (c) => {
+  try {
+    const body = await c.req.json();
+    const { email, outcome, score, answers, freeText, utmSource, utmCampaign } = body;
+
+    // Validate required fields
+    if (!email || !outcome) {
+      return c.json({ error: 'Missing required fields' }, 400);
+    }
+
+    // Only send webhook for PASS and REVIEW (not FAIL)
+    if (outcome !== 'PASS' && outcome !== 'REVIEW') {
+      return c.json({ success: true, message: 'No webhook for FAIL outcomes' });
+    }
+
+    // Send to n8n webhook
+    const webhookResult = await sendCoachingWebhook(c.env, {
+      email,
+      outcome,
+      score,
+      answers,
+      freeText,
+      utmSource,
+      utmCampaign
+    });
+
+    if (webhookResult.error) {
+      console.error('Coaching webhook error:', webhookResult.error);
+      return c.json({ error: 'Webhook failed', success: false }, 200);
+    }
+
+    return c.json({ success: true });
+
+  } catch (error) {
+    console.error('Error in coaching-webhook:', error);
     return c.json({ error: 'Internal server error', success: false }, 200);
   }
 });
