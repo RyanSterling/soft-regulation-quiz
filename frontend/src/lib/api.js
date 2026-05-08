@@ -245,3 +245,54 @@ export async function sendCoachingWebhook(webhookData) {
     return { success: false, error: error.message };
   }
 }
+
+/**
+ * Send 1:1 coaching application webhook to n8n (via Cloudflare Worker)
+ * Triggers email notification to Maggie
+ */
+export async function sendApplicationWebhook(applicationData) {
+  try {
+    const {
+      name,
+      email,
+      location,
+      timezone,
+      answers,
+      revenueRange,
+      utmSource,
+      utmCampaign,
+      utmContent,
+      utmTerm
+    } = applicationData;
+
+    const response = await fetch(`${WORKER_URL}/application-webhook`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        location,
+        timezone,
+        answers,
+        revenueRange,
+        utmSource,
+        utmCampaign,
+        utmContent,
+        utmTerm
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Application webhook error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { success: data.success, error: null };
+
+  } catch (error) {
+    console.error('Error sending application webhook:', error);
+    return { success: false, error: error.message };
+  }
+}

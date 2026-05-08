@@ -4,6 +4,7 @@ import { generateInsight, analyzeResponses } from './claude.js';
 import { generateRootCauseAssessment } from './claudeRootCause.js';
 import { sendWebhook, sendRootCauseWebhook } from './webhook.js';
 import { sendCoachingWebhook } from './coachingWebhook.js';
+import { sendApplicationWebhook } from './applicationWebhook.js';
 import { checkRateLimit } from './rateLimit.js';
 import { createClient } from '@supabase/supabase-js';
 
@@ -238,6 +239,56 @@ app.post('/coaching-webhook', async (c) => {
 
   } catch (error) {
     console.error('Error in coaching-webhook:', error);
+    return c.json({ error: 'Internal server error', success: false }, 200);
+  }
+});
+
+// Send webhook to n8n for 1:1 coaching application
+// Triggers email notification to Maggie
+app.post('/application-webhook', async (c) => {
+  try {
+    const body = await c.req.json();
+    const {
+      name,
+      email,
+      location,
+      timezone,
+      answers,
+      revenueRange,
+      utmSource,
+      utmCampaign,
+      utmContent,
+      utmTerm
+    } = body;
+
+    // Validate required fields
+    if (!name || !email || !answers || !revenueRange) {
+      return c.json({ error: 'Missing required fields' }, 400);
+    }
+
+    // Send to n8n webhook
+    const webhookResult = await sendApplicationWebhook(c.env, {
+      name,
+      email,
+      location,
+      timezone,
+      answers,
+      revenueRange,
+      utmSource,
+      utmCampaign,
+      utmContent,
+      utmTerm
+    });
+
+    if (webhookResult.error) {
+      console.error('Application webhook error:', webhookResult.error);
+      return c.json({ error: 'Webhook failed', success: false }, 200);
+    }
+
+    return c.json({ success: true });
+
+  } catch (error) {
+    console.error('Error in application-webhook:', error);
     return c.json({ error: 'Internal server error', success: false }, 200);
   }
 });

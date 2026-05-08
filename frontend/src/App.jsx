@@ -4,6 +4,9 @@ import RootCauseQuiz from './components/RootCauseQuiz';
 import CoachingQuiz from './components/CoachingQuiz';
 import CoachingAdmin from './components/CoachingAdmin';
 import AdminLayout from './components/AdminLayout';
+import ApplicationLanding from './components/ApplicationLanding';
+import ApplicationForm from './components/ApplicationForm';
+import ApplicationNotReady from './components/ApplicationNotReady';
 import Privacy from './pages/Privacy';
 import Footer from './components/Footer';
 
@@ -37,6 +40,24 @@ function App() {
           </>
         } />
         <Route path="/coaching/admin" element={<CoachingAdmin />} />
+        <Route path="/apply" element={
+          <>
+            <ApplicationLanding />
+            <Footer />
+          </>
+        } />
+        <Route path="/apply/form" element={
+          <>
+            <ApplicationForm />
+            <Footer />
+          </>
+        } />
+        <Route path="/apply/not-ready" element={
+          <>
+            <ApplicationNotReady />
+            <Footer />
+          </>
+        } />
       </Routes>
     </BrowserRouter>
   );
