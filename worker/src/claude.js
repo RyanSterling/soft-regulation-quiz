@@ -179,14 +179,8 @@ export async function generateInsight(env, data) {
  */
 function buildUserMessage(result, scores, answers, symptoms, freeText) {
   // Format symptoms as comma-separated string
-  // Use customText for "Other" if provided
   const symptomString = Array.isArray(symptoms) && symptoms.length > 0
-    ? symptoms.map(s => {
-        if (s.id === 'other' && s.customText) {
-          return s.customText;
-        }
-        return s.label || s.id || s;
-      }).join(', ')
+    ? symptoms.map(s => s.label || s.id || s).join(', ')
     : 'None reported';
 
   const lines = [
