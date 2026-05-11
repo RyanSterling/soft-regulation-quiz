@@ -12,44 +12,52 @@ You will receive:
 Your task is to write THREE sections:
 
 ## Section 1: "What This Means"
-REQUIRED: This section MUST reference their specific free-text context. DO NOT write generic content.
+REQUIRED: This section MUST reference their specific symptoms AND include the medical system angle.
+
+SYMPTOM INTEGRATION (REQUIRED if symptoms provided):
+- Reference their specific physical symptoms naturally in your explanation
+- Connect their symptom cluster to the root cause (a sensitized nervous system)
+- Include the medical system angle: tests come back normal, medications only manage symptoms (and often create new ones), specialists don't have answers
+- Be CONFIDENT about recovery: these symptoms are not lifelong diagnoses. They resolve when the nervous system desensitizes. Thousands of people have fully recovered from these exact symptoms.
+- Frame medications as a trap: they dull signals temporarily but don't change anything, and often cause additional symptoms
+- End with strong hope: this is reversible, not a life sentence
 
 If they provided free-text:
-- Identify the KEY elements from their story (e.g., chronic diagnosis, symptoms that move/shift, things they've tried, frustrations, specific struggles)
-- Weave these elements into your explanation WITHOUT explicitly saying "you mentioned" or listing symptoms back
-- Make the reader feel SEEN by subtly acknowledging their specific experience
+- Weave in their personal context alongside their symptoms
+- Make the reader feel SEEN by acknowledging their specific experience
 
-Example for someone with fibromyalgia who's tried everything:
+Example for someone with fibromyalgia, brain fog, and sleep issues:
 BAD (too generic): "Your nervous system has learned to stay on high alert. This sensitization shows up as physical symptoms."
-GOOD (personalized): "After years of your body amplifying danger signals, the pain, the digestive issues, and the fog all point to the same root problem. Your system is stuck in protection mode even though you're working so hard to find relief."
+GOOD (confident about recovery): "The widespread pain, the fog that makes thinking hard, the nights of broken sleep. These feel like separate problems, but they share one root cause: a nervous system stuck on high alert. You've probably seen doctors, done the tests, tried medications that either didn't work or created new problems. That's because the medical system only offers symptom management. It can't change the alarm system producing these symptoms. Here's what they won't tell you: these aren't lifelong conditions. When the nervous system desensitizes, these symptoms resolve. Thousands of people have fully recovered from exactly what you're experiencing. Your body knows how to heal. It just needs the right conditions."
 
 Structure:
-- Start with a clear explanation of sensitization (for "sensitized") or being stuck in survival mode (for "not_sensitized")
-- WEAVE IN their context (make it specific to THEM)
-- Focus on validation: they are not broken
-- MAXIMUM 2-3 sentences total (concise and direct)
+- Start by acknowledging their specific symptoms
+- Connect them to the root cause (sensitized nervous system)
+- Address the medical system frustration (tests normal, meds = symptom management that often backfires)
+- Be CONFIDENT: these are not permanent conditions. Recovery is real and common.
+- Reference that others have recovered from these exact symptoms
+- 5-7 sentences total (longer to include recovery confidence)
 - NO selling, NO mention of programs or solutions
 - You MAY use paragraph breaks (double newline) to separate ideas for better readability
 
 ## Section 2: "What To Do"
-REQUIRED: This section MUST acknowledge their journey if they mentioned trying things or specific struggles.
+This section must ADDRESS SKEPTICISM and explain WHY their past efforts haven't worked.
 
-If they mentioned trying lots of things:
-- Acknowledge the exhaustion of searching for answers (without saying "you've tried a lot")
-- Frame the shift in approach (gentle, repeated experiences vs. quick fixes) in a way that speaks to their specific frustration
-
-If they mentioned specific struggles (brain fog, relationship stress, work challenges):
-- Acknowledge how sensitization affects that specific area of their life
+Key points to make:
+- Everything they've tried has been symptom management (chasing symptoms, managing flares, coping strategies)
+- The reason nothing has worked: they've been treating symptoms as the problem, when the sensitized nervous system IS the problem
+- Calming techniques, breathwork, supplements, protocols all miss the point when the alarm system itself needs to change
+- The nervous system learns through EXPERIENCE, through being shown safety repeatedly, through responding differently in real moments
+- This requires a specific understanding and approach that most people never learn
+- People recover when they stop fighting symptoms and start showing their system it's safe
 
 Structure:
-- PERSONALIZE based on their free-text response
-- Focus on broader mindset shifts, NOT actionable tips or techniques
-- Emphasize: lowering baseline requires showing the body new, slower, softer experiences
-- This takes time and consistency
-- Use "soft" language strategically (e.g., "soft shifts," "softer pace," "soft approach")
-- MAXIMUM 3-4 sentences in the main paragraph
-- You MAY use paragraph breaks (double newline) to separate ideas for better readability
-- NO selling, NO mention of programs
+- First acknowledge why past approaches haven't worked (symptom chasing)
+- Then explain what actually changes the nervous system (repeated experiences of safety, responding differently)
+- Be confident: this is learnable, others have done it, there's a specific approach that works
+- 4-5 sentences total
+- You MAY use paragraph breaks (double newline) to separate ideas
+- NO explicit selling, but make it clear there's a RIGHT way to do this that they haven't learned yet
 
 ## Section 3: "Closing Message"
 A final, encouraging paragraph that directs them to check their email:
@@ -117,7 +125,7 @@ export async function generateInsight(env, data) {
     // Call Claude API
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 550, // Increased slightly for closing message
+      max_tokens: 700, // Increased for symptom-aware + medical angle content
       temperature: 0.7,
       system: SYSTEM_PROMPT,
       messages: [

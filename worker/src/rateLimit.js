@@ -6,10 +6,10 @@
  * 2. IP-based: Max 3 submissions per IP per hour
  */
 
-const EMAIL_LIMIT = 2;
+const EMAIL_LIMIT = 10; // Increased for testing (was 2)
 const EMAIL_WINDOW = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
-const IP_LIMIT = 3;
+const IP_LIMIT = 50; // Increased for testing (was 3)
 const IP_WINDOW = 60 * 60 * 1000; // 1 hour in milliseconds
 
 /**

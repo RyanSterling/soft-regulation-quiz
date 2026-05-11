@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Welcome from './Welcome';
 import Question from './Question';
 import ProgressBar from './ProgressBar';
-import FreeTextInput from './FreeTextInput';
 import EmailCapture from './EmailCapture';
 import LoadingScreen from './LoadingScreen';
 import Results from './Results';
@@ -18,7 +17,6 @@ import { trackQuizCompleted, trackSensitizedResult } from '../lib/pixel';
 const STEPS = {
   WELCOME: 'welcome',
   QUESTIONS: 'questions',
-  FREE_TEXT: 'free_text',
   EMAIL: 'email',
   LOADING: 'loading',
   RESULTS: 'results'
@@ -28,7 +26,6 @@ export default function Quiz() {
   const [currentStep, setCurrentStep] = useState(STEPS.WELCOME);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [freeText, setFreeText] = useState('');
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -86,8 +83,8 @@ export default function Quiz() {
       if (nextIndex < updatedVisibleQuestions.length) {
         setCurrentQuestionIndex(nextIndex);
       } else {
-        // Move to free text input
-        setCurrentStep(STEPS.FREE_TEXT);
+        // Move directly to email capture
+        setCurrentStep(STEPS.EMAIL);
       }
 
       // Small delay to ensure state updates before fade in
@@ -99,17 +96,11 @@ export default function Quiz() {
 
   const handleBack = () => {
     if (currentStep === STEPS.EMAIL) {
-      setCurrentStep(STEPS.FREE_TEXT);
-    } else if (currentStep === STEPS.FREE_TEXT) {
       setCurrentStep(STEPS.QUESTIONS);
       setCurrentQuestionIndex(visibleQuestions.length - 1);
     } else if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
-  };
-
-  const handleFreeTextNext = () => {
-    setCurrentStep(STEPS.EMAIL);
   };
 
   const handleSubmit = async () => {
@@ -129,12 +120,12 @@ export default function Quiz() {
       // Get symptoms from Q12 (multiselect)
       const symptoms = answers.q12 || [];
 
-      // Prepare quiz data for submission
-      const quizData = prepareQuizData(answers, email, freeText, utmParams);
+      // Prepare quiz data for submission (no free text anymore)
+      const quizData = prepareQuizData(answers, email, '', utmParams);
 
-      // Generate AI content only for sensitized users who provided context
+      // Generate AI content for sensitized users with symptoms
       let aiResult = null;
-      const shouldUseAI = calculatedResult === 'sensitized' && freeText && freeText.trim().length > 0;
+      const shouldUseAI = calculatedResult === 'sensitized' && symptoms.length > 0;
 
       if (shouldUseAI) {
         try {
@@ -143,7 +134,7 @@ export default function Quiz() {
             scores: calculatedScores,
             answers: quizData,
             symptoms,
-            freeText,
+            freeText: '',
             email
           });
 
@@ -221,7 +212,7 @@ export default function Quiz() {
     return (
       <div className="min-h-screen" style={{ backgroundColor: '#EFEDEC' }}>
         <div className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-          <ProgressBar current={currentQuestionIndex + 1} total={totalQuestions + 2} />
+          <ProgressBar current={currentQuestionIndex + 1} total={totalQuestions + 1} />
           <Question
             question={currentQuestion}
             value={answers[currentQuestion.id]}
@@ -238,24 +229,10 @@ export default function Quiz() {
     );
   }
 
-  if (currentStep === STEPS.FREE_TEXT) {
-    return (
-      <>
-        <ProgressBar current={totalQuestions + 1} total={totalQuestions + 2} />
-        <FreeTextInput
-          value={freeText}
-          onChange={setFreeText}
-          onNext={handleFreeTextNext}
-          onBack={handleBack}
-        />
-      </>
-    );
-  }
-
   if (currentStep === STEPS.EMAIL) {
     return (
       <>
-        <ProgressBar current={totalQuestions + 2} total={totalQuestions + 2} />
+        <ProgressBar current={totalQuestions + 1} total={totalQuestions + 1} />
         <EmailCapture
           value={email}
           onChange={setEmail}
@@ -277,6 +254,7 @@ export default function Quiz() {
         result={result}
         scores={scores}
         aiContent={aiContent}
+        symptoms={answers.q12 || []}
       />
     );
   }
