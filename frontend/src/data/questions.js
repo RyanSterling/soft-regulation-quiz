@@ -100,30 +100,31 @@ export const QUESTIONS = [
     options: SCALE_OPTIONS
   },
 
-  // Chronic Pain Screening (Q12 - was Q10)
+  // Physical Symptoms (Q12)
   {
     id: 'q12',
-    category: 'pain',
-    text: 'Are you dealing with chronic pain or persistent physical symptoms—things like back pain, nerve pain, headaches, fibromyalgia, or other pain that hasn\'t gone away?',
-    type: 'yesno',
+    category: 'symptoms',
+    text: 'Are you experiencing any physical symptoms? If so, which ones?',
+    helper: 'Select all that apply',
+    type: 'multiselect',
     options: [
-      { value: true, label: 'Yes' },
-      { value: false, label: 'No' }
-    ]
-  },
-
-  // Medical Clearance (Q13 - conditional, only if Q12 = Yes)
-  {
-    id: 'q13',
-    category: 'clearance',
-    text: 'Have you ruled out structural damage, disease, or other medical causes for your pain—and do you trust that nothing major is being missed?',
-    type: 'choice',
-    conditional: { questionId: 'q12', value: true },
-    options: [
-      { value: 'yes_confident', label: 'Yes, I\'ve been checked out and I\'m confident my symptoms are nervous system related' },
-      { value: 'seen_but_unsure', label: 'I\'ve seen doctors but part of me still thinks something is being missed' },
-      { value: 'not_evaluated', label: 'I haven\'t had this fully evaluated yet' }
-    ]
+      { id: 'anxiety', label: 'Anxiety / panic' },
+      { id: 'back_pain', label: 'Back pain' },
+      { id: 'bladder_pain', label: 'Bladder pain / IC' },
+      { id: 'chronic_fatigue', label: 'Chronic fatigue' },
+      { id: 'crps', label: 'CRPS' },
+      { id: 'dizziness', label: 'Dizziness / vertigo' },
+      { id: 'fibromyalgia', label: 'Fibromyalgia' },
+      { id: 'ibs', label: 'IBS / digestive issues' },
+      { id: 'long_covid', label: 'Long COVID' },
+      { id: 'migraines', label: 'Migraines / headaches' },
+      { id: 'neck_pain', label: 'Neck pain' },
+      { id: 'pelvic_pain', label: 'Pelvic pain' },
+      { id: 'tingling', label: 'Tingling / numbness' },
+      { id: 'other', label: 'Other' },
+      { id: 'none', label: 'None' }
+    ],
+    hasOtherText: true
   }
 ];
 

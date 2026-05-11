@@ -13,7 +13,7 @@ if (!WORKER_URL) {
  */
 export async function generateInsight(quizData) {
   try {
-    const { result, scores, answers, hasPain, medicalClearance, freeText, email } = quizData;
+    const { result, scores, answers, symptoms, freeText, email } = quizData;
 
     const bypassKey = new URLSearchParams(window.location.search).get('bypass');
     const headers = { 'Content-Type': 'application/json' };
@@ -42,8 +42,7 @@ export async function generateInsight(quizData) {
           q8: answers.q8_answer,
           q9: answers.q9_answer
         },
-        hasPain: hasPain,
-        medicalClearance: medicalClearance,
+        symptoms: symptoms,
         freeText: freeText
       })
     });
@@ -173,7 +172,7 @@ export async function sendRootCauseWebhook(webhookData) {
  */
 export async function sendWebhook(webhookData) {
   try {
-    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign, utmContent, utmTerm, deploymentSource, trafficSource } = webhookData;
+    const { email, result, symptoms, utmSource, utmCampaign, utmContent, utmTerm, deploymentSource, trafficSource } = webhookData;
 
     const response = await fetch(`${WORKER_URL}/webhook`, {
       method: 'POST',
@@ -183,10 +182,7 @@ export async function sendWebhook(webhookData) {
       body: JSON.stringify({
         email,
         result,
-        hasPain,
-        medicalClearance,
-        waitlistOptedIn,
-        tag,
+        symptoms,
         utmSource,
         utmCampaign,
         utmContent,

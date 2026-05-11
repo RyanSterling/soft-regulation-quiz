@@ -54,7 +54,7 @@ export async function sendRootCauseWebhook(env, data) {
  */
 export async function sendWebhook(env, data) {
   try {
-    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign, utmContent, utmTerm, deploymentSource, trafficSource } = data;
+    const { email, result, symptoms, utmSource, utmCampaign, utmContent, utmTerm, deploymentSource, trafficSource } = data;
 
     const primaryUrl = env.N8N_WEBHOOK_URL;
     const secondaryUrl = env.N8N_WEBHOOK_URL_SECONDARY; // Optional: for testing self-hosted
@@ -64,20 +64,29 @@ export async function sendWebhook(env, data) {
       return { success: false, error: 'Webhook URL not configured' };
     }
 
+    // Determine if this is paid traffic (for email sequence routing)
+    const isPaidTraffic = trafficSource === 'facebook-ads' ||
+      (utmSource?.toLowerCase().includes('facebook') &&
+       utmCampaign?.toLowerCase().includes('paid'));
+
+    // Format symptoms as comma-separated string for ConvertKit custom field
+    const symptomString = Array.isArray(symptoms)
+      ? symptoms.map(s => s.label || s.id || s).join(', ')
+      : symptoms || '';
+
     // Build webhook payload
     const payload = {
       email,
       result,
-      has_chronic_pain: hasPain,
-      medical_clearance: medicalClearance || null,
-      waitlist_opted_in: waitlistOptedIn || false,
-      tag: tag || null,
+      symptom: symptomString,
+      quiz_type: 'sensitization',
       utm_source: utmSource || null,
       utm_campaign: utmCampaign || null,
       utm_content: utmContent || null,
       utm_term: utmTerm || null,
       deployment_source: deploymentSource || 'organic',
       traffic_source: trafficSource || 'organic',
+      is_paid_traffic: isPaidTraffic,
       timestamp: new Date().toISOString()
     };
 

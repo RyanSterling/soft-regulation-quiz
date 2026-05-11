@@ -6,8 +6,7 @@ You will receive:
 - Their result: "sensitized" or "not_sensitized"
 - Their scores for each dimension (trigger, recovery, baseline)
 - Their answers to each question
-- Whether they have chronic pain
-- Their medical clearance status and eligibility for the program
+- Their physical symptoms (if any)
 - Their free-text response (if provided)
 
 Your task is to write THREE sections:
@@ -100,21 +99,15 @@ const ANSWER_LABELS = {
   4: 'Almost always'
 };
 
-const MEDICAL_CLEARANCE_LABELS = {
-  yes_confident: "Yes, I've been checked out and I'm confident my symptoms are nervous system related",
-  seen_but_unsure: "I've seen doctors but part of me still thinks something is being missed",
-  not_evaluated: "I haven't had this fully evaluated yet"
-};
-
 /**
  * Generate personalized insight using Claude API
  */
 export async function generateInsight(env, data) {
   try {
-    const { result, scores, answers, hasPain, medicalClearance, freeText } = data;
+    const { result, scores, answers, symptoms, freeText } = data;
 
     // Build user message with all quiz data
-    const userMessage = buildUserMessage(result, scores, answers, hasPain, medicalClearance, freeText);
+    const userMessage = buildUserMessage(result, scores, answers, symptoms, freeText);
 
     // Initialize Anthropic client
     const anthropic = new Anthropic({
@@ -184,7 +177,12 @@ export async function generateInsight(env, data) {
 /**
  * Build the user message with quiz data
  */
-function buildUserMessage(result, scores, answers, hasPain, medicalClearance, freeText) {
+function buildUserMessage(result, scores, answers, symptoms, freeText) {
+  // Format symptoms as comma-separated string
+  const symptomString = Array.isArray(symptoms) && symptoms.length > 0
+    ? symptoms.map(s => s.label || s.id || s).join(', ')
+    : 'None reported';
+
   const lines = [
     `Result: ${result}`,
     `Scores: Trigger ${scores.trigger}/12, Recovery ${scores.recovery}/12, Baseline ${scores.baseline}/12`,
@@ -201,8 +199,7 @@ function buildUserMessage(result, scores, answers, hasPain, medicalClearance, fr
     `Q8 (relaxation foreign): ${ANSWER_LABELS[answers.q8]}`,
     `Q9 (background hum): ${ANSWER_LABELS[answers.q9]}`,
     '',
-    `Has chronic pain: ${hasPain ? 'yes' : 'no'}`,
-    `Medical clearance: ${medicalClearance ? MEDICAL_CLEARANCE_LABELS[medicalClearance] : 'n/a'}`,
+    `Physical symptoms: ${symptomString}`,
     '',
     `Additional context from user:`,
     freeText || 'None provided',
@@ -274,7 +271,6 @@ function summarizeResponses(responses) {
 
   // Calculate key metrics
   const sensitized = responses.filter(r => r.result === 'sensitized').length;
-  const withPain = responses.filter(r => r.has_chronic_pain).length;
   const waitlistOptedIn = responses.filter(r => r.waitlist_opted_in).length;
 
   // Score averages
@@ -289,18 +285,9 @@ function summarizeResponses(responses) {
     return acc;
   }, {});
 
-  // Medical clearance breakdown (for those with pain)
-  const withPainResponses = responses.filter(r => r.has_chronic_pain);
-  const clearanceBreakdown = withPainResponses.reduce((acc, r) => {
-    const clearance = r.medical_clearance || 'unknown';
-    acc[clearance] = (acc[clearance] || 0) + 1;
-    return acc;
-  }, {});
-
   const lines = [
     `Total responses: ${total}`,
     `Result breakdown: ${sensitized} sensitized (${((sensitized / total) * 100).toFixed(1)}%), ${total - sensitized} not sensitized`,
-    `Chronic pain: ${withPain} (${((withPain / total) * 100).toFixed(1)}%)`,
     `Waitlist opt-ins: ${waitlistOptedIn} (${((waitlistOptedIn / total) * 100).toFixed(1)}%)`,
     ``,
     `Average scores:`,
@@ -308,16 +295,8 @@ function summarizeResponses(responses) {
     `- Recovery: ${avgRecovery}/12`,
     `- Baseline: ${avgBaseline}/12`,
     ``,
-    `Traffic sources: ${Object.entries(utmSources).map(([s, c]) => `${s} (${c})`).join(', ')}`,
-    ``
+    `Traffic sources: ${Object.entries(utmSources).map(([s, c]) => `${s} (${c})`).join(', ')}`
   ];
-
-  if (withPain > 0) {
-    lines.push(`Medical clearance (${withPain} with pain):`);
-    Object.entries(clearanceBreakdown).forEach(([status, count]) => {
-      lines.push(`- ${status}: ${count}`);
-    });
-  }
 
   return lines.join('\n');
 }

@@ -30,7 +30,7 @@ app.get('/', (c) => {
 app.post('/generate-insight', async (c) => {
   try {
     const body = await c.req.json();
-    const { email, result, scores, answers, hasPain, medicalClearance, freeText } = body;
+    const { email, result, scores, answers, symptoms, freeText } = body;
 
     // Validate required fields
     if (!email || !result || !scores || !answers) {
@@ -57,8 +57,7 @@ app.post('/generate-insight', async (c) => {
       result,
       scores,
       answers,
-      hasPain,
-      medicalClearance,
+      symptoms,
       freeText
     });
 
@@ -89,7 +88,7 @@ app.post('/generate-insight', async (c) => {
 app.post('/webhook', async (c) => {
   try {
     const body = await c.req.json();
-    const { email, result, hasPain, medicalClearance, waitlistOptedIn, tag, utmSource, utmCampaign, utmContent, utmTerm, deploymentSource, trafficSource } = body;
+    const { email, result, symptoms, utmSource, utmCampaign, utmContent, utmTerm, deploymentSource, trafficSource } = body;
 
     // Validate required fields
     if (!email || !result) {
@@ -100,10 +99,7 @@ app.post('/webhook', async (c) => {
     const webhookResult = await sendWebhook(c.env, {
       email,
       result,
-      hasPain,
-      medicalClearance,
-      waitlistOptedIn,
-      tag,
+      symptoms,
       utmSource,
       utmCampaign,
       utmContent,

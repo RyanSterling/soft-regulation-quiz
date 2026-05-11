@@ -7,7 +7,6 @@ import EmailCapture from './EmailCapture';
 import LoadingScreen from './LoadingScreen';
 import Results from './Results';
 import { QUESTIONS, getVisibleQuestions, getTotalQuestionCount } from '../data/questions';
-import { getCtaType } from '../data/ctaContent';
 import { calculateScores, determineResult, prepareQuizData } from '../lib/scoring';
 import { getUtmParams } from '../lib/utm';
 import { getTrafficSource } from '../lib/trafficSource';
@@ -127,14 +126,11 @@ export default function Quiz() {
       setResult(calculatedResult);
       setScores(calculatedScores);
 
-      // Determine CTA type for database storage
-      const hasPain = answers.q12 || false;
-      const medicalClearance = answers.q13 || null;
-      const determinedCtaType = getCtaType(hasPain, medicalClearance);
+      // Get symptoms from Q12 (multiselect)
+      const symptoms = answers.q12 || [];
 
       // Prepare quiz data for submission
       const quizData = prepareQuizData(answers, email, freeText, utmParams);
-      quizData.cta_type = determinedCtaType;
 
       // Generate AI content only for sensitized users who provided context
       let aiResult = null;
@@ -146,8 +142,7 @@ export default function Quiz() {
             result: calculatedResult,
             scores: calculatedScores,
             answers: quizData,
-            hasPain,
-            medicalClearance,
+            symptoms,
             freeText,
             email
           });
@@ -184,23 +179,18 @@ export default function Quiz() {
       // Mark quiz as completed
       await markQuizCompleted(sessionId, savedResponse.id);
 
-      // Send initial webhook ONLY for eligible users (paths 1 & 2)
-      if (determinedCtaType === 'eligible') {
-        await sendWebhook({
-          email,
-          result: calculatedResult,
-          hasPain,
-          medicalClearance,
-          waitlistOptedIn: false,
-          tag: null,
-          utmSource: utmParams.utm_source,
-          utmCampaign: utmParams.utm_campaign,
-          utmContent: utmParams.utm_content,
-          utmTerm: utmParams.utm_term,
-          deploymentSource: import.meta.env.VITE_DEPLOYMENT_SOURCE || 'organic',
-          trafficSource: getTrafficSource()
-        });
-      }
+      // Send webhook to n8n for ConvertKit tagging
+      await sendWebhook({
+        email,
+        result: calculatedResult,
+        symptoms,
+        utmSource: utmParams.utm_source,
+        utmCampaign: utmParams.utm_campaign,
+        utmContent: utmParams.utm_content,
+        utmTerm: utmParams.utm_term,
+        deploymentSource: import.meta.env.VITE_DEPLOYMENT_SOURCE || 'organic',
+        trafficSource: getTrafficSource()
+      });
 
       // Show results
       setCurrentStep(STEPS.RESULTS);
