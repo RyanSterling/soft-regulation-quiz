@@ -70,8 +70,14 @@ export async function sendWebhook(env, data) {
        utmCampaign?.toLowerCase().includes('paid'));
 
     // Format symptoms as comma-separated string for ConvertKit custom field
+    // Use customText for "Other" if provided
     const symptomString = Array.isArray(symptoms)
-      ? symptoms.map(s => s.label || s.id || s).join(', ')
+      ? symptoms.map(s => {
+          if (s.id === 'other' && s.customText) {
+            return s.customText;
+          }
+          return s.label || s.id || s;
+        }).join(', ')
       : symptoms || '';
 
     // Build webhook payload
