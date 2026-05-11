@@ -1,13 +1,60 @@
 import { useState } from 'react';
 import { EMAIL_FIELD } from '../data/ctaContent';
 
+// Disposable email domains to block
+const BLOCKED_DOMAINS = [
+  'mailinator.com', 'tempmail.com', 'throwaway.email', 'guerrillamail.com',
+  'sharklasers.com', 'grr.la', 'guerrillamail.info', 'guerrillamail.biz',
+  'guerrillamail.de', 'guerrillamail.net', 'guerrillamail.org', 'spam4.me',
+  'fakeinbox.com', 'tempinbox.com', 'dispostable.com', 'yopmail.com',
+  'trashmail.com', 'mailnesia.com', 'getnada.com', 'temp-mail.org',
+  '10minutemail.com', 'minutemail.com', 'emailondeck.com', 'mohmal.com',
+  'tempmailo.com', 'tempr.email', 'discard.email', 'discardmail.com',
+  'throwawaymail.com', 'maildrop.cc', 'mailsac.com', 'inboxkitten.com'
+];
+
+// Suspicious patterns in local part (before @)
+const BLOCKED_PATTERNS = [
+  /^(test|fake|spam|trash|junk|asdf|qwerty|aaaa+|xxxx+)$/i,
+  /^.{1,2}$/, // Too short (1-2 chars)
+  /(poo|poop|shit|fuck|ass|penis|vagina|dick|cock|cunt)/i, // Profanity
+  /^(admin|root|administrator|null|undefined|nobody)@/i,
+  /^[0-9]+$/, // Numbers only
+  /(.)\1{4,}/, // Same character repeated 5+ times
+];
+
 export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubmitting }) {
   const [error, setError] = useState('');
   const [privacyConsent, setPrivacyConsent] = useState(false);
 
   const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    // Basic format check
+    const basicFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!basicFormat.test(email)) {
+      return { valid: false, reason: 'Please enter a valid email address' };
+    }
+
+    const [localPart, domain] = email.toLowerCase().split('@');
+
+    // Check blocked domains
+    if (BLOCKED_DOMAINS.includes(domain)) {
+      return { valid: false, reason: 'Please use a permanent email address' };
+    }
+
+    // Check blocked patterns in local part
+    for (const pattern of BLOCKED_PATTERNS) {
+      if (pattern.test(localPart)) {
+        return { valid: false, reason: 'Please enter a valid email address' };
+      }
+    }
+
+    // Check for valid TLD (at least 2 chars)
+    const tld = domain.split('.').pop();
+    if (!tld || tld.length < 2) {
+      return { valid: false, reason: 'Please enter a valid email address' };
+    }
+
+    return { valid: true };
   };
 
   const handleSubmit = (e) => {
@@ -17,8 +64,9 @@ export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubm
       return;
     }
 
-    if (!validateEmail(value)) {
-      setError('Please enter a valid email address');
+    const validation = validateEmail(value);
+    if (!validation.valid) {
+      setError(validation.reason);
       return;
     }
 
