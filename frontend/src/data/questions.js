@@ -121,8 +121,8 @@ export const QUESTIONS = [
       { id: 'neck_pain', label: 'Neck pain' },
       { id: 'pelvic_pain', label: 'Pelvic pain' },
       { id: 'tingling', label: 'Tingling / numbness' },
-      { id: 'other', label: 'Other' },
-      { id: 'none', label: 'None' }
+      { id: 'none', label: 'None' },
+      { id: 'other', label: 'Other' }
     ],
     hasOtherText: true
   }
