@@ -4,17 +4,25 @@
  */
 
 export const SYMPTOM_OPTIONS = [
-  { id: 'back_pain', label: 'Back pain' },
-  { id: 'neck_pain', label: 'Neck pain' },
-  { id: 'migraines', label: 'Migraines / headaches' },
-  { id: 'ibs', label: 'IBS / digestive issues' },
-  { id: 'fibromyalgia', label: 'Fibromyalgia' },
-  { id: 'chronic_fatigue', label: 'Chronic fatigue' },
-  { id: 'pelvic_pain', label: 'Pelvic pain' },
-  { id: 'crps', label: 'CRPS' },
-  { id: 'tingling', label: 'Tingling / numbness' },
   { id: 'anxiety', label: 'Anxiety / panic' },
-  { id: 'other', label: 'Other' }
+  { id: 'back_pain', label: 'Back pain' },
+  { id: 'bladder_pain', label: 'Bladder pain / IC' },
+  { id: 'brain_fog', label: 'Brain fog' },
+  { id: 'chronic_fatigue', label: 'Chronic fatigue' },
+  { id: 'crps', label: 'CRPS' },
+  { id: 'dizziness', label: 'Dizziness / vertigo' },
+  { id: 'fibromyalgia', label: 'Fibromyalgia' },
+  { id: 'heart_palpitations', label: 'Heart palpitations' },
+  { id: 'ibs', label: 'IBS / digestive issues' },
+  { id: 'jaw_pain', label: 'Jaw pain / TMJ' },
+  { id: 'long_covid', label: 'Long COVID' },
+  { id: 'migraines', label: 'Migraines / headaches' },
+  { id: 'muscle_tension', label: 'Muscle tension' },
+  { id: 'neck_pain', label: 'Neck pain' },
+  { id: 'pelvic_pain', label: 'Pelvic pain' },
+  { id: 'sensitivity', label: 'Sensitivity to light/sound' },
+  { id: 'sleep_issues', label: 'Sleep issues / insomnia' },
+  { id: 'tingling', label: 'Tingling / numbness' }
 ];
 
 export const QUESTIONS = [
@@ -26,8 +34,7 @@ export const QUESTIONS = [
     text: 'What symptoms are you experiencing?',
     helper: 'Select all that apply',
     type: 'multiselect',
-    options: SYMPTOM_OPTIONS,
-    hasOtherText: true
+    options: SYMPTOM_OPTIONS
   },
   {
     id: 'duration',

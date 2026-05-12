@@ -611,8 +611,6 @@ export default function RootCauseQuiz() {
 
 // Question Renderer Component
 function QuestionRenderer({ question, value, onChange, onNext, onBack, showBack, current, total }) {
-  const [otherText, setOtherText] = useState('');
-
   // For multiselect questions
   if (question.type === 'multiselect') {
     const selectedItems = value || [];
@@ -634,8 +632,7 @@ function QuestionRenderer({ question, value, onChange, onNext, onBack, showBack,
         const opt = question.options.find(o => o.id === id);
         return {
           id,
-          label: opt?.label || id,
-          ...(id === 'other' && otherText ? { customText: otherText } : {})
+          label: opt?.label || id
         };
       });
 
@@ -662,66 +659,35 @@ function QuestionRenderer({ question, value, onChange, onNext, onBack, showBack,
               )}
             </div>
 
-            <div className="space-y-3 mt-8">
+            <div className="grid grid-cols-2 gap-2 mt-4">
               {question.options.map((option) => {
                 const isSelected = selectedIds.includes(option.id);
                 return (
-                  <div key={option.id}>
-                    <button
-                      onClick={() => toggleOption(option.id)}
-                      className="w-full text-left px-6 py-4 transition-all duration-100"
-                      style={{
-                        backgroundColor: isSelected ? '#4D1E22' : '#E6E4E1',
-                        borderRadius: '27px',
-                        fontFamily: 'Inter, sans-serif',
-                        color: isSelected ? 'white' : '#77716E'
-                      }}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div
-                          className="w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0"
-                          style={{ borderColor: isSelected ? 'white' : '#CBC9C8', backgroundColor: 'transparent' }}
-                        >
-                          {isSelected && (
-                            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                              <path d="M1 4L3.5 6.5L9 1" stroke={isSelected ? "white" : "#CBC9C8"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          )}
-                        </div>
-                        <span className="text-lg">{option.label}</span>
+                  <button
+                    key={option.id}
+                    onClick={() => toggleOption(option.id)}
+                    className="text-left px-4 py-3 transition-all duration-100"
+                    style={{
+                      backgroundColor: isSelected ? '#4D1E22' : '#E6E4E1',
+                      borderRadius: '20px',
+                      fontFamily: 'Inter, sans-serif',
+                      color: isSelected ? 'white' : '#77716E'
+                    }}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0"
+                        style={{ borderColor: isSelected ? 'white' : '#CBC9C8', backgroundColor: 'transparent' }}
+                      >
+                        {isSelected && (
+                          <svg width="8" height="6" viewBox="0 0 10 8" fill="none">
+                            <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
                       </div>
-                    </button>
-                    {option.id === 'other' && isSelected && question.hasOtherText && (
-                      <input
-                        type="text"
-                        value={otherText}
-                        onChange={(e) => {
-                          setOtherText(e.target.value);
-                          // Update the answer with the custom text
-                          const updated = selectedIds.map(id => {
-                            const opt = question.options.find(o => o.id === id);
-                            return {
-                              id,
-                              label: opt?.label || id,
-                              ...(id === 'other' ? { customText: e.target.value } : {})
-                            };
-                          });
-                          onChange(updated);
-                        }}
-                        placeholder="Please specify..."
-                        className="w-full mt-2 px-4 py-3"
-                        style={{
-                          backgroundColor: '#E6E4E1',
-                          borderRadius: '12px',
-                          border: 'none',
-                          fontFamily: 'Inter, sans-serif',
-                          fontSize: '1rem',
-                          color: '#1E1F1C',
-                          outline: 'none'
-                        }}
-                      />
-                    )}
-                  </div>
+                      <span className="text-sm">{option.label}</span>
+                    </div>
+                  </button>
                 );
               })}
             </div>
