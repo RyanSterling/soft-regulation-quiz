@@ -120,7 +120,7 @@ export default function RootCauseQuiz() {
         historyOfSymptoms: answers.historyOfSymptoms
       };
 
-      // Generate AI assessment
+      // Generate AI assessment (this is the slow part)
       const result = await generateRootCauseAssessment({
         email,
         answers: formattedAnswers,
@@ -129,8 +129,8 @@ export default function RootCauseQuiz() {
 
       setAiResult(result);
 
-      // Save to database
-      await saveRootCauseResponse({
+      // Run database save and webhook in parallel (don't block on webhook)
+      const savePromise = saveRootCauseResponse({
         email,
         answers: formattedAnswers,
         ai_assessment: JSON.stringify(result),
@@ -139,14 +139,17 @@ export default function RootCauseQuiz() {
         utm_campaign: utmParams.utm_campaign || null
       });
 
-      // Send webhook to n8n for ConvertKit tagging
-      await sendRootCauseWebhook({
+      // Fire-and-forget webhook - don't wait for it
+      sendRootCauseWebhook({
         email,
         symptoms: formattedAnswers.symptoms,
         likelihood: result.likelihood,
         utmSource: utmParams.utm_source || null,
         utmCampaign: utmParams.utm_campaign || null
-      });
+      }).catch(err => console.error('Webhook error:', err));
+
+      // Wait for database save to complete
+      await savePromise;
 
       setCurrentStep(STEPS.RESULTS);
 
