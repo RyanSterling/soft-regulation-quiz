@@ -43,7 +43,7 @@ export const RESULT_SUBHEADLINES = {
 export const DISCLAIMER = 'This assessment is for educational purposes only and is not a medical diagnosis. Please consult with a healthcare provider for proper evaluation and treatment.';
 
 export const LIKELIHOOD_BADGES = {
-  high: { text: 'Likely Nervous System', color: '#059669', bgColor: '#D1FAE5' },
+  high: { text: 'Strong Nervous System Pattern', color: '#059669', bgColor: '#D1FAE5' },
   moderate: { text: 'Likely Nervous System', color: '#059669', bgColor: '#D1FAE5' },
   low: { text: 'May Have Structural Component', color: '#D97706', bgColor: '#FEF3C7' },
   unclear: { text: 'Inconclusive Pattern', color: '#6B7280', bgColor: '#F3F4F6' }

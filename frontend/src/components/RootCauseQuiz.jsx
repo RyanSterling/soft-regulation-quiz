@@ -418,21 +418,8 @@ export default function RootCauseQuiz() {
           <div style={{ position: 'relative', zIndex: 1, paddingTop: '5rem', paddingBottom: '2rem' }}>
             {/* Header Card */}
             <div className="bg-white rounded-2xl p-8 text-center">
-              {/* Likelihood Badge */}
-              <div className="flex justify-center mb-4">
-                <span
-                  className="px-4 py-2 rounded-full text-sm font-medium"
-                  style={{
-                    backgroundColor: badge.bgColor,
-                    color: badge.color,
-                    fontFamily: 'Inter, sans-serif'
-                  }}
-                >
-                  {badge.text}
-                </span>
-              </div>
               <h2 className="mb-2" style={{ fontFamily: 'Libre Baskerville, serif', fontWeight: '400', color: '#101827', letterSpacing: '-0.02em', fontSize: '32px' }}>
-                Your Assessment
+                {badge.text}
               </h2>
               <p style={{ fontFamily: 'Inter, sans-serif', color: '#77716E', fontSize: '1.25rem', lineHeight: '1.5' }}>
                 {getResultHeadline()}
