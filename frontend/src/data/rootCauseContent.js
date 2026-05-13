@@ -30,14 +30,14 @@ export const RESULT_HEADLINES = {
   high: 'Your symptoms show strong neuroplastic patterns.',
   moderate: 'Your symptoms show some neuroplastic patterns.',
   low: 'Your symptoms may have a structural component.',
-  unclear: 'We need more information to assess your situation.'
+  unclear: 'Your symptom patterns don\'t clearly point to nervous system involvement.'
 };
 
 export const RESULT_SUBHEADLINES = {
   high: 'Based on the FIT criteria, your symptoms are highly likely to be driven by your nervous system.',
   moderate: 'Based on the FIT criteria, your symptoms show characteristics of nervous system involvement.',
   low: 'Based on your answers, structural factors may be playing a significant role.',
-  unclear: 'Please consult with a healthcare provider for a proper evaluation.'
+  unclear: 'Based on your answers, the classic signs of neuroplastic symptoms aren\'t strongly present. This doesn\'t rule anything out — it just means the patterns aren\'t definitive. A consultation with a practitioner familiar with mind-body medicine can help clarify.'
 };
 
 export const DISCLAIMER = 'This assessment is for educational purposes only and is not a medical diagnosis. Please consult with a healthcare provider for proper evaluation and treatment.';
@@ -46,7 +46,7 @@ export const LIKELIHOOD_BADGES = {
   high: { text: 'Likely Nervous System', color: '#059669', bgColor: '#D1FAE5' },
   moderate: { text: 'Likely Nervous System', color: '#059669', bgColor: '#D1FAE5' },
   low: { text: 'May Have Structural Component', color: '#D97706', bgColor: '#FEF3C7' },
-  unclear: { text: 'More Information Needed', color: '#6B7280', bgColor: '#F3F4F6' }
+  unclear: { text: 'Inconclusive Pattern', color: '#6B7280', bgColor: '#F3F4F6' }
 };
 
 export const EDUCATIONAL_CONTENT = {
