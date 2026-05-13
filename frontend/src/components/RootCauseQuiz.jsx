@@ -406,7 +406,7 @@ export default function RootCauseQuiz() {
       } else if (likelihood === 'low') {
         return 'Your symptoms may have a structural component.';
       } else {
-        return 'We need more information to assess your situation.';
+        return 'Your symptom patterns don\'t clearly point to nervous system involvement.';
       }
     };
 
