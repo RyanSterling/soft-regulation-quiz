@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProgressBar from './ProgressBar';
 import { QUESTIONS, getVisibleQuestions, getTotalQuestionCount } from '../data/rootCauseQuestions';
 import { WELCOME_CONTENT, FREE_TEXT_FIELD, EMAIL_FIELD, DISCLAIMER, LIKELIHOOD_BADGES, EDUCATIONAL_CONTENT } from '../data/rootCauseContent';
@@ -31,6 +31,13 @@ export default function RootCauseQuiz() {
 
   // UTM tracking
   const [utmParams, setUtmParams] = useState({});
+
+  // Scroll to top when showing results
+  useEffect(() => {
+    if (currentStep === STEPS.RESULTS) {
+      window.scrollTo(0, 0);
+    }
+  }, [currentStep]);
 
   const visibleQuestions = getVisibleQuestions();
   const currentQuestion = visibleQuestions[currentQuestionIndex];
