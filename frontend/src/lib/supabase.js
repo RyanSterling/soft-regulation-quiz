@@ -372,3 +372,208 @@ export async function saveRootCauseResponse(responseData) {
     return { data: null, error };
   }
 }
+
+// =============================================
+// EVENTS & RSVP FUNCTIONS
+// =============================================
+
+/**
+ * Get the next upcoming active event
+ */
+export async function getActiveEvent() {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('is_active', true)
+      .gte('event_date', new Date().toISOString())
+      .order('event_date', { ascending: true })
+      .limit(1)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
+    return { data: data || null, error: null };
+  } catch (error) {
+    console.error('Error fetching active event:', error);
+    return { data: null, error };
+  }
+}
+
+/**
+ * Get all events (for admin)
+ */
+export async function getAllEvents() {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .order('event_date', { ascending: false });
+
+    if (error) throw error;
+    return { data: data || [], error: null };
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    return { data: [], error };
+  }
+}
+
+/**
+ * Create a new event
+ */
+export async function createEvent(eventData) {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .insert([eventData])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error creating event:', error);
+    return { data: null, error };
+  }
+}
+
+/**
+ * Update an event
+ */
+export async function updateEvent(eventId, updates) {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', eventId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error updating event:', error);
+    return { data: null, error };
+  }
+}
+
+/**
+ * Delete an event
+ */
+export async function deleteEvent(eventId) {
+  try {
+    const { error } = await supabase
+      .from('events')
+      .delete()
+      .eq('id', eventId);
+
+    if (error) throw error;
+    return { error: null };
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    return { error };
+  }
+}
+
+/**
+ * Save an RSVP
+ */
+export async function saveRSVP(rsvpData) {
+  try {
+    const { data, error } = await supabase
+      .from('rsvps')
+      .insert([rsvpData])
+      .select()
+      .single();
+
+    if (error) {
+      // Check for duplicate RSVP
+      if (error.code === '23505') {
+        return { data: null, error: { message: 'You have already RSVPed for this event!' } };
+      }
+      throw error;
+    }
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error saving RSVP:', error);
+    return { data: null, error };
+  }
+}
+
+/**
+ * Get RSVPs for an event
+ */
+export async function getRSVPsForEvent(eventId) {
+  try {
+    const { data, error } = await supabase
+      .from('rsvps')
+      .select('*')
+      .eq('event_id', eventId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return { data: data || [], error: null };
+  } catch (error) {
+    console.error('Error fetching RSVPs:', error);
+    return { data: [], error };
+  }
+}
+
+/**
+ * Get RSVP count for an event
+ */
+export async function getRSVPCount(eventId) {
+  try {
+    const { count, error } = await supabase
+      .from('rsvps')
+      .select('*', { count: 'exact', head: true })
+      .eq('event_id', eventId);
+
+    if (error) throw error;
+    return { count: count || 0, error: null };
+  } catch (error) {
+    console.error('Error fetching RSVP count:', error);
+    return { count: 0, error };
+  }
+}
+
+/**
+ * Get all RSVPs with event info (for admin)
+ */
+export async function getAllRSVPs() {
+  try {
+    const { data, error } = await supabase
+      .from('rsvps')
+      .select(`
+        *,
+        events (
+          title,
+          event_date
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return { data: data || [], error: null };
+  } catch (error) {
+    console.error('Error fetching all RSVPs:', error);
+    return { data: [], error };
+  }
+}
+
+/**
+ * Delete an RSVP
+ */
+export async function deleteRSVP(rsvpId) {
+  try {
+    const { error } = await supabase
+      .from('rsvps')
+      .delete()
+      .eq('id', rsvpId);
+
+    if (error) throw error;
+    return { error: null };
+  } catch (error) {
+    console.error('Error deleting RSVP:', error);
+    return { error };
+  }
+}

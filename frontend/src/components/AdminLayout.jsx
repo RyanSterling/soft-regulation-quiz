@@ -4,6 +4,8 @@ import Analytics from './Analytics';
 import FacebookAds from './FacebookAds';
 import AIAnalyzer from './AIAnalyzer';
 import Settings from './Settings';
+import Events from './Events';
+import RSVPs from './RSVPs';
 
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
@@ -175,6 +177,28 @@ export default function AdminLayout() {
             >
               Settings
             </button>
+            <button
+              onClick={() => setActiveTab('events')}
+              className="pb-4 px-1 font-medium transition-colors"
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                color: activeTab === 'events' ? '#4D1E22' : '#6D6B6B',
+                borderBottom: activeTab === 'events' ? '2px solid #4D1E22' : 'none'
+              }}
+            >
+              Events
+            </button>
+            <button
+              onClick={() => setActiveTab('rsvps')}
+              className="pb-4 px-1 font-medium transition-colors"
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                color: activeTab === 'rsvps' ? '#4D1E22' : '#6D6B6B',
+                borderBottom: activeTab === 'rsvps' ? '2px solid #4D1E22' : 'none'
+              }}
+            >
+              RSVPs
+            </button>
           </div>
         </div>
       </div>
@@ -186,6 +210,8 @@ export default function AdminLayout() {
         {activeTab === 'facebook-ads' && <FacebookAds />}
         {activeTab === 'ai-analyzer' && <AIAnalyzer />}
         {activeTab === 'settings' && <Settings />}
+        {activeTab === 'events' && <Events />}
+        {activeTab === 'rsvps' && <RSVPs />}
       </div>
     </div>
   );

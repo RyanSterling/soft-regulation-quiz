@@ -7,6 +7,7 @@ import AdminLayout from './components/AdminLayout';
 import ApplicationLanding from './components/ApplicationLanding';
 import ApplicationForm from './components/ApplicationForm';
 import ApplicationNotReady from './components/ApplicationNotReady';
+import RSVPPage from './components/RSVPPage';
 import Privacy from './pages/Privacy';
 import Footer from './components/Footer';
 
@@ -55,6 +56,12 @@ function App() {
         <Route path="/apply/not-ready" element={
           <>
             <ApplicationNotReady />
+            <Footer />
+          </>
+        } />
+        <Route path="/rsvp" element={
+          <>
+            <RSVPPage />
             <Footer />
           </>
         } />
