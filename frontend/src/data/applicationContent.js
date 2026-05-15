@@ -7,7 +7,7 @@ export const LANDING_CONTENT = {
   // Hero section
   hero: {
     eyebrow: 'Private 1:1 Coaching',
-    headline: 'For founders scaling a business while their nervous system is falling apart.',
+    headline: "For creators and leaders with a public presence and a nervous system that's falling apart.",
     subhead: 'A 3-month private container for online business owners, content creators, and helping professionals who are running successful businesses while privately dealing with chronic nervous system symptoms. Strategic business coaching meets nervous system work.',
     ctaText: 'Apply Now'
   },
@@ -16,11 +16,11 @@ export const LANDING_CONTENT = {
   opening: {
     paragraphs: [
       "You're not the person who can step away to heal.",
-      "You have clients on the calendar, a team waiting on decisions, and a platform that doesn't pause. You're the face of the business, and the business doesn't run if you're not running.",
-      "And somewhere in the middle of all of it, your body started screaming.",
-      "Anxiety that won't quit, panic before launches, dissociation in the middle of a podcast recording. Symptoms you can't ignore anymore, and a creeping certainty that you're one hard week from checking yourself into a psych hospital.",
-      "You've tried the obvious things: therapy, books, the course your friend swore by. You probably understand the nervous system intellectually. You might be the one teaching it to your own clients.",
-      "What you don't know is how to keep building this business without abandoning yourself to do it, or whether the business you've built is even the one you should be scaling."
+      "You can't cancel on clients. You can't not get your team what they need. You don't have the luxury of pausing. You are the face of the business, and the business doesn't run if you're not running.",
+      "In the middle of trying to handle everything your business requires of you, your body started screaming. And it hasn't stopped.",
+      "Anxiety. Panic. Dissociation. Pain. Symptoms you can't ignore anymore.",
+      "You've tried therapy, books, courses. You probably understand the nervous system intellectually. You might even teach this stuff to your own clients.",
+      "What you don't know is how to keep building without paying the price through your body. Or whether the business you've built is even the one you should be scaling."
     ],
     closing: "That's what this is for."
   },
@@ -48,12 +48,8 @@ export const LANDING_CONTENT = {
         text: "If you don't currently run an online business, have a public-facing brand, or work in a helping profession (e.g. therapist, coach, somatic practitioner), this container isn't designed for you."
       },
       {
-        bold: "This is not sensitization recovery coaching.",
-        text: "If you're looking for help understanding symptoms, getting reassurance about whether you're okay, or working through acute sensitization, <a href='https://www.maggiesterling.com/soft-regulation' target='_blank' rel='noopener noreferrer' style='color: #9C8B75; text-decoration: underline;'>my course</a> is built for exactly that."
-      },
-      {
-        bold: "This is for people who are still working.",
-        text: "If you've stepped away from your business to focus on healing, this isn't the right container."
+        bold: "This includes business coaching.",
+        text: "If you're only looking for nervous system support without the business component, <a href='https://www.maggiesterling.com/soft-regulation' target='_blank' rel='noopener noreferrer' style='color: #9C8B75; text-decoration: underline;'>my course</a> is the right fit. This container is for people who want both."
       },
       {
         bold: "This isn't a set curriculum or step-by-step program.",
@@ -62,75 +58,107 @@ export const LANDING_CONTENT = {
     ]
   },
 
-  // What we'll actually do
-  theWork: {
-    headline: "What We'll Actually Do",
-    intro: "This is not a curriculum. It's a custom container, and the work is as much strategic as it is somatic.",
-    question: "Most clients arrive with some version of the same question: how do I keep building this without it costing me my body? Underneath that question is usually a second one they haven't said out loud yet: is this even the business I should be building?",
-    businessSide: {
-      headline: 'On the business side',
-      items: [
-        'Looking at where your business is currently being built from survival, urgency, or self-abandonment, and what changes structurally if you stop',
-        'Auditing offers, pricing, content cadence, team structure, and revenue model through the lens of what\'s actually sustainable for the version of you running it',
-        'Identifying the specific moves that will let your business make more money with less of you in it',
-        'Building a relationship with visibility, content creation, and public-facing work that doesn\'t require dissociation to execute on'
-      ]
-    },
-    embodiedSide: {
-      headline: 'On the nervous system side',
-      items: [
-        'Distinguishing intuition from nervous system noise so you can make decisions you trust',
-        'Recovering self-trust in your creative voice, your offers, your boundaries, and your timing',
-        'Holding the symptoms with enough capacity that they stop running the show'
-      ]
-    },
-    closing: "The two sides aren't separate. A business built from a dysregulated nervous system has a ceiling, and you've probably hit it. The work is how you break through it."
-  },
-
-  // ROI note
+  // ROI note (hidden - kept for component compatibility)
   roi: {
-    headline: 'A Note on ROI',
-    paragraphs: [
-      "This is a business coaching container, and I treat it like one.",
-      "You're not paying for symptom relief. You're paying for the strategic and nervous system work that makes a scaled, sustainable, higher-revenue business possible. The clients I'm built to work with are running businesses where one good decision (restructured offer, better pricing, an honest look at what's actually working) pays for this container several times over.",
-      "A business that runs on burnout is not a scalable business. It's a ceiling, and this work removes the actual constraint."
-    ]
+    headline: '',
+    paragraphs: []
   },
 
   // About Maggie
   about: {
     headline: 'About Maggie',
     paragraphs: [
-      "I've been coaching one-on-one with high-performing people for six years.",
-      "Before this work, I built my career in the weight loss, overeating, and behavior change space. I coached hundreds of clients through the mindset, identity, and nervous system patterns underneath the visible problem. Business owners were always the ones drawn to me. I learned early how to work with high-capacity people who couldn't afford to fall apart.",
-      "I also built the businesses to back it up. Across the last several years I've grown a TikTok account to 182,000 followers, an Instagram account to 142,000 followers, two additional social accounts to roughly 80,000 each, and a YouTube channel to 40,000 subscribers, monetized in 45 days. Multiple six and seven-figure online businesses.",
-      "I'm not pulling these numbers from a course I bought. I built every one of them myself, on my own face and my own voice, while running the kind of business most coaches only theorize about."
+      "I've been coaching for six years. Thousands of people, across weight loss, overeating, behavior change, and now nervous system work.",
+      "Business owners and high-capacity people were always the ones drawn to me. I learned early how to work with people who couldn't afford to fall apart."
     ],
     breakdown: {
       intro: "Then I fell apart.",
-      text: "In the middle of running a six-figure business, with a family, a team, and a public platform, I had a full-blown mental breakdown. I didn't have the option to stop. I had to learn in real time, in public, with payroll to make and content to ship, how to lead without self-violence, how to create without running on adrenaline, and how to keep showing up without abandoning my body to do it."
+      text: "In the middle of running a multiple six-figure business, with a family and a public platform, I had a full-blown mental breakdown. I didn't have the option to stop. I had to recalibrate my entire nervous system while continuing to show up in real time in public with content to post and clients to coach."
     },
-    closing: "That's the work I'm bringing to this container: strategic business coaching, identity-level work, and nervous system regulation, all three at once, because they aren't actually separate."
+    closing: "That's the work I'm bringing to this container: the mindset and identity work that makes business sustainable, plus nervous system desensitization and resilience."
+  },
+
+  // Track Record - credibility section
+  trackRecord: {
+    headline: 'The Track Record',
+    intro: "I'm not just a 'coach who coaches coaches'. I've built successful businesses in multiple B2C niches.",
+    niches: [
+      {
+        name: 'Weight Loss & Behavior Change',
+        tiktokImage: '/assets/track-record/wl-tiktok.png',
+        instagramImage: '/assets/track-record/wl-instagram.png'
+      },
+      {
+        name: 'Nervous System & Mental Health',
+        tiktokImage: '/assets/track-record/ns-tiktok.png',
+        instagramImage: '/assets/track-record/ns-instagram.png'
+      }
+    ],
+    // YouTube - prominent because this is harder than social
+    youtubeStat: '50,000',
+    youtubeLabel: 'subscribers in 7 months',
+    youtubeImage: '/assets/track-record/youtube-stat.png',
+    youtubeNote: 'YouTube is where people actually get to know you. It\'s harder to grow, but it\'s where trust builds.',
+    // Podcast
+    podcastStat: '3,000,000+',
+    podcastLabel: 'podcast downloads',
+    podcastImage: '/assets/track-record/podcast-stat.png',
+    businessStats: [
+      {
+        stat: '6 & 7 Figure',
+        label: 'businesses built'
+      },
+      {
+        stat: '95%',
+        label: 'profit margins'
+      },
+      {
+        stat: '100%',
+        label: 'organic content'
+      },
+      {
+        stat: 'Zero',
+        label: 'paid ads'
+      }
+    ],
+    closing: ""
   },
 
   // The Container - what's included
   container: {
     headline: 'The Container',
     duration: 'Three months, 1:1',
-    items: [
-      'Two private 60-minute coaching calls per month (six total)',
-      'WhatsApp support between sessions, Monday through Friday, with a 24-hour response window',
-      'All calls recorded and yours to keep',
-      'Application and discovery call required to enroll',
-      'Limited to a small number of clients at a time so the work stays high-touch'
-    ]
+    // Simple logistics
+    logistics: [
+      {
+        title: '12 private coaching calls',
+        description: '45 minutes each'
+      },
+      {
+        title: 'Direct WhatsApp access',
+        description: 'For when something comes up between sessions'
+      }
+    ],
+    logisticsNote: '',
+    // What we can work on together
+    scopeHeadline: 'What We Can Work On',
+    scopeIntro: "The work is custom. We focus on what's actually in the way.",
+    scopeItems: [
+      'Working through sensitization symptoms without putting your business on hold',
+      'Learning to regulate in real-time while you\'re in the middle of the work',
+      'Figuring out what you actually want to build (and what needs to go)',
+      'Making strategic decisions from clarity instead of survival mode',
+      'Content and visibility that doesn\'t cost you your nervous system',
+      'Building a business that doesn\'t require you to be in survival mode to run it'
+    ],
+    scopeClosing: ''
   },
 
   // Investment
   investment: {
     headline: 'Investment',
-    price: '$7,500',
-    note: "I'm naming the price here on purpose. I'm not a salesperson, and I'm not going to surprise you with a number on a discovery call. If $7,500 isn't a clear yes for you right now, don't apply yet. Take the course, do the work, build the business, and come back when this is the obvious next step.",
+    price: '$5,500',
+    note: "I'm not a salesperson, and I'm not going to surprise you with a number on a discovery call. If $5,500 isn't a clear yes for you right now, don't apply yet. Take the course, do the work, build the business, and come back when this is the obvious next step.",
     closing: "If it is a clear yes, keep going."
   },
 
@@ -180,6 +208,10 @@ export const LANDING_CONTENT = {
       {
         question: "What if I'm not sure I qualify?",
         answer: "Apply. The form itself will tell you a lot. If we're not a fit, I'll say so, and I may point you somewhere that is."
+      },
+      {
+        question: "Can I apply if I don't have a business yet?",
+        answer: "This container is built for people who are already running a business or practice. If you're still in the building phase, this isn't the right fit yet—but the course is a great place to start."
       }
     ]
   },

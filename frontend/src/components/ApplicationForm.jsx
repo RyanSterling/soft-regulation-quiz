@@ -16,6 +16,16 @@ import { getUtmParams } from '../lib/utm';
 import { saveApplicationResponse } from '../lib/applicationConfig';
 import { sendApplicationWebhook } from '../lib/api';
 
+// Match ApplicationLanding color palette
+const colors = {
+  cream: '#FAF9F7',
+  creamDark: '#E8E6E3',
+  white: '#FFFFFF',
+  black: '#1E1F1C',
+  olive: '#545B47',
+  muted: '#6D6B6B',
+};
+
 const STEPS = {
   WELCOME: 'welcome',
   CONTACT: 'contact',
@@ -81,8 +91,7 @@ export default function ApplicationForm() {
     if (currentStep === STEPS.LINKS) return 3;
     if (currentStep === STEPS.SYMPTOMS) return 4;
     if (currentStep === STEPS.FREE_TEXT) return 5 + currentFreeTextIndex;
-    if (currentStep === STEPS.REVENUE) return 5 + REMAINING_FREE_TEXT.length;
-    if (currentStep === STEPS.PRICING) return 6 + REMAINING_FREE_TEXT.length;
+    if (currentStep === STEPS.PRICING) return 5 + REMAINING_FREE_TEXT.length;
     return TOTAL_STEPS;
   };
 
@@ -174,7 +183,7 @@ export default function ApplicationForm() {
       if (currentFreeTextIndex < REMAINING_FREE_TEXT.length - 1) {
         setCurrentFreeTextIndex(currentFreeTextIndex + 1);
       } else {
-        setCurrentStep(STEPS.REVENUE);
+        setCurrentStep(STEPS.PRICING);
       }
     });
   };
@@ -246,8 +255,6 @@ export default function ApplicationForm() {
   const handleBack = () => {
     setError('');
     if (currentStep === STEPS.PRICING) {
-      setCurrentStep(STEPS.REVENUE);
-    } else if (currentStep === STEPS.REVENUE) {
       setCurrentStep(STEPS.FREE_TEXT);
       setCurrentFreeTextIndex(REMAINING_FREE_TEXT.length - 1);
     } else if (currentStep === STEPS.FREE_TEXT && currentFreeTextIndex > 0) {
@@ -278,7 +285,7 @@ export default function ApplicationForm() {
   // ============================================
   if (currentStep === STEPS.WELCOME) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#EFEDEC' }}>
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: colors.cream }}>
         <div className="max-w-2xl w-full text-center space-y-8">
           <div className="mb-12 flex justify-center">
             <img src="/assets/logo.svg" alt="Soft Regulation" className="h-16 md:h-20" />
@@ -286,9 +293,9 @@ export default function ApplicationForm() {
 
           <h1
             style={{
-              fontFamily: 'Libre Baskerville, serif',
-              fontWeight: '400',
-              color: '#101827',
+              fontFamily: 'Cormorant Garamond, serif',
+              fontWeight: '500',
+              color: colors.black,
               letterSpacing: '-0.02em',
               fontSize: '2.5rem',
               lineHeight: '1.2'
@@ -301,7 +308,7 @@ export default function ApplicationForm() {
           <p
             style={{
               fontFamily: 'Inter, sans-serif',
-              color: '#77716E',
+              color: colors.muted,
               fontSize: '1.125rem',
               lineHeight: '1.75'
             }}
@@ -315,9 +322,8 @@ export default function ApplicationForm() {
               onClick={handleStart}
               className="px-10 py-4 text-lg font-medium transition-all duration-200 hover:opacity-90"
               style={{
-                backgroundColor: '#4D1E22',
-                color: '#FFFFFF',
-                borderRadius: '27px',
+                backgroundColor: colors.olive,
+                color: colors.white,
                 fontFamily: 'Inter, sans-serif'
               }}
             >
@@ -325,7 +331,7 @@ export default function ApplicationForm() {
             </button>
           </div>
 
-          <p style={{ fontFamily: 'Inter, sans-serif', color: '#77716E', fontSize: '0.875rem' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', color: colors.muted, fontSize: '0.875rem' }}>
             {STEP_CONTENT.welcome.timeEstimate}
           </p>
         </div>
@@ -341,17 +347,17 @@ export default function ApplicationForm() {
 
     return (
       <>
-        <ProgressBar current={getProgress()} total={TOTAL_STEPS} />
-        <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#EFEDEC' }}>
+        <ProgressBar current={getProgress()} total={TOTAL_STEPS} barColor={colors.olive} bgColor={colors.creamDark} />
+        <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.cream }}>
           <div className={`flex-1 pt-20 pb-8 px-4 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <div className="max-w-3xl mx-auto">
-              <h2 className="mb-8" style={{ fontFamily: 'Libre Baskerville, serif', fontSize: '1.875rem', color: '#1E1F1C', lineHeight: '1.3', fontWeight: '400' }}>
+              <h2 className="mb-8" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.875rem', color: colors.black, lineHeight: '1.3', fontWeight: '500' }}>
                 {content.headline}
               </h2>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#4A4A4A' }}>
+                  <label className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                     {content.fields.name.label}
                   </label>
                   <input
@@ -360,12 +366,12 @@ export default function ApplicationForm() {
                     onChange={(e) => { setContactInfo({ ...contactInfo, name: e.target.value }); setError(''); }}
                     placeholder={content.fields.name.placeholder}
                     className="w-full px-4 py-3"
-                    style={{ backgroundColor: '#E6E4E1', borderRadius: '12px', border: 'none', fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: '#1E1F1C', outline: 'none' }}
+                    style={{ backgroundColor: colors.creamDark, border: `1px solid ${colors.creamDark}`, fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: colors.black, outline: 'none' }}
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#4A4A4A' }}>
+                  <label className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                     {content.fields.email.label}
                   </label>
                   <input
@@ -374,14 +380,14 @@ export default function ApplicationForm() {
                     onChange={(e) => { setContactInfo({ ...contactInfo, email: e.target.value }); setError(''); }}
                     placeholder={content.fields.email.placeholder}
                     className="w-full px-4 py-3"
-                    style={{ backgroundColor: '#E6E4E1', borderRadius: '12px', border: 'none', fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: '#1E1F1C', outline: 'none' }}
+                    style={{ backgroundColor: colors.creamDark, border: `1px solid ${colors.creamDark}`, fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: colors.black, outline: 'none' }}
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#4A4A4A' }}>
+                  <label className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                     {content.fields.location.label}
-                    <span className="text-gray-400 ml-1">(optional)</span>
+                    <span style={{ color: colors.muted, marginLeft: '0.25rem' }}>(optional)</span>
                   </label>
                   <input
                     type="text"
@@ -389,19 +395,19 @@ export default function ApplicationForm() {
                     onChange={(e) => setContactInfo({ ...contactInfo, location: e.target.value })}
                     placeholder={content.fields.location.placeholder}
                     className="w-full px-4 py-3"
-                    style={{ backgroundColor: '#E6E4E1', borderRadius: '12px', border: 'none', fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: '#1E1F1C', outline: 'none' }}
+                    style={{ backgroundColor: colors.creamDark, border: `1px solid ${colors.creamDark}`, fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: colors.black, outline: 'none' }}
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#4A4A4A' }}>
+                  <label className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                     {content.fields.timezone.label}
                   </label>
                   <select
                     value={contactInfo.timezone}
                     onChange={(e) => { setContactInfo({ ...contactInfo, timezone: e.target.value }); setError(''); }}
                     className="w-full px-4 py-3"
-                    style={{ backgroundColor: '#E6E4E1', borderRadius: '12px', border: 'none', fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: contactInfo.timezone ? '#1E1F1C' : '#77716E', outline: 'none' }}
+                    style={{ backgroundColor: colors.creamDark, border: `1px solid ${colors.creamDark}`, fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: contactInfo.timezone ? colors.black : colors.muted, outline: 'none' }}
                   >
                     <option value="">{content.fields.timezone.placeholder}</option>
                     {TIMEZONE_OPTIONS.map((tz) => (
@@ -414,10 +420,10 @@ export default function ApplicationForm() {
               {error && <p className="mt-4 text-sm" style={{ fontFamily: 'Inter, sans-serif', color: '#DC2626' }}>{error}</p>}
 
               <div className="flex justify-between items-center mt-8">
-                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   ← Back
                 </button>
-                <button onClick={handleContactNext} className="px-8 py-3 font-medium" style={{ backgroundColor: '#4D1E22', color: 'white', borderRadius: '27px', fontFamily: 'Inter, sans-serif' }}>
+                <button onClick={handleContactNext} className="px-8 py-3 font-medium" style={{ backgroundColor: colors.olive, color: colors.white, fontFamily: 'Inter, sans-serif' }}>
                   Continue
                 </button>
               </div>
@@ -438,19 +444,19 @@ export default function ApplicationForm() {
 
     return (
       <>
-        <ProgressBar current={getProgress()} total={TOTAL_STEPS} />
-        <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#EFEDEC' }}>
+        <ProgressBar current={getProgress()} total={TOTAL_STEPS} barColor={colors.olive} bgColor={colors.creamDark} />
+        <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.cream }}>
           <div className={`flex-1 pt-20 pb-8 px-4 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <div className="max-w-3xl mx-auto flex flex-col h-full">
               <div className="space-y-4 mb-auto">
-                <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: '#8B8886' }}>
+                <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   Question {question.questionNumber} of 9
                 </p>
-                <h2 style={{ fontFamily: 'Libre Baskerville, serif', fontSize: '1.875rem', color: '#1E1F1C', lineHeight: '1.3', fontWeight: '400' }}>
+                <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.875rem', color: colors.black, lineHeight: '1.3', fontWeight: '500' }}>
                   {question.label}
                 </h2>
                 {question.helper && (
-                  <p className="text-sm italic" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                  <p className="text-sm italic" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                     {question.helper}
                   </p>
                 )}
@@ -460,9 +466,9 @@ export default function ApplicationForm() {
                   placeholder={question.placeholder}
                   rows={8}
                   className="w-full px-4 py-3 resize-none"
-                  style={{ backgroundColor: '#E6E4E1', borderRadius: '12px', border: error ? '2px solid #DC2626' : 'none', fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: '#1E1F1C', outline: 'none' }}
+                  style={{ backgroundColor: colors.creamDark, border: error ? '2px solid #DC2626' : `1px solid ${colors.creamDark}`, fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: colors.black, outline: 'none' }}
                 />
-                <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: meetsMinimum ? '#166534' : '#77716E' }}>
+                <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: meetsMinimum ? colors.olive : colors.muted }}>
                   {charCount} / {question.minChars} characters minimum
                   {meetsMinimum && ' ✓'}
                 </p>
@@ -470,14 +476,14 @@ export default function ApplicationForm() {
               </div>
 
               <div className="flex justify-between items-center mt-8">
-                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   ← Back
                 </button>
                 <button
                   onClick={handleBusinessDescNext}
                   disabled={!meetsMinimum}
                   className="px-8 py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ backgroundColor: '#4D1E22', color: 'white', borderRadius: '27px', fontFamily: 'Inter, sans-serif' }}
+                  style={{ backgroundColor: colors.olive, color: colors.white, fontFamily: 'Inter, sans-serif' }}
                 >
                   Continue
                 </button>
@@ -497,27 +503,27 @@ export default function ApplicationForm() {
 
     return (
       <>
-        <ProgressBar current={getProgress()} total={TOTAL_STEPS} />
-        <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#EFEDEC' }}>
+        <ProgressBar current={getProgress()} total={TOTAL_STEPS} barColor={colors.olive} bgColor={colors.creamDark} />
+        <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.cream }}>
           <div className={`flex-1 pt-20 pb-8 px-4 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <div className="max-w-3xl mx-auto">
-              <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: '#8B8886' }}>
+              <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                 Question {LINKS_QUESTION.questionNumber} of 9
               </p>
-              <h2 className="mb-2" style={{ fontFamily: 'Libre Baskerville, serif', fontSize: '1.875rem', color: '#1E1F1C', lineHeight: '1.3', fontWeight: '400' }}>
+              <h2 className="mb-2" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.875rem', color: colors.black, lineHeight: '1.3', fontWeight: '500' }}>
                 {LINKS_QUESTION.headline}
               </h2>
-              <p className="text-sm italic mb-2" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+              <p className="text-sm italic mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                 {LINKS_QUESTION.helper}
               </p>
-              <p className="text-sm mb-6" style={{ fontFamily: 'Inter, sans-serif', color: filledCount > 0 ? '#166534' : '#77716E' }}>
+              <p className="text-sm mb-6" style={{ fontFamily: 'Inter, sans-serif', color: filledCount > 0 ? colors.olive : colors.muted }}>
                 {LINKS_QUESTION.requirement} {filledCount > 0 && '✓'}
               </p>
 
               <div className="space-y-4">
                 {LINKS_QUESTION.fields.map((field) => (
                   <div key={field.id}>
-                    <label className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#4A4A4A' }}>
+                    <label className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                       {field.label}
                     </label>
                     <input
@@ -526,7 +532,7 @@ export default function ApplicationForm() {
                       onChange={(e) => { setLinks({ ...links, [field.id]: e.target.value }); setError(''); }}
                       placeholder={field.placeholder}
                       className="w-full px-4 py-3"
-                      style={{ backgroundColor: '#E6E4E1', borderRadius: '12px', border: 'none', fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: '#1E1F1C', outline: 'none' }}
+                      style={{ backgroundColor: colors.creamDark, border: `1px solid ${colors.creamDark}`, fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: colors.black, outline: 'none' }}
                     />
                   </div>
                 ))}
@@ -535,14 +541,14 @@ export default function ApplicationForm() {
               {error && <p className="mt-4 text-sm" style={{ fontFamily: 'Inter, sans-serif', color: '#DC2626' }}>{error}</p>}
 
               <div className="flex justify-between items-center mt-8">
-                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   ← Back
                 </button>
                 <button
                   onClick={handleLinksNext}
                   disabled={filledCount === 0}
                   className="px-8 py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ backgroundColor: '#4D1E22', color: 'white', borderRadius: '27px', fontFamily: 'Inter, sans-serif' }}
+                  style={{ backgroundColor: colors.olive, color: colors.white, fontFamily: 'Inter, sans-serif' }}
                 >
                   Continue
                 </button>
@@ -564,14 +570,14 @@ export default function ApplicationForm() {
 
     return (
       <>
-        <ProgressBar current={getProgress()} total={TOTAL_STEPS} />
-        <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#EFEDEC' }}>
+        <ProgressBar current={getProgress()} total={TOTAL_STEPS} barColor={colors.olive} bgColor={colors.creamDark} />
+        <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.cream }}>
           <div className={`flex-1 pt-20 pb-8 px-4 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <div className="max-w-3xl mx-auto">
-              <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: '#8B8886' }}>
+              <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                 Question {SYMPTOMS_QUESTION.questionNumber} of 9
               </p>
-              <h2 className="mb-6" style={{ fontFamily: 'Libre Baskerville, serif', fontSize: '1.875rem', color: '#1E1F1C', lineHeight: '1.3', fontWeight: '400' }}>
+              <h2 className="mb-6" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.875rem', color: colors.black, lineHeight: '1.3', fontWeight: '500' }}>
                 {SYMPTOMS_QUESTION.headline}
               </h2>
 
@@ -583,10 +589,10 @@ export default function ApplicationForm() {
                       key={option.value}
                       onClick={() => { setHasSymptoms(option.value); setError(''); }}
                       className="w-full text-left px-6 py-4 transition-all duration-100"
-                      style={{ backgroundColor: isSelected ? '#4D1E22' : '#E6E4E1', borderRadius: '27px', fontFamily: 'Inter, sans-serif', color: isSelected ? 'white' : '#77716E' }}
+                      style={{ backgroundColor: isSelected ? colors.olive : colors.creamDark, border: `1px solid ${isSelected ? colors.olive : colors.creamDark}`, fontFamily: 'Inter, sans-serif', color: isSelected ? colors.white : colors.muted }}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0" style={{ borderColor: isSelected ? 'white' : '#CBC9C8', backgroundColor: 'transparent' }}>
+                        <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0" style={{ borderColor: isSelected ? colors.white : colors.creamDark, backgroundColor: 'transparent' }}>
                           {isSelected && (
                             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                               <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -602,11 +608,11 @@ export default function ApplicationForm() {
 
               {showTextarea && (
                 <div className="space-y-4 mt-6">
-                  <h3 style={{ fontFamily: 'Libre Baskerville, serif', fontSize: '1.25rem', color: '#1E1F1C', fontWeight: '400' }}>
+                  <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.25rem', color: colors.black, fontWeight: '500' }}>
                     {SYMPTOMS_QUESTION.followUp.label}
                   </h3>
                   {SYMPTOMS_QUESTION.followUp.helper && (
-                    <p className="text-sm italic" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                    <p className="text-sm italic" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                       {SYMPTOMS_QUESTION.followUp.helper}
                     </p>
                   )}
@@ -616,9 +622,9 @@ export default function ApplicationForm() {
                     placeholder={SYMPTOMS_QUESTION.followUp.placeholder}
                     rows={6}
                     className="w-full px-4 py-3 resize-none"
-                    style={{ backgroundColor: '#E6E4E1', borderRadius: '12px', border: error ? '2px solid #DC2626' : 'none', fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: '#1E1F1C', outline: 'none' }}
+                    style={{ backgroundColor: colors.creamDark, border: error ? '2px solid #DC2626' : `1px solid ${colors.creamDark}`, fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: colors.black, outline: 'none' }}
                   />
-                  <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: meetsSymptomsMin ? '#166534' : '#77716E' }}>
+                  <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: meetsSymptomsMin ? colors.olive : colors.muted }}>
                     {symptomsCharCount} / {SYMPTOMS_QUESTION.followUp.minChars} characters minimum
                     {meetsSymptomsMin && ' ✓'}
                   </p>
@@ -628,14 +634,14 @@ export default function ApplicationForm() {
               {error && <p className="mt-4 text-sm" style={{ fontFamily: 'Inter, sans-serif', color: '#DC2626' }}>{error}</p>}
 
               <div className="flex justify-between items-center mt-8">
-                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   ← Back
                 </button>
                 <button
                   onClick={handleSymptomsNext}
                   disabled={hasSymptoms === null || (hasSymptoms === 'yes' && !meetsSymptomsMin)}
                   className="px-8 py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ backgroundColor: '#4D1E22', color: 'white', borderRadius: '27px', fontFamily: 'Inter, sans-serif' }}
+                  style={{ backgroundColor: colors.olive, color: colors.white, fontFamily: 'Inter, sans-serif' }}
                 >
                   Continue
                 </button>
@@ -658,19 +664,19 @@ export default function ApplicationForm() {
 
     return (
       <>
-        <ProgressBar current={getProgress()} total={TOTAL_STEPS} />
-        <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#EFEDEC' }}>
+        <ProgressBar current={getProgress()} total={TOTAL_STEPS} barColor={colors.olive} bgColor={colors.creamDark} />
+        <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.cream }}>
           <div className={`flex-1 pt-20 pb-8 px-4 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <div className="max-w-3xl mx-auto flex flex-col h-full">
               <div className="space-y-4 mb-auto">
-                <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: '#8B8886' }}>
+                <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   Question {question.questionNumber} of 9
                 </p>
-                <h2 style={{ fontFamily: 'Libre Baskerville, serif', fontSize: '1.875rem', color: '#1E1F1C', lineHeight: '1.3', fontWeight: '400' }}>
+                <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.875rem', color: colors.black, lineHeight: '1.3', fontWeight: '500' }}>
                   {question.label}
                 </h2>
                 {question.helper && (
-                  <p className="text-sm italic" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                  <p className="text-sm italic" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                     {question.helper}
                   </p>
                 )}
@@ -680,29 +686,29 @@ export default function ApplicationForm() {
                   placeholder={question.placeholder}
                   rows={8}
                   className="w-full px-4 py-3 resize-none"
-                  style={{ backgroundColor: '#E6E4E1', borderRadius: '12px', border: error ? '2px solid #DC2626' : 'none', fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: '#1E1F1C', outline: 'none' }}
+                  style={{ backgroundColor: colors.creamDark, border: error ? '2px solid #DC2626' : `1px solid ${colors.creamDark}`, fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: colors.black, outline: 'none' }}
                 />
                 {question.required && question.minChars > 0 && (
-                  <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: meetsMinimum ? '#166534' : '#77716E' }}>
+                  <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: meetsMinimum ? colors.olive : colors.muted }}>
                     {charCount} / {question.minChars} characters minimum
                     {meetsMinimum && ' ✓'}
                   </p>
                 )}
                 {!question.required && (
-                  <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>Optional</p>
+                  <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Optional</p>
                 )}
                 {error && <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: '#DC2626' }}>{error}</p>}
               </div>
 
               <div className="flex justify-between items-center mt-8">
-                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   ← Back
                 </button>
                 <button
                   onClick={handleFreeTextNext}
                   disabled={question.required && !meetsMinimum}
                   className="px-8 py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ backgroundColor: '#4D1E22', color: 'white', borderRadius: '27px', fontFamily: 'Inter, sans-serif' }}
+                  style={{ backgroundColor: colors.olive, color: colors.white, fontFamily: 'Inter, sans-serif' }}
                 >
                   Continue
                 </button>
@@ -720,19 +726,19 @@ export default function ApplicationForm() {
   if (currentStep === STEPS.REVENUE) {
     return (
       <>
-        <ProgressBar current={getProgress()} total={TOTAL_STEPS} />
-        <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#EFEDEC' }}>
+        <ProgressBar current={getProgress()} total={TOTAL_STEPS} barColor={colors.olive} bgColor={colors.creamDark} />
+        <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.cream }}>
           <div className={`flex-1 pt-20 pb-8 px-4 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <div className="max-w-3xl mx-auto flex flex-col h-full">
               <div className="space-y-4 mb-auto">
-                <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: '#8B8886' }}>
+                <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   Question {STEP_CONTENT.revenue.questionNumber} of 9
                 </p>
-                <h2 style={{ fontFamily: 'Libre Baskerville, serif', fontSize: '1.875rem', color: '#1E1F1C', lineHeight: '1.3', fontWeight: '400' }}>
+                <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.875rem', color: colors.black, lineHeight: '1.3', fontWeight: '500' }}>
                   {STEP_CONTENT.revenue.headline}
                 </h2>
                 {STEP_CONTENT.revenue.helper && (
-                  <p className="text-sm italic" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                  <p className="text-sm italic" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                     {STEP_CONTENT.revenue.helper}
                   </p>
                 )}
@@ -746,10 +752,10 @@ export default function ApplicationForm() {
                       key={option.value}
                       onClick={() => handleRevenueSelect(option.value)}
                       className="w-full text-left px-6 py-4 transition-all duration-100"
-                      style={{ backgroundColor: isSelected ? '#4D1E22' : '#E6E4E1', borderRadius: '27px', fontFamily: 'Inter, sans-serif', color: isSelected ? 'white' : '#77716E' }}
+                      style={{ backgroundColor: isSelected ? colors.olive : colors.creamDark, border: `1px solid ${isSelected ? colors.olive : colors.creamDark}`, fontFamily: 'Inter, sans-serif', color: isSelected ? colors.white : colors.muted }}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0" style={{ borderColor: isSelected ? 'white' : '#CBC9C8', backgroundColor: 'transparent' }}>
+                        <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0" style={{ borderColor: isSelected ? colors.white : colors.creamDark, backgroundColor: 'transparent' }}>
                           {isSelected && (
                             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                               <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -764,7 +770,7 @@ export default function ApplicationForm() {
               </div>
 
               <div className="mt-6">
-                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   ← Back
                 </button>
               </div>
@@ -781,18 +787,18 @@ export default function ApplicationForm() {
   if (currentStep === STEPS.PRICING) {
     return (
       <>
-        <ProgressBar current={getProgress()} total={TOTAL_STEPS} />
-        <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#EFEDEC' }}>
+        <ProgressBar current={getProgress()} total={TOTAL_STEPS} barColor={colors.olive} bgColor={colors.creamDark} />
+        <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.cream }}>
           <div className={`flex-1 pt-20 pb-8 px-4 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <div className="max-w-3xl mx-auto flex flex-col h-full">
               <div className="space-y-4 mb-auto">
-                <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: '#8B8886' }}>
+                <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   Question {STEP_CONTENT.pricing.questionNumber} of 9
                 </p>
-                <h2 style={{ fontFamily: 'Libre Baskerville, serif', fontSize: '1.875rem', color: '#1E1F1C', lineHeight: '1.3', fontWeight: '400' }}>
+                <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.875rem', color: colors.black, lineHeight: '1.3', fontWeight: '500' }}>
                   {STEP_CONTENT.pricing.headline}
                 </h2>
-                <p className="py-4" style={{ fontFamily: 'Inter, sans-serif', color: '#4A4A4A', fontSize: '1.125rem', lineHeight: '1.6' }}>
+                <p className="py-4" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted, fontSize: '1.125rem', lineHeight: '1.6' }}>
                   {STEP_CONTENT.pricing.statement}
                 </p>
               </div>
@@ -806,10 +812,10 @@ export default function ApplicationForm() {
                       onClick={() => handlePricingSelect(option.value)}
                       disabled={isSubmitting}
                       className="w-full text-left px-6 py-4 transition-all duration-100 disabled:opacity-50"
-                      style={{ backgroundColor: isSelected ? '#4D1E22' : '#E6E4E1', borderRadius: '27px', fontFamily: 'Inter, sans-serif', color: isSelected ? 'white' : '#77716E' }}
+                      style={{ backgroundColor: isSelected ? colors.olive : colors.creamDark, border: `1px solid ${isSelected ? colors.olive : colors.creamDark}`, fontFamily: 'Inter, sans-serif', color: isSelected ? colors.white : colors.muted }}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0" style={{ borderColor: isSelected ? 'white' : '#CBC9C8', backgroundColor: 'transparent' }}>
+                        <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0" style={{ borderColor: isSelected ? colors.white : colors.creamDark, backgroundColor: 'transparent' }}>
                           {isSelected && (
                             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                               <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -824,7 +830,7 @@ export default function ApplicationForm() {
               </div>
 
               <div className="mt-6">
-                <button onClick={handleBack} disabled={isSubmitting} className="font-medium disabled:opacity-50" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E' }}>
+                <button onClick={handleBack} disabled={isSubmitting} className="font-medium disabled:opacity-50" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                   ← Back
                 </button>
               </div>
@@ -840,10 +846,10 @@ export default function ApplicationForm() {
   // ============================================
   if (currentStep === STEPS.LOADING) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#EFEDEC' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: colors.cream }}>
         <div className="text-center space-y-6">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 mx-auto" style={{ borderTopColor: '#4D1E22' }} />
-          <p style={{ fontFamily: 'Inter, sans-serif', color: '#77716E', fontSize: '1.125rem' }}>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 mx-auto" style={{ borderColor: colors.creamDark, borderTopColor: colors.olive }} />
+          <p style={{ fontFamily: 'Inter, sans-serif', color: colors.muted, fontSize: '1.125rem' }}>
             {STEP_CONTENT.loading.message}
           </p>
         </div>
@@ -856,27 +862,27 @@ export default function ApplicationForm() {
   // ============================================
   if (currentStep === STEPS.CONFIRMATION) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: '#EFEDEC' }}>
+      <div className="min-h-screen" style={{ backgroundColor: colors.cream }}>
         <div className="max-w-3xl mx-auto px-4">
-          <div style={{ backgroundColor: '#4D1E22', position: 'absolute', left: 0, right: 0, top: 0, height: '170px', zIndex: 0 }} />
+          <div style={{ backgroundColor: colors.olive, position: 'absolute', left: 0, right: 0, top: 0, height: '170px', zIndex: 0 }} />
 
           <div style={{ position: 'relative', zIndex: 1, paddingTop: '5rem', paddingBottom: '2rem' }}>
-            <div className="bg-white rounded-2xl p-8 text-center">
+            <div className="p-8 text-center" style={{ backgroundColor: colors.white }}>
               <div className="flex justify-center mb-4">
-                <span className="px-4 py-2 rounded-full text-sm font-medium" style={{ backgroundColor: '#DCFCE7', color: '#166534', fontFamily: 'Inter, sans-serif' }}>
+                <span className="px-4 py-2 text-sm font-medium" style={{ backgroundColor: colors.creamDark, color: colors.olive, fontFamily: 'Inter, sans-serif' }}>
                   Submitted
                 </span>
               </div>
 
-              <h2 className="mb-4" style={{ fontFamily: 'Libre Baskerville, serif', fontWeight: '400', color: '#101827', letterSpacing: '-0.02em', fontSize: '32px' }}>
+              <h2 className="mb-4" style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: '500', color: colors.black, letterSpacing: '-0.02em', fontSize: '32px' }}>
                 {STEP_CONTENT.confirmation.headline}
               </h2>
 
-              <p className="mb-6" style={{ fontFamily: 'Inter, sans-serif', color: '#77716E', fontSize: '1.125rem', lineHeight: '1.6' }}>
+              <p className="mb-6" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted, fontSize: '1.125rem', lineHeight: '1.6' }}>
                 {STEP_CONTENT.confirmation.subhead}
               </p>
 
-              <p style={{ fontFamily: 'Inter, sans-serif', color: '#6D6B6B', fontSize: '1rem', lineHeight: '1.7' }}>
+              <p style={{ fontFamily: 'Inter, sans-serif', color: colors.muted, fontSize: '1rem', lineHeight: '1.7' }}>
                 {STEP_CONTENT.confirmation.body}
               </p>
             </div>

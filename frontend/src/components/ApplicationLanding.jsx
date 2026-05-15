@@ -381,92 +381,109 @@ export default function ApplicationLanding() {
       </section>
 
       {/* ============================================ */}
-      {/* THE WORK */}
+      {/* THE CONTAINER */}
       {/* ============================================ */}
       <section className="py-24 lg:py-32 px-6" style={{ backgroundColor: colors.cream }}>
         <div className="max-w-5xl mx-auto">
-          <SectionHeading script="the work" className="text-center">
-            {content.theWork.headline}
-          </SectionHeading>
+          <div className="text-center mb-16">
+            <SectionHeading script="what's included" className="text-center">
+              {content.container.headline}
+            </SectionHeading>
 
-          <div className="max-w-3xl mx-auto mb-16">
-            <BodyText className="mb-4">{content.theWork.intro}</BodyText>
             <p
+              className="mb-12"
               style={{
                 fontFamily: 'Cormorant Garamond, serif',
                 fontStyle: 'italic',
-                color: colors.black,
-                fontSize: '1.125rem',
-                lineHeight: '1.6',
+                color: colors.olive,
+                fontSize: '1.5rem',
               }}
             >
-              {content.theWork.question}
+              {content.container.duration}
+            </p>
+
+            {/* Logistics - Simple */}
+            <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto mb-6">
+              {content.container.logistics.map((item, index) => (
+                <div
+                  key={index}
+                  className="p-6"
+                  style={{
+                    backgroundColor: colors.white,
+                    border: `1px solid ${colors.creamDark}`,
+                  }}
+                >
+                  <p
+                    className="mb-1"
+                    style={{
+                      fontFamily: 'Cormorant Garamond, serif',
+                      fontWeight: '500',
+                      color: colors.black,
+                      fontSize: '1.25rem',
+                    }}
+                  >
+                    {item.title}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      color: colors.muted,
+                      fontSize: '0.9375rem',
+                    }}
+                  >
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <p
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                color: colors.muted,
+                fontSize: '0.875rem',
+              }}
+            >
+              {content.container.logisticsNote}
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Business Side */}
-            <div
-              className="p-8 lg:p-10"
-              style={{ backgroundColor: colors.white }}
+          {/* What We Can Work On */}
+          <div className="mt-20">
+            <h3
+              className="text-center mb-4"
+              style={{
+                fontFamily: 'Cormorant Garamond, serif',
+                fontWeight: '500',
+                color: colors.black,
+                fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
+              }}
             >
-              <h3
-                className="mb-6 pb-4"
-                style={{
-                  fontFamily: 'Cormorant Garamond, serif',
-                  fontWeight: '500',
-                  color: colors.black,
-                  fontSize: '1.5rem',
-                  borderBottom: `1px solid ${colors.creamDark}`,
-                }}
-              >
-                {content.theWork.businessSide.headline}
-              </h3>
-              <ul className="space-y-4">
-                {content.theWork.businessSide.items.map((item, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <span style={{ color: colors.olive }}>—</span>
-                    <span
-                      style={{
-                        fontFamily: 'Inter, sans-serif',
-                        color: colors.muted,
-                        fontSize: '0.9375rem',
-                        lineHeight: '1.7',
-                      }}
-                    >
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              {content.container.scopeHeadline}
+            </h3>
 
-            {/* Embodied Side */}
-            <div
-              className="p-8 lg:p-10"
-              style={{ backgroundColor: colors.white }}
+            <p
+              className="text-center max-w-2xl mx-auto mb-12"
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                color: colors.muted,
+                fontSize: '1rem',
+                lineHeight: '1.7',
+              }}
             >
-              <h3
-                className="mb-6 pb-4"
-                style={{
-                  fontFamily: 'Cormorant Garamond, serif',
-                  fontWeight: '500',
-                  color: colors.black,
-                  fontSize: '1.5rem',
-                  borderBottom: `1px solid ${colors.creamDark}`,
-                }}
-              >
-                {content.theWork.embodiedSide.headline}
-              </h3>
+              {content.container.scopeIntro}
+            </p>
+
+            <div className="max-w-xl mx-auto">
               <ul className="space-y-4">
-                {content.theWork.embodiedSide.items.map((item, index) => (
+                {content.container.scopeItems.map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <span style={{ color: colors.olive }}>—</span>
+                    <span style={{ color: colors.olive, marginTop: '0.25rem' }}>—</span>
                     <span
                       style={{
                         fontFamily: 'Inter, sans-serif',
                         color: colors.muted,
-                        fontSize: '0.9375rem',
+                        fontSize: '1rem',
                         lineHeight: '1.7',
                       }}
                     >
@@ -477,20 +494,6 @@ export default function ApplicationLanding() {
               </ul>
             </div>
           </div>
-
-          <p
-            className="text-center mt-12 py-6 px-8"
-            style={{
-              fontFamily: 'Cormorant Garamond, serif',
-              fontStyle: 'italic',
-              color: colors.black,
-              fontSize: '1.25rem',
-              lineHeight: '1.5',
-              backgroundColor: colors.oliveMuted,
-            }}
-          >
-            {content.theWork.closing}
-          </p>
         </div>
       </section>
 
@@ -565,89 +568,260 @@ export default function ApplicationLanding() {
       </section>
 
       {/* ============================================ */}
-      {/* ROI NOTE */}
-      {/* ============================================ */}
-      <section
-        className="py-24 lg:py-32 px-6"
-        style={{ backgroundColor: colors.olive }}
-      >
-        <div className="max-w-3xl mx-auto text-center">
-          <h2
-            className="mb-8"
-            style={{
-              fontFamily: 'Cormorant Garamond, serif',
-              fontWeight: '500',
-              color: colors.white,
-              fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
-              lineHeight: '1.2',
-            }}
-          >
-            {content.roi.headline}
-          </h2>
-
-          {content.roi.paragraphs.map((paragraph, index) => (
-            <p
-              key={index}
-              className="mb-5"
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                color: 'rgba(255, 255, 255, 0.85)',
-                fontSize: '1rem',
-                lineHeight: '1.85',
-              }}
-            >
-              {paragraph}
-            </p>
-          ))}
-        </div>
-      </section>
-
-      {/* ============================================ */}
-      {/* THE CONTAINER */}
+      {/* TRACK RECORD */}
       {/* ============================================ */}
       <section className="py-24 lg:py-32 px-6" style={{ backgroundColor: colors.cream }}>
-        <div className="max-w-4xl mx-auto text-center">
-          <SectionHeading script="what's included" className="text-center">
-            {content.container.headline}
+        <div className="max-w-5xl mx-auto">
+          <SectionHeading script="the proof" className="text-center">
+            {content.trackRecord.headline}
           </SectionHeading>
 
           <p
-            className="mb-12"
+            className="text-center max-w-3xl mx-auto mb-12"
             style={{
-              fontFamily: 'Cormorant Garamond, serif',
-              fontStyle: 'italic',
-              color: colors.olive,
-              fontSize: '1.5rem',
+              fontFamily: 'Inter, sans-serif',
+              color: colors.muted,
+              fontSize: '1.0625rem',
+              lineHeight: '1.8',
             }}
           >
-            {content.container.duration}
+            {content.trackRecord.intro}
           </p>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {content.container.items.map((item, index) => (
-              <div
-                key={index}
-                className="p-6 text-center"
-                style={{
-                  backgroundColor: colors.white,
-                  border: `1px solid ${colors.creamDark}`,
-                }}
-              >
+          {/* Business Stats - At Top */}
+          <div
+            className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16 py-10 px-8"
+            style={{ backgroundColor: colors.white, border: `1px solid ${colors.creamDark}` }}
+          >
+            {content.trackRecord.businessStats.map((item, index) => (
+              <div key={index} className="text-center">
+                <p
+                  style={{
+                    fontFamily: 'Cormorant Garamond, serif',
+                    color: colors.black,
+                    fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                    fontWeight: '500',
+                    letterSpacing: '-0.02em',
+                    lineHeight: '1.1',
+                  }}
+                >
+                  {item.stat}
+                </p>
+                <p
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    color: colors.muted,
+                    fontSize: '0.8125rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    marginTop: '0.5rem',
+                  }}
+                >
+                  {item.label}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Two Niches Grid */}
+          <div className="grid md:grid-cols-2 gap-12 mb-16">
+            {content.trackRecord.niches.map((niche, index) => (
+              <div key={index}>
+                <h3
+                  className="text-center mb-6 pb-4"
+                  style={{
+                    fontFamily: 'Cormorant Garamond, serif',
+                    fontWeight: '500',
+                    color: colors.black,
+                    fontSize: '1.25rem',
+                    borderBottom: `1px solid ${colors.creamDark}`,
+                  }}
+                >
+                  {niche.name}
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div
+                    className="overflow-hidden"
+                    style={{ border: `1px solid ${colors.creamDark}` }}
+                  >
+                    <img
+                      src={niche.tiktokImage}
+                      alt={`${niche.name} TikTok`}
+                      className="w-full h-auto"
+                    />
+                  </div>
+                  <div
+                    className="overflow-hidden"
+                    style={{ border: `1px solid ${colors.creamDark}` }}
+                  >
+                    <img
+                      src={niche.instagramImage}
+                      alt={`${niche.name} Instagram`}
+                      className="w-full h-auto"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* YouTube Stat - Prominent */}
+          <div
+            className="mb-16 p-8 lg:p-12"
+            style={{ backgroundColor: colors.white, border: `1px solid ${colors.creamDark}` }}
+          >
+            <div className="grid lg:grid-cols-2 gap-8 items-center">
+              <div className="text-center lg:text-left">
+                <p
+                  style={{
+                    fontFamily: 'Cormorant Garamond, serif',
+                    color: colors.black,
+                    fontSize: 'clamp(3rem, 8vw, 4.5rem)',
+                    fontWeight: '400',
+                    letterSpacing: '-0.02em',
+                    lineHeight: '1',
+                  }}
+                >
+                  {content.trackRecord.youtubeStat}
+                </p>
+                <p
+                  className="mb-4"
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    color: colors.muted,
+                    fontSize: '0.9375rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    marginTop: '0.5rem',
+                  }}
+                >
+                  {content.trackRecord.youtubeLabel}
+                </p>
+                <p
+                  className="mt-6"
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    color: colors.muted,
+                    fontSize: '0.9375rem',
+                    lineHeight: '1.7',
+                  }}
+                >
+                  {content.trackRecord.youtubeNote}
+                </p>
+              </div>
+              {content.trackRecord.youtubeImage && (
+                <div>
+                  <img
+                    src={content.trackRecord.youtubeImage}
+                    alt="YouTube analytics"
+                    className="w-full h-auto rounded"
+                    style={{ border: `1px solid ${colors.creamDark}` }}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Podcast Stat */}
+          <div
+            className="mb-16 p-8 lg:p-12"
+            style={{ backgroundColor: colors.white, border: `1px solid ${colors.creamDark}` }}
+          >
+            <div className="grid lg:grid-cols-2 gap-8 items-center">
+              <div className="text-center lg:text-left">
+                <p
+                  style={{
+                    fontFamily: 'Cormorant Garamond, serif',
+                    color: colors.black,
+                    fontSize: 'clamp(3rem, 8vw, 4.5rem)',
+                    fontWeight: '400',
+                    letterSpacing: '-0.02em',
+                    lineHeight: '1',
+                  }}
+                >
+                  {content.trackRecord.podcastStat}
+                </p>
                 <p
                   style={{
                     fontFamily: 'Inter, sans-serif',
                     color: colors.muted,
                     fontSize: '0.9375rem',
-                    lineHeight: '1.6',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    marginTop: '0.5rem',
                   }}
                 >
-                  {item}
+                  {content.trackRecord.podcastLabel}
                 </p>
               </div>
-            ))}
+              {content.trackRecord.podcastImage && (
+                <div>
+                  <img
+                    src={content.trackRecord.podcastImage}
+                    alt="Podcast"
+                    className="w-full h-auto rounded"
+                    style={{ border: `1px solid ${colors.creamDark}` }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Closing */}
+          <p
+            className="text-center max-w-3xl mx-auto"
+            style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontStyle: 'italic',
+              color: colors.olive,
+              fontSize: '1.125rem',
+              lineHeight: '1.6',
+            }}
+          >
+            {content.trackRecord.closing}
+          </p>
         </div>
       </section>
+
+      {/* ============================================ */}
+      {/* ROI NOTE */}
+      {/* ============================================ */}
+      {content.roi.headline && content.roi.paragraphs.length > 0 && (
+        <section
+          className="py-24 lg:py-32 px-6"
+          style={{ backgroundColor: colors.olive }}
+        >
+          <div className="max-w-3xl mx-auto text-center">
+            <h2
+              className="mb-8"
+              style={{
+                fontFamily: 'Cormorant Garamond, serif',
+                fontWeight: '500',
+                color: colors.white,
+                fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
+                lineHeight: '1.2',
+              }}
+            >
+              {content.roi.headline}
+            </h2>
+
+            {content.roi.paragraphs.map((paragraph, index) => (
+              <p
+                key={index}
+                className="mb-5"
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  fontSize: '1rem',
+                  lineHeight: '1.85',
+                }}
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ============================================ */}
       {/* INVESTMENT */}

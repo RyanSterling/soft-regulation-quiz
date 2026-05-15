@@ -40,14 +40,14 @@ export const PRICING_OPTIONS = [
 export const LINKS_QUESTION = {
   questionNumber: 3,
   headline: 'Where can I see your work?',
-  helper: 'Share at least one link so I can get a sense of your public-facing presence.',
+  helper: 'Share at least one link or handle so I can get a sense of your public-facing presence.',
   requirement: 'At least 1 link required',
   fields: [
-    { id: 'instagram', label: 'Instagram', placeholder: 'https://instagram.com/yourhandle' },
-    { id: 'youtube', label: 'YouTube', placeholder: 'https://youtube.com/@yourchannel' },
-    { id: 'tiktok', label: 'TikTok', placeholder: 'https://tiktok.com/@yourhandle' },
-    { id: 'website', label: 'Website', placeholder: 'https://yourwebsite.com' },
-    { id: 'other', label: 'Other', placeholder: 'https://...' }
+    { id: 'instagram', label: 'Instagram', placeholder: '@yourhandle' },
+    { id: 'youtube', label: 'YouTube', placeholder: '@yourchannel' },
+    { id: 'tiktok', label: 'TikTok', placeholder: '@yourhandle' },
+    { id: 'website', label: 'Website', placeholder: 'yourwebsite.com' },
+    { id: 'other', label: 'Other', placeholder: 'Link or handle' }
   ]
 };
 
@@ -148,9 +148,9 @@ export const STEP_CONTENT = {
     helper: 'Approximate is fine.'
   },
   pricing: {
-    questionNumber: 9,
+    questionNumber: 8,
     headline: 'One last thing.',
-    statement: 'I understand the investment is $7,500 for the 3-month container and I\'m ready to enroll if we\'re a mutual fit.',
+    statement: 'I understand the investment is $5,500 for the 3-month container and I\'m ready to enroll if we\'re a mutual fit.',
     helper: ''
   },
   confirmation: {
@@ -164,16 +164,13 @@ export const STEP_CONTENT = {
 };
 
 // Total question count for progress bar
-// welcome + contact + business + links + symptoms + already_tried + success_outcome + anything_else + revenue + pricing
-export const TOTAL_STEPS = 11;
+// welcome + contact + business + links + symptoms + already_tried + success_outcome + anything_else + pricing
+export const TOTAL_STEPS = 10;
 
-// URL validation helper
+// URL/handle validation helper - accepts URLs, handles (@username), or plain text
 export function isValidUrl(string) {
   if (!string || string.trim() === '') return true; // Empty is OK (we check at least 1 separately)
-  try {
-    const url = new URL(string);
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch {
-    return false;
-  }
+  // Accept anything that looks like a handle, URL, or username
+  // Just make sure they entered something meaningful (at least 3 chars)
+  return string.trim().length >= 3;
 }
