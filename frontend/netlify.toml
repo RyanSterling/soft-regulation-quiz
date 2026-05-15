@@ -1,0 +1,13 @@
+# Netlify configuration
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[[edge_functions]]
+  path = "/apply"
+  function = "og-tags"
+
+[[edge_functions]]
+  path = "/apply/*"
+  function = "og-tags"
