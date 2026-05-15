@@ -5,6 +5,8 @@ import {
   updateEvent,
   deleteEvent,
   getRSVPCount,
+  getRSVPsForEvent,
+  deleteRSVP,
 } from '../lib/supabase';
 
 export default function Events() {
@@ -15,6 +17,11 @@ export default function Events() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  // RSVP viewing state
+  const [expandedEventId, setExpandedEventId] = useState(null);
+  const [eventRsvps, setEventRsvps] = useState([]);
+  const [loadingRsvps, setLoadingRsvps] = useState(false);
 
   const emptyForm = {
     title: '',
@@ -49,6 +56,55 @@ export default function Events() {
     }
     setLoading(false);
   }
+
+  const handleViewRsvps = async (eventId) => {
+    if (expandedEventId === eventId) {
+      setExpandedEventId(null);
+      setEventRsvps([]);
+      return;
+    }
+
+    setExpandedEventId(eventId);
+    setLoadingRsvps(true);
+    const { data } = await getRSVPsForEvent(eventId);
+    setEventRsvps(data || []);
+    setLoadingRsvps(false);
+  };
+
+  const handleDeleteRsvp = async (rsvpId, eventId) => {
+    if (!window.confirm('Delete this RSVP?')) return;
+
+    const { error } = await deleteRSVP(rsvpId);
+    if (!error) {
+      // Refresh RSVPs for this event
+      const { data } = await getRSVPsForEvent(eventId);
+      setEventRsvps(data || []);
+      // Update count
+      const { count } = await getRSVPCount(eventId);
+      setRsvpCounts((prev) => ({ ...prev, [eventId]: count }));
+    }
+  };
+
+  const exportRsvpsCsv = (event) => {
+    const headers = ['Name', 'RSVP Date'];
+    const rows = eventRsvps.map((rsvp) => [
+      rsvp.name,
+      new Date(rsvp.created_at).toLocaleDateString(),
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+      ),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `rsvps-${event.title.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+  };
 
   const handleCreateNew = () => {
     setEditingEvent(null);
@@ -139,6 +195,10 @@ export default function Events() {
 
     const { error } = await deleteEvent(eventId);
     if (!error) {
+      if (expandedEventId === eventId) {
+        setExpandedEventId(null);
+        setEventRsvps([]);
+      }
       fetchEvents();
     }
   };
@@ -155,6 +215,16 @@ export default function Events() {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
+    });
+  };
+
+  const formatRsvpDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
     });
   };
 
@@ -434,95 +504,152 @@ export default function Events() {
         <div className="space-y-4">
           {events.map((event) => {
             const isPast = new Date(event.event_date) < new Date();
+            const isExpanded = expandedEventId === event.id;
+            const rsvpCount = rsvpCounts[event.id] || 0;
+
             return (
               <div
                 key={event.id}
-                className="bg-white rounded-lg p-6"
+                className="bg-white rounded-lg overflow-hidden"
                 style={{
                   border: '1px solid #E5E7EB',
-                  opacity: isPast ? 0.6 : 1,
+                  opacity: isPast ? 0.7 : 1,
                 }}
               >
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3
-                        style={{
-                          fontFamily: 'Libre Baskerville, serif',
-                          fontSize: '1.125rem',
-                          color: '#101827',
-                        }}
-                      >
-                        {event.title}
-                      </h3>
-                      {event.is_active && !isPast && (
-                        <span
-                          className="px-2 py-1 text-xs rounded-full"
+                {/* Event Header */}
+                <div className="p-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3
                           style={{
-                            backgroundColor: '#D1FAE5',
-                            color: '#059669',
+                            fontFamily: 'Libre Baskerville, serif',
+                            fontSize: '1.125rem',
+                            color: '#101827',
                           }}
                         >
-                          Active
-                        </span>
-                      )}
-                      {isPast && (
-                        <span
-                          className="px-2 py-1 text-xs rounded-full"
-                          style={{
-                            backgroundColor: '#F3F4F6',
-                            color: '#6B7280',
-                          }}
-                        >
-                          Past
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-gray-600 text-sm mb-2">
-                      {formatDate(event.event_date)}
-                      {event.time_pacific && ` at ${event.time_pacific}`}
-                    </p>
-                    {event.description && (
-                      <p className="text-gray-500 text-sm line-clamp-2">
-                        {event.description}
+                          {event.title}
+                        </h3>
+                        {event.is_active && !isPast && (
+                          <span
+                            className="px-2 py-1 text-xs rounded-full"
+                            style={{
+                              backgroundColor: '#D1FAE5',
+                              color: '#059669',
+                            }}
+                          >
+                            Active
+                          </span>
+                        )}
+                        {isPast && (
+                          <span
+                            className="px-2 py-1 text-xs rounded-full"
+                            style={{
+                              backgroundColor: '#F3F4F6',
+                              color: '#6B7280',
+                            }}
+                          >
+                            Past
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-gray-600 text-sm mb-2">
+                        {formatDate(event.event_date)}
+                        {event.time_pacific && ` at ${event.time_pacific}`}
                       </p>
-                    )}
-                    <div className="mt-3 flex items-center gap-4">
-                      <span
-                        className="text-sm font-medium"
-                        style={{ color: '#4D1E22' }}
-                      >
-                        {rsvpCounts[event.id] || 0} RSVPs
-                      </span>
+                      {event.description && (
+                        <p className="text-gray-500 text-sm line-clamp-2">
+                          {event.description}
+                        </p>
+                      )}
+                      <div className="mt-3">
+                        <button
+                          onClick={() => handleViewRsvps(event.id)}
+                          className="text-sm font-medium hover:underline"
+                          style={{ color: '#4D1E22' }}
+                        >
+                          {rsvpCount} RSVPs {isExpanded ? '▲' : '▼'}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2 ml-4">
-                    {!isPast && (
+                    <div className="flex items-center gap-2 ml-4">
+                      {!isPast && (
+                        <button
+                          onClick={() => handleToggleActive(event)}
+                          className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
+                          style={{
+                            borderColor: event.is_active ? '#DC2626' : '#059669',
+                            color: event.is_active ? '#DC2626' : '#059669',
+                          }}
+                        >
+                          {event.is_active ? 'Deactivate' : 'Activate'}
+                        </button>
+                      )}
                       <button
-                        onClick={() => handleToggleActive(event)}
-                        className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
-                        style={{
-                          borderColor: event.is_active ? '#DC2626' : '#059669',
-                          color: event.is_active ? '#DC2626' : '#059669',
-                        }}
+                        onClick={() => handleEdit(event)}
+                        className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
                       >
-                        {event.is_active ? 'Deactivate' : 'Activate'}
+                        Edit
                       </button>
-                    )}
-                    <button
-                      onClick={() => handleEdit(event)}
-                      className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(event.id)}
-                      className="px-3 py-1 text-sm border border-red-300 text-red-600 rounded hover:bg-red-50"
-                    >
-                      Delete
-                    </button>
+                      <button
+                        onClick={() => handleDelete(event.id)}
+                        className="px-3 py-1 text-sm border border-red-300 text-red-600 rounded hover:bg-red-50"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
+
+                {/* Expanded RSVPs Section */}
+                {isExpanded && (
+                  <div
+                    className="border-t px-6 py-4"
+                    style={{ backgroundColor: '#F9FAFB' }}
+                  >
+                    {loadingRsvps ? (
+                      <p className="text-gray-500 text-sm">Loading RSVPs...</p>
+                    ) : eventRsvps.length === 0 ? (
+                      <p className="text-gray-500 text-sm">No RSVPs yet for this event.</p>
+                    ) : (
+                      <>
+                        <div className="flex justify-between items-center mb-4">
+                          <p className="text-sm text-gray-600">
+                            {eventRsvps.length} people RSVPed
+                          </p>
+                          <button
+                            onClick={() => exportRsvpsCsv(event)}
+                            className="text-sm px-3 py-1 border border-gray-300 rounded hover:bg-white"
+                          >
+                            Export CSV
+                          </button>
+                        </div>
+                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                          {eventRsvps.map((rsvp) => (
+                            <div
+                              key={rsvp.id}
+                              className="flex justify-between items-center bg-white p-3 rounded border"
+                              style={{ borderColor: '#E5E7EB' }}
+                            >
+                              <div>
+                                <p className="font-medium text-sm">{rsvp.name}</p>
+                                <p className="text-xs text-gray-500">
+                                  RSVPed {formatRsvpDate(rsvp.created_at)}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => handleDeleteRsvp(rsvp.id, event.id)}
+                                className="text-xs text-red-600 hover:underline"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
