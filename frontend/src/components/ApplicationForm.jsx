@@ -8,6 +8,7 @@ import {
   FREE_TEXT_QUESTIONS,
   LINKS_QUESTION,
   SYMPTOMS_QUESTION,
+  COURSE_QUESTION,
   STEP_CONTENT,
   TOTAL_STEPS,
   isValidUrl
@@ -32,6 +33,7 @@ const STEPS = {
   BUSINESS_DESC: 'business_desc',
   LINKS: 'links',
   SYMPTOMS: 'symptoms',
+  COURSE: 'course',
   FREE_TEXT: 'free_text',
   REVENUE: 'revenue',
   PRICING: 'pricing',
@@ -69,6 +71,7 @@ export default function ApplicationForm() {
   });
   const [hasSymptoms, setHasSymptoms] = useState(null); // null, 'yes', 'no'
   const [symptomsDescription, setSymptomsDescription] = useState('');
+  const [hasTakenCourse, setHasTakenCourse] = useState(null); // null, 'yes', 'no'
   const [freeTextAnswers, setFreeTextAnswers] = useState({});
   const [revenueRange, setRevenueRange] = useState('');
   const [pricingAck, setPricingAck] = useState('');
@@ -90,8 +93,9 @@ export default function ApplicationForm() {
     if (currentStep === STEPS.BUSINESS_DESC) return 2;
     if (currentStep === STEPS.LINKS) return 3;
     if (currentStep === STEPS.SYMPTOMS) return 4;
-    if (currentStep === STEPS.FREE_TEXT) return 5 + currentFreeTextIndex;
-    if (currentStep === STEPS.PRICING) return 5 + REMAINING_FREE_TEXT.length;
+    if (currentStep === STEPS.COURSE) return 5;
+    if (currentStep === STEPS.FREE_TEXT) return 6 + currentFreeTextIndex;
+    if (currentStep === STEPS.PRICING) return 6 + REMAINING_FREE_TEXT.length;
     return TOTAL_STEPS;
   };
 
@@ -163,6 +167,11 @@ export default function ApplicationForm() {
       return;
     }
     setError('');
+    transitionTo(() => setCurrentStep(STEPS.COURSE));
+  };
+
+  const handleCourseSelect = (value) => {
+    setHasTakenCourse(value);
     transitionTo(() => {
       setCurrentStep(STEPS.FREE_TEXT);
       setCurrentFreeTextIndex(0);
@@ -211,6 +220,7 @@ export default function ApplicationForm() {
         links: links,
         has_symptoms: hasSymptoms,
         symptoms: hasSymptoms === 'yes' ? symptomsDescription.trim() : null,
+        has_taken_course: hasTakenCourse,
         ...freeTextAnswers
       };
 
@@ -260,6 +270,8 @@ export default function ApplicationForm() {
     } else if (currentStep === STEPS.FREE_TEXT && currentFreeTextIndex > 0) {
       setCurrentFreeTextIndex(currentFreeTextIndex - 1);
     } else if (currentStep === STEPS.FREE_TEXT && currentFreeTextIndex === 0) {
+      setCurrentStep(STEPS.COURSE);
+    } else if (currentStep === STEPS.COURSE) {
       setCurrentStep(STEPS.SYMPTOMS);
     } else if (currentStep === STEPS.SYMPTOMS) {
       setCurrentStep(STEPS.LINKS);
@@ -654,7 +666,54 @@ export default function ApplicationForm() {
   }
 
   // ============================================
-  // FREE TEXT QUESTIONS SCREEN (Q5-Q8)
+  // COURSE QUESTION SCREEN (Q5)
+  // ============================================
+  if (currentStep === STEPS.COURSE) {
+    return (
+      <>
+        <ProgressBar current={getProgress()} total={TOTAL_STEPS} barColor={colors.olive} bgColor={colors.creamDark} />
+        <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.cream }}>
+          <div className={`flex-1 pt-20 pb-8 px-4 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="max-w-3xl mx-auto flex flex-col h-full">
+              <div className="space-y-4 mb-auto">
+                <p className="text-sm font-medium mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
+                  Question {COURSE_QUESTION.questionNumber} of 9
+                </p>
+                <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.875rem', color: colors.black, lineHeight: '1.3', fontWeight: '500' }}>
+                  {COURSE_QUESTION.headline}
+                </h2>
+              </div>
+
+              <div className="space-y-3 mt-8">
+                {COURSE_QUESTION.options.map((option) => {
+                  const isSelected = hasTakenCourse === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => handleCourseSelect(option.value)}
+                      className="w-full text-left px-6 py-4 transition-all duration-100"
+                      style={{ backgroundColor: isSelected ? colors.olive : colors.creamDark, border: `1px solid ${isSelected ? colors.olive : colors.creamDark}`, fontFamily: 'Inter, sans-serif', color: isSelected ? colors.white : colors.muted }}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex justify-between items-center mt-8">
+                <button onClick={handleBack} className="font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
+                  ← Back
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // ============================================
+  // FREE TEXT QUESTIONS SCREEN (Q6-Q8)
   // ============================================
   if (currentStep === STEPS.FREE_TEXT) {
     const question = currentFreeTextQuestion;

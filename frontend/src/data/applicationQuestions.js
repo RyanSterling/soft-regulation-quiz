@@ -68,6 +68,17 @@ export const SYMPTOMS_QUESTION = {
   }
 };
 
+// Course question - yes/no
+export const COURSE_QUESTION = {
+  questionNumber: 5,
+  headline: "Have you taken Maggie's course, Soft Regulation Desensitize?",
+  helper: '',
+  options: [
+    { value: 'yes', label: 'Yes' },
+    { value: 'no', label: 'No' }
+  ]
+};
+
 // Free text questions (shown one per screen)
 export const FREE_TEXT_QUESTIONS = [
   {
@@ -79,10 +90,10 @@ export const FREE_TEXT_QUESTIONS = [
     required: true,
     minChars: 50
   },
-  // Questions 3 (links) and 4 (symptoms) are handled separately
+  // Questions 3 (links), 4 (symptoms), and 5 (course) are handled separately
   {
     id: 'already_tried',
-    questionNumber: 5,
+    questionNumber: 6,
     label: 'What have you already tried?',
     helper: 'Therapy, modalities, courses, practitioners, etc.',
     placeholder: "List what you've already attempted to address this...",
@@ -91,7 +102,7 @@ export const FREE_TEXT_QUESTIONS = [
   },
   {
     id: 'success_outcome',
-    questionNumber: 6,
+    questionNumber: 7,
     label: 'What would success look like for you after 3 months of coaching?',
     helper: '',
     placeholder: "Describe the outcome you're hoping for...",
@@ -100,7 +111,7 @@ export const FREE_TEXT_QUESTIONS = [
   },
   {
     id: 'anything_else',
-    questionNumber: 7,
+    questionNumber: 8,
     label: 'Is there anything else you want me to know before our discovery call?',
     helper: 'Optional, but helpful.',
     placeholder: 'Anything else relevant to your situation...',
@@ -148,7 +159,7 @@ export const STEP_CONTENT = {
     helper: 'Approximate is fine.'
   },
   pricing: {
-    questionNumber: 8,
+    questionNumber: 9,
     headline: 'One last thing.',
     statement: 'I understand the investment is $5,500 for the 3-month container and I\'m ready to enroll if we\'re a mutual fit.',
     helper: ''
@@ -164,8 +175,8 @@ export const STEP_CONTENT = {
 };
 
 // Total question count for progress bar
-// welcome + contact + business + links + symptoms + already_tried + success_outcome + anything_else + pricing
-export const TOTAL_STEPS = 10;
+// welcome + contact + business + links + symptoms + course + already_tried + success_outcome + anything_else + pricing
+export const TOTAL_STEPS = 11;
 
 // URL/handle validation helper - accepts URLs, handles (@username), or plain text
 export function isValidUrl(string) {
