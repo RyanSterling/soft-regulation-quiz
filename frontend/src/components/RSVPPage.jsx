@@ -23,7 +23,6 @@ export default function RSVPPage() {
 
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
   });
 
   // Get UTM params from URL
@@ -57,18 +56,12 @@ export default function RSVPPage() {
       setSubmitting(false);
       return;
     }
-    if (!formData.email.trim() || !formData.email.includes('@')) {
-      setError('Please enter a valid email address');
-      setSubmitting(false);
-      return;
-    }
 
     const utmParams = getUtmParams();
 
     const { error: saveError } = await saveRSVP({
       event_id: event.id,
       name: formData.name.trim(),
-      email: formData.email.trim().toLowerCase(),
       ...utmParams,
     });
 
@@ -186,7 +179,7 @@ export default function RSVPPage() {
               lineHeight: '1.2',
             }}
           >
-            You're In!
+            You're In, {formData.name}!
           </h1>
           <p
             className="mb-6"
@@ -199,7 +192,7 @@ export default function RSVPPage() {
           >
             We'll send the Zoom link to{' '}
             <span style={{ color: colors.black, fontWeight: '500' }}>
-              {formData.email}
+              the email you used to purchase the course
             </span>{' '}
             24 hours before the call, and again as it's starting.
           </p>
@@ -456,35 +449,6 @@ export default function RSVPPage() {
                   fontSize: '1rem',
                 }}
                 placeholder="First name is fine"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block mb-2"
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  color: colors.muted,
-                  fontSize: '0.875rem',
-                }}
-              >
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="w-full px-4 py-3 border rounded-none focus:outline-none focus:ring-2"
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  borderColor: colors.creamDark,
-                  backgroundColor: colors.white,
-                  fontSize: '1rem',
-                }}
-                placeholder="you@example.com"
               />
             </div>
           </div>

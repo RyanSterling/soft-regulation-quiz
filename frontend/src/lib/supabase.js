@@ -485,13 +485,7 @@ export async function saveRSVP(rsvpData) {
       .select()
       .single();
 
-    if (error) {
-      // Check for duplicate RSVP
-      if (error.code === '23505') {
-        return { data: null, error: { message: 'You have already RSVPed for this event!' } };
-      }
-      throw error;
-    }
+    if (error) throw error;
     return { data, error: null };
   } catch (error) {
     console.error('Error saving RSVP:', error);
