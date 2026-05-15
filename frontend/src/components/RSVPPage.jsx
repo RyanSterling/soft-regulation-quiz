@@ -262,9 +262,9 @@ export default function RSVPPage() {
   // Main RSVP form
   return (
     <div className="min-h-screen" style={{ backgroundColor: colors.cream }}>
-      <div className="max-w-2xl mx-auto px-6 py-16 lg:py-24">
+      <div className="max-w-2xl mx-auto px-6 py-10 lg:py-20">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <p
             className="mb-4"
             style={{
@@ -291,101 +291,36 @@ export default function RSVPPage() {
           </h1>
         </div>
 
-        {/* Event Details Card */}
-        <div
-          className="p-8 mb-10"
-          style={{
-            backgroundColor: colors.white,
-            border: `1px solid ${colors.creamDark}`,
-          }}
-        >
-          <div className="text-center mb-6">
-            <p
-              className="mb-2"
-              style={{
-                fontFamily: 'Cormorant Garamond, serif',
-                fontWeight: '500',
-                color: colors.black,
-                fontSize: '1.375rem',
-              }}
-            >
-              {formattedDate}
-            </p>
-            <p
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                color: colors.muted,
-                fontSize: '1rem',
-                lineHeight: '1.6',
-              }}
-            >
-              {event.time_pacific} / {event.time_eastern}
-              <br />
-              {event.time_uk} / {event.time_europe}
-            </p>
-          </div>
-
-          {event.description && (
-            <p
-              className="text-center mb-6"
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                color: colors.muted,
-                fontSize: '0.9375rem',
-                lineHeight: '1.75',
-              }}
-            >
-              {event.description}
-            </p>
-          )}
-
-          <p
-            className="text-center"
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              color: colors.muted,
-              fontSize: '0.875rem',
-              lineHeight: '1.7',
-            }}
-          >
-            Zoom link sent 24 hours before and again as it starts.
-            <br />
-            Can't make it? The replay will be in your coaching feed.
-          </p>
-        </div>
-
         {/* RSVP Form */}
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4 mb-6">
-            <div>
-              <label
-                htmlFor="name"
-                className="block mb-2"
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  color: colors.muted,
-                  fontSize: '0.875rem',
-                }}
-              >
-                Your Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full px-4 py-3 border rounded-none focus:outline-none focus:ring-2"
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  borderColor: colors.creamDark,
-                  backgroundColor: colors.white,
-                  fontSize: '1rem',
-                }}
-                placeholder="First name is fine"
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="mb-10">
+          <div className="mb-4">
+            <label
+              htmlFor="name"
+              className="block mb-2"
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                color: colors.muted,
+                fontSize: '0.875rem',
+              }}
+            >
+              Your Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className="w-full px-4 py-3 border rounded-none focus:outline-none focus:ring-2"
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                borderColor: colors.creamDark,
+                backgroundColor: colors.white,
+                fontSize: '1rem',
+              }}
+              placeholder="First name is fine"
+            />
           </div>
 
           {error && (
@@ -420,6 +355,69 @@ export default function RSVPPage() {
             {submitting ? 'Submitting...' : 'RSVP Now'}
           </button>
         </form>
+
+        {/* Event Details Card */}
+        <div
+          className="p-6 mb-8"
+          style={{
+            backgroundColor: colors.white,
+            border: `1px solid ${colors.creamDark}`,
+          }}
+        >
+          <div className="text-center mb-4">
+            <p
+              className="mb-1"
+              style={{
+                fontFamily: 'Cormorant Garamond, serif',
+                fontWeight: '500',
+                color: colors.black,
+                fontSize: '1.25rem',
+              }}
+            >
+              {formattedDate}
+            </p>
+            <p
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                color: colors.muted,
+                fontSize: '0.9375rem',
+                lineHeight: '1.5',
+              }}
+            >
+              {event.time_pacific} / {event.time_eastern}
+              <br />
+              {event.time_uk} / {event.time_europe}
+            </p>
+          </div>
+
+          {event.description && (
+            <p
+              className="text-center mb-4"
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                color: colors.muted,
+                fontSize: '0.875rem',
+                lineHeight: '1.7',
+              }}
+            >
+              {event.description}
+            </p>
+          )}
+
+          <p
+            className="text-center"
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              color: colors.muted,
+              fontSize: '0.8125rem',
+              lineHeight: '1.6',
+            }}
+          >
+            Zoom link sent 24 hours before and again as it starts.
+            <br />
+            Can't make it? The replay will be in your coaching feed.
+          </p>
+        </div>
 
         {/* Closing */}
         <p
