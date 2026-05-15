@@ -18,10 +18,11 @@ export default function Events() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
-  // RSVP viewing state
-  const [expandedEventId, setExpandedEventId] = useState(null);
+  // Detail view state
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventRsvps, setEventRsvps] = useState([]);
   const [loadingRsvps, setLoadingRsvps] = useState(false);
+  const [rsvpSearch, setRsvpSearch] = useState('');
 
   const emptyForm = {
     title: '',
@@ -46,7 +47,6 @@ export default function Events() {
     const { data, error } = await getAllEvents();
     if (!error) {
       setEvents(data);
-      // Fetch RSVP counts for each event
       const counts = {};
       for (const event of data) {
         const { count } = await getRSVPCount(event.id);
@@ -57,37 +57,36 @@ export default function Events() {
     setLoading(false);
   }
 
-  const handleViewRsvps = async (eventId) => {
-    if (expandedEventId === eventId) {
-      setExpandedEventId(null);
-      setEventRsvps([]);
-      return;
-    }
-
-    setExpandedEventId(eventId);
+  const handleSelectEvent = async (event) => {
+    setSelectedEvent(event);
     setLoadingRsvps(true);
-    const { data } = await getRSVPsForEvent(eventId);
+    setRsvpSearch('');
+    const { data } = await getRSVPsForEvent(event.id);
     setEventRsvps(data || []);
     setLoadingRsvps(false);
   };
 
-  const handleDeleteRsvp = async (rsvpId, eventId) => {
+  const handleBackToList = () => {
+    setSelectedEvent(null);
+    setEventRsvps([]);
+    setRsvpSearch('');
+  };
+
+  const handleDeleteRsvp = async (rsvpId) => {
     if (!window.confirm('Delete this RSVP?')) return;
 
     const { error } = await deleteRSVP(rsvpId);
     if (!error) {
-      // Refresh RSVPs for this event
-      const { data } = await getRSVPsForEvent(eventId);
+      const { data } = await getRSVPsForEvent(selectedEvent.id);
       setEventRsvps(data || []);
-      // Update count
-      const { count } = await getRSVPCount(eventId);
-      setRsvpCounts((prev) => ({ ...prev, [eventId]: count }));
+      const { count } = await getRSVPCount(selectedEvent.id);
+      setRsvpCounts((prev) => ({ ...prev, [selectedEvent.id]: count }));
     }
   };
 
-  const exportRsvpsCsv = (event) => {
+  const exportRsvpsCsv = () => {
     const headers = ['Name', 'RSVP Date'];
-    const rows = eventRsvps.map((rsvp) => [
+    const rows = filteredRsvps.map((rsvp) => [
       rsvp.name,
       new Date(rsvp.created_at).toLocaleDateString(),
     ]);
@@ -102,7 +101,7 @@ export default function Events() {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `rsvps-${event.title.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `rsvps-${selectedEvent.title.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
   };
 
@@ -113,7 +112,8 @@ export default function Events() {
     setError('');
   };
 
-  const handleEdit = (event) => {
+  const handleEdit = (event, e) => {
+    e.stopPropagation();
     const eventDate = new Date(event.event_date);
     setEditingEvent(event);
     setFormData({
@@ -136,7 +136,6 @@ export default function Events() {
     setError('');
     setSaving(true);
 
-    // Validate
     if (!formData.title.trim()) {
       setError('Title is required');
       setSaving(false);
@@ -148,7 +147,6 @@ export default function Events() {
       return;
     }
 
-    // Combine date and time into ISO string
     const eventDateTime = new Date(
       `${formData.event_date}T${formData.event_time}:00Z`
     );
@@ -184,10 +182,11 @@ export default function Events() {
     fetchEvents();
   };
 
-  const handleDelete = async (eventId) => {
+  const handleDelete = async (eventId, e) => {
+    e.stopPropagation();
     if (
       !window.confirm(
-        'Are you sure you want to delete this event? This will also delete all RSVPs for this event.'
+        'Delete this event and all its RSVPs?'
       )
     ) {
       return;
@@ -195,15 +194,16 @@ export default function Events() {
 
     const { error } = await deleteEvent(eventId);
     if (!error) {
-      if (expandedEventId === eventId) {
-        setExpandedEventId(null);
+      if (selectedEvent?.id === eventId) {
+        setSelectedEvent(null);
         setEventRsvps([]);
       }
       fetchEvents();
     }
   };
 
-  const handleToggleActive = async (event) => {
+  const handleToggleActive = async (event, e) => {
+    e.stopPropagation();
     await updateEvent(event.id, { is_active: !event.is_active });
     fetchEvents();
   };
@@ -228,6 +228,12 @@ export default function Events() {
     });
   };
 
+  // Filter RSVPs by search
+  const filteredRsvps = eventRsvps.filter((rsvp) => {
+    if (!rsvpSearch) return true;
+    return rsvp.name.toLowerCase().includes(rsvpSearch.toLowerCase());
+  });
+
   if (loading) {
     return (
       <div className="text-center py-12">
@@ -238,6 +244,165 @@ export default function Events() {
     );
   }
 
+  // DETAIL VIEW - Selected Event
+  if (selectedEvent) {
+    const isPast = new Date(selectedEvent.event_date) < new Date();
+
+    return (
+      <div>
+        {/* Back button */}
+        <button
+          onClick={handleBackToList}
+          className="flex items-center gap-2 mb-6 text-gray-600 hover:text-gray-900"
+          style={{ fontFamily: 'Inter, sans-serif' }}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Events
+        </button>
+
+        {/* Event Header */}
+        <div
+          className="bg-white rounded-lg p-6 mb-6"
+          style={{ border: '1px solid #E5E7EB' }}
+        >
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h2
+                  style={{
+                    fontFamily: 'Libre Baskerville, serif',
+                    fontSize: '1.5rem',
+                    color: '#101827',
+                  }}
+                >
+                  {selectedEvent.title}
+                </h2>
+                {selectedEvent.is_active && !isPast && (
+                  <span
+                    className="px-2 py-1 text-xs rounded-full"
+                    style={{ backgroundColor: '#D1FAE5', color: '#059669' }}
+                  >
+                    Active
+                  </span>
+                )}
+                {isPast && (
+                  <span
+                    className="px-2 py-1 text-xs rounded-full"
+                    style={{ backgroundColor: '#F3F4F6', color: '#6B7280' }}
+                  >
+                    Past
+                  </span>
+                )}
+              </div>
+              <p className="text-gray-600 mb-1">
+                {formatDate(selectedEvent.event_date)}
+                {selectedEvent.time_pacific && ` at ${selectedEvent.time_pacific}`}
+              </p>
+              {selectedEvent.description && (
+                <p className="text-gray-500 text-sm mt-2">{selectedEvent.description}</p>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={(e) => handleEdit(selectedEvent, e)}
+                className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* RSVPs Section */}
+        <div
+          className="bg-white rounded-lg"
+          style={{ border: '1px solid #E5E7EB' }}
+        >
+          {/* RSVPs Header */}
+          <div className="p-6 border-b" style={{ borderColor: '#E5E7EB' }}>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h3
+                  style={{
+                    fontFamily: 'Libre Baskerville, serif',
+                    fontSize: '1.25rem',
+                    color: '#101827',
+                  }}
+                >
+                  RSVPs
+                </h3>
+                <p className="text-gray-500 text-sm mt-1">
+                  {rsvpCounts[selectedEvent.id] || 0} people registered
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={rsvpSearch}
+                  onChange={(e) => setRsvpSearch(e.target.value)}
+                  placeholder="Search by name..."
+                  className="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#4D1E22]"
+                  style={{ fontFamily: 'Inter, sans-serif', width: '200px' }}
+                />
+                <button
+                  onClick={exportRsvpsCsv}
+                  disabled={filteredRsvps.length === 0}
+                  className="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  Export CSV
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* RSVPs List */}
+          <div className="divide-y" style={{ borderColor: '#E5E7EB' }}>
+            {loadingRsvps ? (
+              <div className="p-8 text-center text-gray-500">Loading RSVPs...</div>
+            ) : filteredRsvps.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                {rsvpSearch ? 'No RSVPs match your search' : 'No RSVPs yet'}
+              </div>
+            ) : (
+              filteredRsvps.map((rsvp) => (
+                <div
+                  key={rsvp.id}
+                  className="px-6 py-4 flex justify-between items-center hover:bg-gray-50"
+                >
+                  <div>
+                    <p
+                      className="font-medium"
+                      style={{ fontFamily: 'Inter, sans-serif', color: '#101827' }}
+                    >
+                      {rsvp.name}
+                    </p>
+                    <p
+                      className="text-sm text-gray-500"
+                      style={{ fontFamily: 'Inter, sans-serif' }}
+                    >
+                      RSVPed {formatRsvpDate(rsvp.created_at)}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteRsvp(rsvp.id)}
+                    className="text-sm text-red-600 hover:text-red-800"
+                    style={{ fontFamily: 'Inter, sans-serif' }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // LIST VIEW - All Events
   return (
     <div>
       {/* Header */}
@@ -452,9 +617,7 @@ export default function Events() {
                   </label>
                 </div>
 
-                {error && (
-                  <p className="text-red-600 text-sm">{error}</p>
-                )}
+                {error && <p className="text-red-600 text-sm">{error}</p>}
 
                 <div className="flex gap-3 pt-4">
                   <button
@@ -501,81 +664,66 @@ export default function Events() {
           </button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {events.map((event) => {
             const isPast = new Date(event.event_date) < new Date();
-            const isExpanded = expandedEventId === event.id;
             const rsvpCount = rsvpCounts[event.id] || 0;
 
             return (
               <div
                 key={event.id}
-                className="bg-white rounded-lg overflow-hidden"
+                onClick={() => handleSelectEvent(event)}
+                className="bg-white rounded-lg p-5 cursor-pointer hover:shadow-md transition-shadow"
                 style={{
                   border: '1px solid #E5E7EB',
                   opacity: isPast ? 0.7 : 1,
                 }}
               >
-                {/* Event Header */}
-                <div className="p-6">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3
-                          style={{
-                            fontFamily: 'Libre Baskerville, serif',
-                            fontSize: '1.125rem',
-                            color: '#101827',
-                          }}
+                <div className="flex justify-between items-center">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-1">
+                      <h3
+                        style={{
+                          fontFamily: 'Libre Baskerville, serif',
+                          fontSize: '1.0625rem',
+                          color: '#101827',
+                        }}
+                      >
+                        {event.title}
+                      </h3>
+                      {event.is_active && !isPast && (
+                        <span
+                          className="px-2 py-0.5 text-xs rounded-full"
+                          style={{ backgroundColor: '#D1FAE5', color: '#059669' }}
                         >
-                          {event.title}
-                        </h3>
-                        {event.is_active && !isPast && (
-                          <span
-                            className="px-2 py-1 text-xs rounded-full"
-                            style={{
-                              backgroundColor: '#D1FAE5',
-                              color: '#059669',
-                            }}
-                          >
-                            Active
-                          </span>
-                        )}
-                        {isPast && (
-                          <span
-                            className="px-2 py-1 text-xs rounded-full"
-                            style={{
-                              backgroundColor: '#F3F4F6',
-                              color: '#6B7280',
-                            }}
-                          >
-                            Past
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-gray-600 text-sm mb-2">
-                        {formatDate(event.event_date)}
-                        {event.time_pacific && ` at ${event.time_pacific}`}
-                      </p>
-                      {event.description && (
-                        <p className="text-gray-500 text-sm line-clamp-2">
-                          {event.description}
-                        </p>
+                          Active
+                        </span>
                       )}
-                      <div className="mt-3">
-                        <button
-                          onClick={() => handleViewRsvps(event.id)}
-                          className="text-sm font-medium hover:underline"
-                          style={{ color: '#4D1E22' }}
+                      {isPast && (
+                        <span
+                          className="px-2 py-0.5 text-xs rounded-full"
+                          style={{ backgroundColor: '#F3F4F6', color: '#6B7280' }}
                         >
-                          {rsvpCount} RSVPs {isExpanded ? '▲' : '▼'}
-                        </button>
-                      </div>
+                          Past
+                        </span>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2 ml-4">
+                    <p className="text-gray-500 text-sm">
+                      {formatDate(event.event_date)}
+                      {event.time_pacific && ` at ${event.time_pacific}`}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span
+                      className="text-sm font-medium"
+                      style={{ color: '#4D1E22' }}
+                    >
+                      {rsvpCount} RSVPs
+                    </span>
+                    <div className="flex items-center gap-2">
                       {!isPast && (
                         <button
-                          onClick={() => handleToggleActive(event)}
+                          onClick={(e) => handleToggleActive(event, e)}
                           className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
                           style={{
                             borderColor: event.is_active ? '#DC2626' : '#059669',
@@ -586,13 +734,13 @@ export default function Events() {
                         </button>
                       )}
                       <button
-                        onClick={() => handleEdit(event)}
+                        onClick={(e) => handleEdit(event, e)}
                         className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
                       >
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(event.id)}
+                        onClick={(e) => handleDelete(event.id, e)}
                         className="px-3 py-1 text-sm border border-red-300 text-red-600 rounded hover:bg-red-50"
                       >
                         Delete
@@ -600,56 +748,6 @@ export default function Events() {
                     </div>
                   </div>
                 </div>
-
-                {/* Expanded RSVPs Section */}
-                {isExpanded && (
-                  <div
-                    className="border-t px-6 py-4"
-                    style={{ backgroundColor: '#F9FAFB' }}
-                  >
-                    {loadingRsvps ? (
-                      <p className="text-gray-500 text-sm">Loading RSVPs...</p>
-                    ) : eventRsvps.length === 0 ? (
-                      <p className="text-gray-500 text-sm">No RSVPs yet for this event.</p>
-                    ) : (
-                      <>
-                        <div className="flex justify-between items-center mb-4">
-                          <p className="text-sm text-gray-600">
-                            {eventRsvps.length} people RSVPed
-                          </p>
-                          <button
-                            onClick={() => exportRsvpsCsv(event)}
-                            className="text-sm px-3 py-1 border border-gray-300 rounded hover:bg-white"
-                          >
-                            Export CSV
-                          </button>
-                        </div>
-                        <div className="space-y-2 max-h-64 overflow-y-auto">
-                          {eventRsvps.map((rsvp) => (
-                            <div
-                              key={rsvp.id}
-                              className="flex justify-between items-center bg-white p-3 rounded border"
-                              style={{ borderColor: '#E5E7EB' }}
-                            >
-                              <div>
-                                <p className="font-medium text-sm">{rsvp.name}</p>
-                                <p className="text-xs text-gray-500">
-                                  RSVPed {formatRsvpDate(rsvp.created_at)}
-                                </p>
-                              </div>
-                              <button
-                                onClick={() => handleDeleteRsvp(rsvp.id, event.id)}
-                                className="text-xs text-red-600 hover:underline"
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
               </div>
             );
           })}
