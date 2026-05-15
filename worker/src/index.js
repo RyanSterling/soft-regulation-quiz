@@ -258,7 +258,7 @@ app.post('/application-webhook', async (c) => {
     } = body;
 
     // Validate required fields
-    if (!name || !email || !answers || !revenueRange) {
+    if (!name || !email || !answers) {
       return c.json({ error: 'Missing required fields' }, 400);
     }
 

@@ -327,7 +327,7 @@ export default function RSVPPage() {
 
           {event.description && (
             <p
-              className="text-center"
+              className="text-center mb-6"
               style={{
                 fontFamily: 'Inter, sans-serif',
                 color: colors.muted,
@@ -338,85 +338,20 @@ export default function RSVPPage() {
               {event.description}
             </p>
           )}
-        </div>
 
-        {/* Additional Info */}
-        <div className="mb-10 space-y-4">
-          <div
-            className="flex items-start gap-3 p-4"
-            style={{ backgroundColor: colors.oliveMuted }}
+          <p
+            className="text-center"
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              color: colors.muted,
+              fontSize: '0.875rem',
+              lineHeight: '1.7',
+            }}
           >
-            <span style={{ color: colors.olive, marginTop: '0.125rem' }}>
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </span>
-            <p
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                color: colors.black,
-                fontSize: '0.9375rem',
-                lineHeight: '1.6',
-              }}
-            >
-              Hosted via Zoom. We'll send the link 24 hours before the call, and
-              again as it's starting.
-            </p>
-          </div>
-          <div
-            className="flex items-start gap-3 p-4"
-            style={{ backgroundColor: colors.oliveMuted }}
-          >
-            <span style={{ color: colors.olive, marginTop: '0.125rem' }}>
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </span>
-            <p
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                color: colors.black,
-                fontSize: '0.9375rem',
-                lineHeight: '1.6',
-              }}
-            >
-              Nobody will be on camera except Maggie. Questions will be answered
-              via the question box.
-            </p>
-          </div>
-          <div
-            className="flex items-start gap-3 p-4"
-            style={{ backgroundColor: colors.oliveMuted }}
-          >
-            <span style={{ color: colors.olive, marginTop: '0.125rem' }}>
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </span>
-            <p
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                color: colors.black,
-                fontSize: '0.9375rem',
-                lineHeight: '1.6',
-              }}
-            >
-              Can't make it live? The full replay will be in your coaching
-              broadcast feed afterward.
-            </p>
-          </div>
+            Zoom link sent 24 hours before and again as it starts.
+            <br />
+            Can't make it? The replay will be in your coaching feed.
+          </p>
         </div>
 
         {/* RSVP Form */}

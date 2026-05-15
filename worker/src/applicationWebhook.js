@@ -35,15 +35,13 @@ export async function sendApplicationWebhook(env, data) {
 
       // Answers (flattened from JSONB)
       business_description: answers.business_description || null,
-      business_links: answers.business_links || null,
+      links: answers.links || null,
+      has_symptoms: answers.has_symptoms || null,
       symptoms: answers.symptoms || null,
+      has_taken_course: answers.has_taken_course || null,
       already_tried: answers.already_tried || null,
-      why_now: answers.why_now || null,
-      clear_yes: answers.clear_yes || null,
+      success_outcome: answers.success_outcome || null,
       anything_else: answers.anything_else || null,
-
-      // Revenue
-      revenue_range: revenueRange,
 
       // UTM tracking
       utm_source: utmSource || null,
