@@ -255,6 +255,8 @@ export default function Quiz() {
         scores={scores}
         aiContent={aiContent}
         symptoms={answers.q12 || []}
+        email={email}
+        utmParams={utmParams}
       />
     );
   }

@@ -22,3 +22,23 @@ export function trackSensitizedResult(scores) {
     });
   }
 }
+
+export function trackResultsViewed(result, scores) {
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'ViewContent', {
+      content_name: 'Quiz Results',
+      content_category: result,
+      value: scores?.total || 0
+    });
+  }
+}
+
+export function trackResultsEngagement(result, timeSpentSeconds) {
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('trackCustom', 'ResultsEngagement', {
+      content_name: 'Quiz Results',
+      result: result,
+      time_spent_seconds: timeSpentSeconds
+    });
+  }
+}

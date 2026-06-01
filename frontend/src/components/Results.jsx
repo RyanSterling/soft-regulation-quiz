@@ -1,15 +1,29 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import ScoreVisualization from './ScoreVisualization';
 import SalesSection from './SalesSection';
 import { getSeverityLevel } from '../lib/scoring';
 import { getSymptomComparisons } from '../data/symptomData';
+import { trackResultsViewed, trackResultsEngagement } from '../lib/pixel';
+
+const TRACKER_API_URL = 'https://learn.maggiesterling.com/api/quiz/results-viewed';
+
+// Get visitor ID from tracker cookie
+function getVisitorId() {
+  const match = document.cookie.match(/(?:^|;\s*)_vid=([^;]*)/);
+  return match ? match[1] : null;
+}
 
 export default function Results({
   result,
   scores,
   aiContent,
-  symptoms = []
+  symptoms = [],
+  email = '',
+  utmParams = {}
 }) {
+  const startTimeRef = useRef(Date.now());
+  const viewIdRef = useRef(null);
+
   // Scroll to top when results load (delay to override browser autoscroll to video)
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -17,6 +31,75 @@ export default function Results({
     const timeout = setTimeout(() => window.scrollTo(0, 0), 100);
     return () => clearTimeout(timeout);
   }, []);
+
+  // Track results page view and time spent (Facebook Pixel)
+  useEffect(() => {
+    // Fire ViewContent when results page loads
+    trackResultsViewed(result, scores);
+
+    // Track time spent on results page
+    const handleBeforeUnload = () => {
+      const timeSpent = Math.round((Date.now() - startTimeRef.current) / 1000);
+      trackResultsEngagement(result, timeSpent);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Also fire on unmount (e.g., if user navigates away within the SPA)
+      const timeSpent = Math.round((Date.now() - startTimeRef.current) / 1000);
+      trackResultsEngagement(result, timeSpent);
+    };
+  }, [result, scores]);
+
+  // Track results view in tracker database (for dashboard analytics)
+  useEffect(() => {
+    const trackView = async () => {
+      try {
+        const response = await fetch(TRACKER_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email || null,
+            visitor_id: getVisitorId(),
+            source: utmParams.utm_source || null,
+            campaign: utmParams.utm_campaign || null,
+            quiz_result: result
+          })
+        });
+        const data = await response.json();
+        if (data.view_id) {
+          viewIdRef.current = data.view_id;
+        }
+      } catch (error) {
+        console.error('Failed to track results view:', error);
+      }
+    };
+
+    trackView();
+
+    // Update time spent when leaving page
+    const updateTimeSpent = () => {
+      if (!viewIdRef.current) return;
+      const timeSpent = Math.round((Date.now() - startTimeRef.current) / 1000);
+      // Use sendBeacon for reliable delivery on page unload
+      navigator.sendBeacon(
+        TRACKER_API_URL,
+        JSON.stringify({
+          view_id: viewIdRef.current,
+          time_on_page_seconds: timeSpent
+        })
+      );
+    };
+
+    window.addEventListener('beforeunload', updateTimeSpent);
+
+    return () => {
+      window.removeEventListener('beforeunload', updateTimeSpent);
+      updateTimeSpent();
+    };
+  }, [email, utmParams, result]);
 
   // Get severity level for sensitized results
   const severity = scores ? getSeverityLevel(scores, result) : null;
