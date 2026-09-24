@@ -8,6 +8,8 @@ import ApplicationLanding from './components/ApplicationLanding';
 import ApplicationForm from './components/ApplicationForm';
 import ApplicationNotReady from './components/ApplicationNotReady';
 import RSVPPage from './components/RSVPPage';
+import SuccessStoryForm from './components/SuccessStoryForm';
+import SuccessStoryAdmin from './components/SuccessStoryAdmin';
 import Privacy from './pages/Privacy';
 import Footer from './components/Footer';
 
@@ -65,6 +67,13 @@ function App() {
             <Footer />
           </>
         } />
+        <Route path="/success-story" element={
+          <>
+            <SuccessStoryForm />
+            <Footer />
+          </>
+        } />
+        <Route path="/success-story/admin" element={<SuccessStoryAdmin />} />
       </Routes>
     </BrowserRouter>
   );
