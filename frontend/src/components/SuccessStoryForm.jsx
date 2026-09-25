@@ -18,7 +18,9 @@ export default function SuccessStoryForm() {
     name: '',
     email: '',
     life_before: '',
+    symptoms: '',
     life_now: '',
+    what_helped: '',
     recovery_status: '',
     camera_consent: false,
   });
@@ -44,13 +46,33 @@ export default function SuccessStoryForm() {
     e.preventDefault();
     setError('');
 
-    if (!formData.name || !formData.email || !formData.life_before || !formData.life_now || !formData.recovery_status) {
+    if (!formData.name || !formData.email || !formData.life_before || !formData.symptoms || !formData.life_now || !formData.what_helped || !formData.recovery_status) {
       setError('Please fill in all required fields');
       return;
     }
 
     if (!validateEmail(formData.email)) {
       setError('Please enter a valid email address');
+      return;
+    }
+
+    if (formData.life_before.length < 150) {
+      setError('Please provide more detail about life before (at least 150 characters)');
+      return;
+    }
+
+    if (formData.symptoms.length < 100) {
+      setError('Please provide more detail about symptoms (at least 100 characters)');
+      return;
+    }
+
+    if (formData.life_now.length < 150) {
+      setError('Please provide more detail about life now (at least 150 characters)');
+      return;
+    }
+
+    if (formData.what_helped.length < 100) {
+      setError('Please provide more detail about what helped (at least 100 characters)');
       return;
     }
 
@@ -68,7 +90,9 @@ export default function SuccessStoryForm() {
           name: formData.name,
           email: formData.email,
           life_before: formData.life_before,
+          symptoms: formData.symptoms,
           life_now: formData.life_now,
+          what_helped: formData.what_helped,
           recovery_status: formData.recovery_status,
           camera_consent: formData.camera_consent,
         }]);
@@ -177,12 +201,39 @@ export default function SuccessStoryForm() {
                 What was life like when you started the course? <span style={{ color: colors.error }}>*</span>
               </label>
               <p className="text-sm mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
-                A few sentences is perfect. Specifics help, like what you were avoiding or what your days looked like.
+                Give specific examples - what activities did you avoid? What did a typical day look like? How did symptoms affect work, relationships, or daily tasks? (Minimum 150 characters)
               </p>
               <textarea
                 id="life_before"
                 name="life_before"
                 value={formData.life_before}
+                onChange={handleChange}
+                rows={4}
+                className="w-full px-4 py-3 resize-none"
+                style={{
+                  backgroundColor: colors.creamDark,
+                  border: `1px solid ${colors.creamDark}`,
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '1rem',
+                  color: colors.black,
+                  outline: 'none'
+                }}
+                required
+              />
+            </div>
+
+            {/* Symptoms */}
+            <div>
+              <label htmlFor="symptoms" className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
+                What symptoms were you experiencing? <span style={{ color: colors.error }}>*</span>
+              </label>
+              <p className="text-sm mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
+                Be specific about the physical, emotional, or mental symptoms you were dealing with. Examples: panic attacks, chronic pain, dissociation, brain fog, fatigue, etc. (Minimum 100 characters)
+              </p>
+              <textarea
+                id="symptoms"
+                name="symptoms"
+                value={formData.symptoms}
                 onChange={handleChange}
                 rows={4}
                 className="w-full px-4 py-3 resize-none"
@@ -204,12 +255,39 @@ export default function SuccessStoryForm() {
                 What's life like now? <span style={{ color: colors.error }}>*</span>
               </label>
               <p className="text-sm mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
-                What's different day to day? What can you do now that you couldn't do before? Things like trips, work, activities, or everyday stuff that used to feel hard.
+                What's different day to day? Give concrete examples - specific activities you can do now, how work or relationships have improved, everyday things that used to feel hard but don't anymore. (Minimum 150 characters)
               </p>
               <textarea
                 id="life_now"
                 name="life_now"
                 value={formData.life_now}
+                onChange={handleChange}
+                rows={4}
+                className="w-full px-4 py-3 resize-none"
+                style={{
+                  backgroundColor: colors.creamDark,
+                  border: `1px solid ${colors.creamDark}`,
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '1rem',
+                  color: colors.black,
+                  outline: 'none'
+                }}
+                required
+              />
+            </div>
+
+            {/* What Helped */}
+            <div>
+              <label htmlFor="what_helped" className="block mb-2 text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
+                What specific parts of the Soft Regulation course helped you the most? <span style={{ color: colors.error }}>*</span>
+              </label>
+              <p className="text-sm mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
+                Be specific - mention particular videos, exercises, or concepts from the course. This helps us know the course made the difference. (Minimum 100 characters)
+              </p>
+              <textarea
+                id="what_helped"
+                name="what_helped"
+                value={formData.what_helped}
                 onChange={handleChange}
                 rows={4}
                 className="w-full px-4 py-3 resize-none"

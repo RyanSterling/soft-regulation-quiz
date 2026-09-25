@@ -156,10 +156,28 @@ export default function SuccessStoryAdmin() {
                 </div>
 
                 <div>
+                  <p className="text-sm font-medium mb-1" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Symptoms</p>
+                  <div className="p-4" style={{ backgroundColor: colors.cream }}>
+                    <p style={{ fontFamily: 'Inter, sans-serif', color: colors.black, whiteSpace: 'pre-wrap' }}>
+                      {selectedStory.symptoms || 'Not provided'}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
                   <p className="text-sm font-medium mb-1" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Life Now</p>
                   <div className="p-4" style={{ backgroundColor: colors.cream }}>
                     <p style={{ fontFamily: 'Inter, sans-serif', color: colors.black, whiteSpace: 'pre-wrap' }}>
                       {selectedStory.life_now}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium mb-1" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>What Helped from the Course</p>
+                  <div className="p-4" style={{ backgroundColor: colors.cream }}>
+                    <p style={{ fontFamily: 'Inter, sans-serif', color: colors.black, whiteSpace: 'pre-wrap' }}>
+                      {selectedStory.what_helped || 'Not provided'}
                     </p>
                   </div>
                 </div>
