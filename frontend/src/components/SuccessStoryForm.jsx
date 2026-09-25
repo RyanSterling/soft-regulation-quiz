@@ -56,26 +56,6 @@ export default function SuccessStoryForm() {
       return;
     }
 
-    if (formData.life_before.length < 150) {
-      setError('Please provide more detail about life before (at least 150 characters)');
-      return;
-    }
-
-    if (formData.symptoms.length < 100) {
-      setError('Please provide more detail about symptoms (at least 100 characters)');
-      return;
-    }
-
-    if (formData.life_now.length < 150) {
-      setError('Please provide more detail about life now (at least 150 characters)');
-      return;
-    }
-
-    if (formData.what_helped.length < 100) {
-      setError('Please provide more detail about what helped (at least 100 characters)');
-      return;
-    }
-
     if (!formData.camera_consent) {
       setError('Please confirm you are comfortable being on camera');
       return;
@@ -201,7 +181,7 @@ export default function SuccessStoryForm() {
                 What was life like when you started the course? <span style={{ color: colors.error }}>*</span>
               </label>
               <p className="text-sm mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
-                Give specific examples - what activities did you avoid? What did a typical day look like? How did symptoms affect work, relationships, or daily tasks? (Minimum 150 characters)
+                Give specific examples - what activities did you avoid? What did a typical day look like? How did symptoms affect work, relationships, or daily tasks?
               </p>
               <textarea
                 id="life_before"
@@ -228,7 +208,7 @@ export default function SuccessStoryForm() {
                 What symptoms were you experiencing? <span style={{ color: colors.error }}>*</span>
               </label>
               <p className="text-sm mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
-                Be specific about the physical, emotional, or mental symptoms you were dealing with. Examples: panic attacks, chronic pain, dissociation, brain fog, fatigue, etc. (Minimum 100 characters)
+                Be specific about the physical, emotional, or mental symptoms you were dealing with. Examples: panic attacks, chronic pain, dissociation, brain fog, fatigue, etc.
               </p>
               <textarea
                 id="symptoms"
@@ -255,7 +235,7 @@ export default function SuccessStoryForm() {
                 What's life like now? <span style={{ color: colors.error }}>*</span>
               </label>
               <p className="text-sm mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
-                What's different day to day? Give concrete examples - specific activities you can do now, how work or relationships have improved, everyday things that used to feel hard but don't anymore. (Minimum 150 characters)
+                What's different day to day? Give concrete examples - specific activities you can do now, how work or relationships have improved, everyday things that used to feel hard but don't anymore.
               </p>
               <textarea
                 id="life_now"
@@ -282,7 +262,7 @@ export default function SuccessStoryForm() {
                 What specific parts of the Soft Regulation course helped you the most? <span style={{ color: colors.error }}>*</span>
               </label>
               <p className="text-sm mb-2" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
-                Be specific - mention particular videos, exercises, or concepts from the course. This helps us know the course made the difference. (Minimum 100 characters)
+                Be specific - mention particular videos, exercises, or concepts from the course. This helps us know the course made the difference.
               </p>
               <textarea
                 id="what_helped"
