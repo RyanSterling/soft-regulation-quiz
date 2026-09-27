@@ -292,3 +292,45 @@ export async function sendApplicationWebhook(applicationData) {
     return { success: false, error: error.message };
   }
 }
+
+/**
+ * Send 30-day challenge waitlist signup to n8n (via Cloudflare Worker)
+ */
+export async function sendChallengeWebhook(challengeData) {
+  try {
+    const {
+      email,
+      source,
+      utmSource,
+      utmCampaign,
+      utmContent,
+      utmTerm
+    } = challengeData;
+
+    const response = await fetch(`${WORKER_URL}/challenge-webhook`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        source,
+        utmSource,
+        utmCampaign,
+        utmContent,
+        utmTerm
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Challenge webhook error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { success: data.success, error: null };
+
+  } catch (error) {
+    console.error('Error sending challenge webhook:', error);
+    return { success: false, error: error.message };
+  }
+}

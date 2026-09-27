@@ -10,6 +10,7 @@ import ApplicationNotReady from './components/ApplicationNotReady';
 import RSVPPage from './components/RSVPPage';
 import SuccessStoryForm from './components/SuccessStoryForm';
 import SuccessStoryAdmin from './components/SuccessStoryAdmin';
+import ChallengePage from './components/ChallengePage';
 import Privacy from './pages/Privacy';
 import Footer from './components/Footer';
 
@@ -74,6 +75,12 @@ function App() {
           </>
         } />
         <Route path="/success-story/admin" element={<SuccessStoryAdmin />} />
+        <Route path="/challenge" element={
+          <>
+            <ChallengePage />
+            <Footer />
+          </>
+        } />
       </Routes>
     </BrowserRouter>
   );
