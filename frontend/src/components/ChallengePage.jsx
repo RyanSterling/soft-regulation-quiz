@@ -48,7 +48,7 @@ export default function ChallengePage() {
     try {
       const result = await sendChallengeWebhook({
         email: email.trim(),
-        source: '30-day-challenge-waitlist',
+        source: '14-day-challenge-waitlist',
         utmSource: utmParams.utm_source,
         utmCampaign: utmParams.utm_campaign,
         utmContent: utmParams.utm_content,
@@ -159,7 +159,7 @@ export default function ChallengePage() {
               letterSpacing: '-0.02em',
             }}
           >
-            Let Life Be the Regulator: A 30-Day Challenge
+            Let Life Be the Regulator: A 14-Day Challenge
           </h1>
         </div>
 
@@ -173,7 +173,7 @@ export default function ChallengePage() {
               lineHeight: '1.85',
             }}
           >
-            For 30 days, we're going to practice one of the biggest things I teach, which is letting life be the regulator. Your nervous system learns from what you do, so we're going to work on filling your days with things that pull your attention toward your life, even while you still feel bad.
+            For 14 days, we're going to practice one of the biggest things I teach, which is letting life be the regulator. Your nervous system learns from what you do, so we're going to work on filling your days with things that pull your attention toward your life, even while you still feel bad.
           </p>
           <p
             style={{
