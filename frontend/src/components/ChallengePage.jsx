@@ -183,7 +183,7 @@ export default function ChallengePage() {
               lineHeight: '1.85',
             }}
           >
-            We'll do this together as a community, and I'll be there with you through the whole thing. It's going to be low cost, and I'll share the price once it's set. I'm still working out the rest of the details. Join the waitlist and you'll be the first to know when everything is ready.
+            We'll do this together as a community, and I'll be there with you through the whole thing. It's $33 for all 14 days. Join the waitlist and you'll be the first to know when everything is ready.
           </p>
           <p
             style={{
