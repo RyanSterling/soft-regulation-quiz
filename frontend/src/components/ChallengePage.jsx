@@ -251,11 +251,12 @@ export default function ChallengePage() {
 
         {/* Form */}
         <p
-          className="text-center mb-4"
+          className="text-center mb-6"
           style={{
             fontFamily: 'Inter, sans-serif',
-            color: colors.black,
-            fontSize: '1rem',
+            color: colors.muted,
+            fontSize: '1.0625rem',
+            lineHeight: '1.85',
           }}
         >
           We start October 12. Enter your email to be notified when registration opens.
@@ -307,7 +308,7 @@ export default function ChallengePage() {
               cursor: submitting ? 'not-allowed' : 'pointer',
             }}
           >
-            {submitting ? 'Joining...' : 'Join the waitlist'}
+            {submitting ? 'Submitting...' : 'Notify me'}
           </button>
         </form>
 
