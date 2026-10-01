@@ -146,7 +146,7 @@ export default function ChallengePage() {
               color: colors.olive,
             }}
           >
-            starts October 12
+            coming soon
           </p>
           <h1
             className="mb-8"
@@ -218,7 +218,7 @@ export default function ChallengePage() {
               '14 days together',
               '4 live group calls with Maggie',
               'Private community',
-              'Daily guidance and exclusive content from Maggie',
+              'Accountability and exclusive content from Maggie',
               '30 days of replay access',
             ].map((item, i) => (
               <li
@@ -259,7 +259,7 @@ export default function ChallengePage() {
             lineHeight: '1.85',
           }}
         >
-          We start October 12. Enter your email to be notified when registration opens.
+          Enter your email to be notified when registration opens.
         </p>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

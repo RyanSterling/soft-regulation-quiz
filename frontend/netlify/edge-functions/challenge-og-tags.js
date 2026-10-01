@@ -13,12 +13,12 @@ export default async (request, context) => {
   // OG tags for the 14-Day Challenge page
   const ogTags = `
     <meta property="og:title" content="14-Day Challenge: Let Life Be the Regulator" />
-    <meta property="og:description" content="Join Maggie for 14 days of letting life be the regulator. $33 for community, live calls, and daily guidance. Starts October 12." />
+    <meta property="og:description" content="Join Maggie for 14 days of letting life be the regulator. $33 for community, live calls, and exclusive content from Maggie." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://softregulationsystem.com/challenge" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="14-Day Challenge: Let Life Be the Regulator" />
-    <meta name="twitter:description" content="Join Maggie for 14 days of letting life be the regulator. $33 for community, live calls, and daily guidance. Starts October 12." />
+    <meta name="twitter:description" content="Join Maggie for 14 days of letting life be the regulator. $33 for community, live calls, and exclusive content from Maggie." />
   `;
 
   // Replace title for /challenge page
