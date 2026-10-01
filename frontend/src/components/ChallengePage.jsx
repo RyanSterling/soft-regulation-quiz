@@ -183,7 +183,7 @@ export default function ChallengePage() {
               lineHeight: '1.85',
             }}
           >
-            We'll do this together as a community, and I'll be there with you through the whole thing. It's $33 for all 14 days. Join the waitlist and you'll be the first to know when everything is ready.
+            We'll do this together as a community, and I'll be there with you through the whole thing. Join the waitlist and you'll be the first to know when everything is ready.
           </p>
           <p
             style={{
@@ -194,6 +194,67 @@ export default function ChallengePage() {
             }}
           >
             This works at any level of capacity. If you're in bed most of the day right now, living is going to look different for you, and that's okay. The goal is to find a little joy inside the capacity you already have.
+          </p>
+        </div>
+
+        {/* What's Included */}
+        <div
+          className="mb-10 p-6"
+          style={{ backgroundColor: colors.creamDark, borderRadius: '4px' }}
+        >
+          <p
+            className="mb-4"
+            style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontWeight: '500',
+              fontSize: '1.25rem',
+              color: colors.black,
+            }}
+          >
+            What's included
+          </p>
+          <ul className="space-y-3 mb-5">
+            {[
+              '14 days together',
+              '4 live calls with Maggie',
+              'Private community',
+              'Daily guidance and exclusive content from Maggie',
+            ].map((item, i) => (
+              <li
+                key={i}
+                className="flex items-start gap-3"
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  color: colors.muted,
+                  fontSize: '1rem',
+                }}
+              >
+                <svg
+                  className="w-5 h-5 mt-0.5 flex-shrink-0"
+                  fill="none"
+                  stroke={colors.olive}
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p
+            style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontWeight: '500',
+              fontSize: '1.5rem',
+              color: colors.black,
+            }}
+          >
+            $33
           </p>
         </div>
 
