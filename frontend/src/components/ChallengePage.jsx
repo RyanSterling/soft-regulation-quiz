@@ -146,7 +146,7 @@ export default function ChallengePage() {
               color: colors.olive,
             }}
           >
-            coming soon
+            starts October 12
           </p>
           <h1
             className="mb-8"
@@ -211,9 +211,9 @@ export default function ChallengePage() {
               color: colors.black,
             }}
           >
-            What's included
+            What's included for $33
           </p>
-          <ul className="space-y-3 mb-5">
+          <ul className="space-y-3">
             {[
               '14 days together',
               '4 live calls with Maggie',
@@ -246,19 +246,19 @@ export default function ChallengePage() {
               </li>
             ))}
           </ul>
-          <p
-            style={{
-              fontFamily: 'Cormorant Garamond, serif',
-              fontWeight: '500',
-              fontSize: '1.5rem',
-              color: colors.black,
-            }}
-          >
-            $33
-          </p>
         </div>
 
         {/* Form */}
+        <p
+          className="text-center mb-4"
+          style={{
+            fontFamily: 'Inter, sans-serif',
+            color: colors.black,
+            fontSize: '1rem',
+          }}
+        >
+          We start October 12. Enter your email to be notified when registration opens.
+        </p>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
