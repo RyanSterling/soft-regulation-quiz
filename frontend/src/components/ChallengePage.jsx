@@ -216,9 +216,10 @@ export default function ChallengePage() {
           <ul className="space-y-3">
             {[
               '14 days together',
-              '4 live calls with Maggie',
+              '4 live group calls with Maggie',
               'Private community',
               'Daily guidance and exclusive content from Maggie',
+              '30 days of replay access',
             ].map((item, i) => (
               <li
                 key={i}
