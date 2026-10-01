@@ -11,3 +11,11 @@
 [[edge_functions]]
   path = "/apply/*"
   function = "og-tags"
+
+[[edge_functions]]
+  path = "/challenge"
+  function = "challenge-og-tags"
+
+[[edge_functions]]
+  path = "/challenge/*"
+  function = "challenge-og-tags"
