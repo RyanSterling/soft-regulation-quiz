@@ -13,6 +13,7 @@ export default function SuccessStoryAdmin() {
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedStory, setSelectedStory] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   useEffect(() => {
     fetchStories();
@@ -31,6 +32,38 @@ export default function SuccessStoryAdmin() {
       console.error('Error fetching stories:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const { error } = await supabase
+        .from('success_stories')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      setStories(stories.filter(s => s.id !== id));
+      setDeleteConfirm(null);
+      setSelectedStory(null);
+    } catch (err) {
+      console.error('Error deleting story:', err);
+    }
+  };
+
+  const toggleOutreach = async (id, field, currentValue) => {
+    try {
+      const { error } = await supabase
+        .from('success_stories')
+        .update({ [field]: !currentValue })
+        .eq('id', id);
+
+      if (error) throw error;
+      setStories(stories.map(s =>
+        s.id === id ? { ...s, [field]: !currentValue } : s
+      ));
+    } catch (err) {
+      console.error('Error updating outreach status:', err);
     }
   };
 
@@ -67,7 +100,7 @@ export default function SuccessStoryAdmin() {
           Success Story Submissions
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <div className="p-4" style={{ backgroundColor: colors.white }}>
             <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Total</p>
             <p className="text-2xl font-bold" style={{ fontFamily: 'Inter, sans-serif', color: colors.black }}>{stories.length}</p>
@@ -84,46 +117,89 @@ export default function SuccessStoryAdmin() {
               {stories.filter(s => s.camera_consent).length}
             </p>
           </div>
+          <div className="p-4" style={{ backgroundColor: colors.white }}>
+            <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>YouTube Reached</p>
+            <p className="text-2xl font-bold" style={{ fontFamily: 'Inter, sans-serif', color: '#8B5CF6' }}>
+              {stories.filter(s => s.youtube_outreach).length}
+            </p>
+          </div>
+          <div className="p-4" style={{ backgroundColor: colors.white }}>
+            <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Testimonial Reached</p>
+            <p className="text-2xl font-bold" style={{ fontFamily: 'Inter, sans-serif', color: '#EC4899' }}>
+              {stories.filter(s => s.testimonial_outreach).length}
+            </p>
+          </div>
         </div>
 
-        <div style={{ backgroundColor: colors.white }}>
+        <div style={{ backgroundColor: colors.white }} className="overflow-x-auto">
           <table className="min-w-full">
             <thead style={{ borderBottom: '1px solid #E5E7EB' }}>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Camera</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Name</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Email</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Camera</th>
+                <th className="px-4 py-3 text-center text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>YouTube</th>
+                <th className="px-4 py-3 text-center text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Testimonial</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {stories.map((story) => (
                 <tr key={story.id} style={{ borderBottom: '1px solid #F3F4F6' }}>
-                  <td className="px-6 py-4 text-sm" style={{ fontFamily: 'Inter, sans-serif', color: colors.black }}>{story.name}</td>
-                  <td className="px-6 py-4 text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  <td className="px-4 py-4 text-sm" style={{ fontFamily: 'Inter, sans-serif', color: colors.black }}>{story.name}</td>
+                  <td className="px-4 py-4 text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>
                     <a href={`mailto:${story.email}`} style={{ color: '#3B82F6' }}>{story.email}</a>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-4">
                     <span className="px-2 py-1 text-xs rounded-full" style={{ backgroundColor: `${getStatusColor(story.recovery_status)}20`, color: getStatusColor(story.recovery_status), fontFamily: 'Inter, sans-serif' }}>
                       {getStatusLabel(story.recovery_status)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm" style={{ fontFamily: 'Inter, sans-serif', color: story.camera_consent ? '#059669' : colors.error }}>
+                  <td className="px-4 py-4 text-sm" style={{ fontFamily: 'Inter, sans-serif', color: story.camera_consent ? '#059669' : colors.error }}>
                     {story.camera_consent ? '✓ Yes' : '✗ No'}
                   </td>
-                  <td className="px-6 py-4 text-sm" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
+                  <td className="px-4 py-4 text-center">
+                    <input
+                      type="checkbox"
+                      checked={story.youtube_outreach || false}
+                      onChange={() => toggleOutreach(story.id, 'youtube_outreach', story.youtube_outreach)}
+                      className="w-5 h-5 cursor-pointer"
+                      style={{ accentColor: '#8B5CF6' }}
+                      title="YouTube interview outreach"
+                    />
+                  </td>
+                  <td className="px-4 py-4 text-center">
+                    <input
+                      type="checkbox"
+                      checked={story.testimonial_outreach || false}
+                      onChange={() => toggleOutreach(story.id, 'testimonial_outreach', story.testimonial_outreach)}
+                      className="w-5 h-5 cursor-pointer"
+                      style={{ accentColor: '#EC4899' }}
+                      title="Website testimonial outreach"
+                    />
+                  </td>
+                  <td className="px-4 py-4 text-sm" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
                     {new Date(story.created_at).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => setSelectedStory(story)}
-                      className="text-sm font-medium"
-                      style={{ fontFamily: 'Inter, sans-serif', color: '#3B82F6' }}
-                    >
-                      View
-                    </button>
+                  <td className="px-4 py-4">
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setSelectedStory(story)}
+                        className="text-sm font-medium"
+                        style={{ fontFamily: 'Inter, sans-serif', color: '#3B82F6' }}
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => setDeleteConfirm(story.id)}
+                        className="text-sm font-medium"
+                        style={{ fontFamily: 'Inter, sans-serif', color: colors.error }}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -131,19 +207,107 @@ export default function SuccessStoryAdmin() {
           </table>
         </div>
 
+        {/* Delete Confirmation Modal */}
+        {deleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setDeleteConfirm(null)}>
+            <div className="max-w-md w-full p-8" style={{ backgroundColor: colors.white }} onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Cormorant Garamond, serif', color: colors.black }}>
+                Delete Submission?
+              </h2>
+              <p className="mb-6" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>
+                This action cannot be undone. The submission will be permanently deleted.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setDeleteConfirm(null)}
+                  className="flex-1 px-4 py-2 font-medium border"
+                  style={{ fontFamily: 'Inter, sans-serif', color: colors.black, borderColor: '#E5E7EB' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDelete(deleteConfirm)}
+                  className="flex-1 px-4 py-2 font-medium"
+                  style={{ backgroundColor: colors.error, color: colors.white, fontFamily: 'Inter, sans-serif' }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* View Details Modal */}
         {selectedStory && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setSelectedStory(null)}>
             <div className="max-w-3xl w-full max-h-[90vh] overflow-y-auto p-8" style={{ backgroundColor: colors.white }} onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: 'Cormorant Garamond, serif', color: colors.black }}>
-                {selectedStory.name}
-              </h2>
+              <div className="flex justify-between items-start mb-6">
+                <h2 className="text-2xl font-bold" style={{ fontFamily: 'Cormorant Garamond, serif', color: colors.black }}>
+                  {selectedStory.name}
+                </h2>
+                <button
+                  onClick={() => {
+                    setDeleteConfirm(selectedStory.id);
+                  }}
+                  className="text-sm font-medium px-3 py-1"
+                  style={{ fontFamily: 'Inter, sans-serif', color: colors.error, border: `1px solid ${colors.error}` }}
+                >
+                  Delete
+                </button>
+              </div>
 
               <div className="space-y-6">
-                <div>
-                  <p className="text-sm font-medium mb-1" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Email</p>
-                  <a href={`mailto:${selectedStory.email}`} style={{ fontFamily: 'Inter, sans-serif', color: '#3B82F6' }}>
-                    {selectedStory.email}
-                  </a>
+                <div className="flex gap-6 flex-wrap">
+                  <div>
+                    <p className="text-sm font-medium mb-1" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Email</p>
+                    <a href={`mailto:${selectedStory.email}`} style={{ fontFamily: 'Inter, sans-serif', color: '#3B82F6' }}>
+                      {selectedStory.email}
+                    </a>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium mb-1" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Camera Consent</p>
+                    <p style={{ fontFamily: 'Inter, sans-serif', color: selectedStory.camera_consent ? '#059669' : colors.error }}>
+                      {selectedStory.camera_consent ? '✓ Yes' : '✗ No'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium mb-1" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Status</p>
+                    <span className="px-2 py-1 text-xs rounded-full" style={{ backgroundColor: `${getStatusColor(selectedStory.recovery_status)}20`, color: getStatusColor(selectedStory.recovery_status), fontFamily: 'Inter, sans-serif' }}>
+                      {getStatusLabel(selectedStory.recovery_status)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4 border" style={{ borderColor: '#E5E7EB' }}>
+                  <p className="text-sm font-medium mb-3" style={{ fontFamily: 'Inter, sans-serif', color: colors.muted }}>Outreach Status</p>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedStory.youtube_outreach || false}
+                        onChange={() => {
+                          toggleOutreach(selectedStory.id, 'youtube_outreach', selectedStory.youtube_outreach);
+                          setSelectedStory({ ...selectedStory, youtube_outreach: !selectedStory.youtube_outreach });
+                        }}
+                        className="w-5 h-5"
+                        style={{ accentColor: '#8B5CF6' }}
+                      />
+                      <span style={{ fontFamily: 'Inter, sans-serif', color: colors.black }}>YouTube Interview</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedStory.testimonial_outreach || false}
+                        onChange={() => {
+                          toggleOutreach(selectedStory.id, 'testimonial_outreach', selectedStory.testimonial_outreach);
+                          setSelectedStory({ ...selectedStory, testimonial_outreach: !selectedStory.testimonial_outreach });
+                        }}
+                        className="w-5 h-5"
+                        style={{ accentColor: '#EC4899' }}
+                      />
+                      <span style={{ fontFamily: 'Inter, sans-serif', color: colors.black }}>Website Testimonial</span>
+                    </label>
+                  </div>
                 </div>
 
                 <div>
