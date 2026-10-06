@@ -31,36 +31,27 @@ const BLOCKED_DOMAINS = [
   'veryrealemail.com', 'veryrealmail.com', 'mailmetrash.com', 'thankyou2010.com'
 ];
 
-// Common typo domains to block (people mistyping real providers)
+// Common typo domains to suggest corrections (people mistyping real providers)
 const TYPO_DOMAINS = [
   // Gmail typos
-  'gmial.com', 'gmal.com', 'gmaill.com', 'gmil.com', 'gnail.com', 'gmail.co',
-  'gamil.com', 'gmali.com', 'gmaul.com', 'gamail.com', 'gimail.com', 'gemail.com',
+  'gmial.com', 'gmal.com', 'gmaill.com', 'gmil.com', 'gnail.com',
+  'gamil.com', 'gmali.com', 'gmaul.com',
   // Yahoo typos
-  'yaho.com', 'yahooo.com', 'yhoo.com', 'yaoo.com', 'yhaoo.com', 'yaaho.com',
+  'yaho.com', 'yahooo.com', 'yhoo.com',
   // Hotmail typos
-  'hotmal.com', 'hotmial.com', 'hotmil.com', 'hotmaill.com', 'hotmai.com',
-  'htmail.com', 'htomail.com', 'hotmailcom', 'hotmsil.com', 'homtail.com',
+  'hotmal.com', 'hotmial.com', 'hotmil.com', 'hotmaill.com',
+  'htmail.com', 'htomail.com', 'homtail.com',
   // Outlook typos
-  'outlok.com', 'outloo.com', 'outllok.com', 'putlook.com', 'outlool.com',
-  // iCloud typos
-  'iclod.com', 'icloud.com', 'iclould.com', 'icoud.com',
-  // AOL typos
-  'aol.co', 'ao.com', 'aool.com'
+  'outlok.com', 'outllok.com',
+  // iCloud typos (NOT icloud.com - that's the real domain!)
+  'iclod.com', 'iclould.com', 'icoud.com'
 ];
 
-// Suspicious patterns in local part (before @)
+// Suspicious patterns in local part (before @) - only block obvious spam/test emails
 const BLOCKED_PATTERNS = [
-  /^(test|fake|spam|trash|junk|asdf|qwerty|aaaa+|xxxx+|zzzz+)$/i,
-  /^.{1,2}$/, // Too short (1-2 chars)
-  /(poo|poop|shit|fuck|ass|penis|vagina|dick|cock|cunt|bitch|bastard|damn|crap)/i, // Profanity
-  /^(admin|root|administrator|null|undefined|nobody|noreply|no-reply|donotreply|mailer-daemon)$/i,
-  /^[0-9]+$/, // Numbers only
-  /(.)\1{4,}/, // Same character repeated 5+ times
-  /^(abc|xyz|aaa|bbb|ccc|xxx|zzz|qwe|asd|zxc)$/i, // Keyboard patterns
-  /^(user|example|sample|demo|testing|tester)$/i, // Generic test names
-  /^(temp|temporary|disposable|throwaway|burner)$/i, // Obvious disposable intent
-  /^[a-z]{1}[0-9]+$/i, // Single letter + numbers (a123, b456)
+  /^(test|fake|spam|trash|junk|asdf|qwerty)$/i,
+  /^(noreply|no-reply|donotreply|mailer-daemon)$/i,
+  /^(example|sample|demo|testing|tester)$/i,
 ];
 
 export default function EmailCapture({ value, onChange, onSubmit, onBack, isSubmitting }) {
