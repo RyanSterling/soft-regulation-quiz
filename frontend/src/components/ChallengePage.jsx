@@ -208,7 +208,7 @@ export default function ChallengePage() {
 
         {/* What's Included */}
         <div
-          className="mb-10 p-6"
+          className="mb-6 p-6"
           style={{ backgroundColor: colors.creamDark, borderRadius: '4px' }}
         >
           <p
@@ -227,7 +227,6 @@ export default function ChallengePage() {
               '4 live calls with Maggie (twice a week)',
               'Private community to interact with other participants',
               'Accountability + exclusive content',
-              '30 days of replay access',
             ].map((item, i) => (
               <li
                 key={i}
@@ -257,10 +256,63 @@ export default function ChallengePage() {
           </ul>
         </div>
 
+        {/* Call Schedule */}
+        <div
+          className="mb-6 p-6"
+          style={{ backgroundColor: colors.creamDark, borderRadius: '4px' }}
+        >
+          <p
+            className="mb-4"
+            style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontWeight: '500',
+              fontSize: '1.25rem',
+              color: colors.black,
+            }}
+          >
+            Call schedule <span style={{ fontWeight: '400', fontSize: '1rem' }}>(Eastern time)</span>
+          </p>
+          <ul className="space-y-3">
+            {[
+              { date: 'Oct 12', title: 'Kickoff Call', time: '1:00 PM ET' },
+              { date: 'Oct 16', title: 'Live Call', time: '1:00 PM ET' },
+              { date: 'Oct 21', title: 'Live Call', time: '1:00 PM ET' },
+              { date: 'Oct 26', title: 'Closing Call', time: '1:00 PM ET' },
+            ].map((call, i) => (
+              <li
+                key={i}
+                className="flex items-start gap-3"
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  color: colors.muted,
+                  fontSize: '1rem',
+                }}
+              >
+                <span style={{ fontWeight: '500', color: colors.black, minWidth: '50px' }}>
+                  {call.date}
+                </span>
+                <span>{call.title} · {call.time}</span>
+              </li>
+            ))}
+          </ul>
+          <p
+            className="mt-4 pt-4"
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              color: colors.muted,
+              fontSize: '0.875rem',
+              lineHeight: '1.6',
+              borderTop: `1px solid ${colors.oliveMuted}`,
+            }}
+          >
+            Can't make the live calls? No problem. Replays are available within 24-48 hours and stay accessible for 30 days after the challenge ends.
+          </p>
+        </div>
+
         {/* CTA */}
         <a
           href="https://let-life-be-the-regulator.circle.so/checkout/let-life-be-the-regulator-14-day-challenge"
-          className="block w-full py-4 text-center transition-opacity hover:opacity-90"
+          className="block w-full py-4 mt-10 text-center transition-opacity hover:opacity-90"
           style={{
             fontFamily: 'Inter, sans-serif',
             fontWeight: '500',
