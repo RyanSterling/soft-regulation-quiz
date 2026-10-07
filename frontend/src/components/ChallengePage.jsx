@@ -138,7 +138,7 @@ export default function ChallengePage() {
         {/* Header */}
         <div className="text-center mb-10">
           <img
-            src="/maggie cutout 2025.png"
+            src="/maggie-cutout-2025.png"
             alt="Maggie Sterling"
             className="mx-auto mb-8"
             style={{
