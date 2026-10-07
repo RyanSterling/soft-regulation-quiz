@@ -137,19 +137,18 @@ export default function ChallengePage() {
       <div className="max-w-2xl mx-auto px-6 py-16 lg:py-24">
         {/* Header */}
         <div className="text-center mb-10">
-          <p
-            className="mb-4"
+          <img
+            src="/maggie cutout 2025.png"
+            alt="Maggie Sterling"
+            className="mx-auto mb-8"
             style={{
-              fontFamily: 'Cormorant Garamond, serif',
-              fontStyle: 'italic',
-              fontSize: '1.25rem',
-              color: colors.olive,
+              maxWidth: '196px',
+              width: '100%',
+              height: 'auto',
             }}
-          >
-            coming soon
-          </p>
+          />
           <h1
-            className="mb-8"
+            className="mb-4"
             style={{
               fontFamily: 'Cormorant Garamond, serif',
               fontWeight: '500',
@@ -159,8 +158,18 @@ export default function ChallengePage() {
               letterSpacing: '-0.02em',
             }}
           >
-            Let Life Be the Regulator: A 14-Day Challenge
+            Let Life Be the Regulator
           </h1>
+          <p
+            style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontStyle: 'italic',
+              fontSize: '1.25rem',
+              color: colors.olive,
+            }}
+          >
+            A 14-day challenge with Maggie Sterling
+          </p>
         </div>
 
         {/* Body Copy */}
@@ -173,7 +182,7 @@ export default function ChallengePage() {
               lineHeight: '1.85',
             }}
           >
-            For 14 days, we're going to practice one of the biggest things I teach, which is letting life be the regulator. Your nervous system learns from what you do, so we're going to work on filling your days with things that pull your attention toward your life, even while you still feel bad.
+            Your nervous system learns from what you do. It learns from the way you fill your time and what you fill your mind with.
           </p>
           <p
             style={{
@@ -183,7 +192,7 @@ export default function ChallengePage() {
               lineHeight: '1.85',
             }}
           >
-            We'll do this together as a community, and I'll be there with you through the whole thing. Join the waitlist and you'll be the first to know when everything is ready.
+            For 14 days, we're going to introduce things that pull you more into your life and more away from your symptoms. Even *especially* when you feel bad.
           </p>
           <p
             style={{
@@ -193,7 +202,7 @@ export default function ChallengePage() {
               lineHeight: '1.85',
             }}
           >
-            This works at any level of capacity. If you're in bed most of the day right now, living is going to look different for you, and that's okay. The goal is to find a little joy inside the capacity you already have.
+            This works at any capacity. If you're in bed most of the day, your version will look different, but it isn't wrong. This challenge is meant to meet you where you're at.
           </p>
         </div>
 
@@ -211,14 +220,13 @@ export default function ChallengePage() {
               color: colors.black,
             }}
           >
-            What's included for $33
+            What you get
           </p>
           <ul className="space-y-3">
             {[
-              '14 days together',
-              '4 live group calls with Maggie',
-              'Private community',
-              'Accountability and exclusive content from Maggie',
+              '4 live calls with Maggie (twice a week)',
+              'Private community to interact with other participants',
+              'Accountability + exclusive content',
               '30 days of replay access',
             ].map((item, i) => (
               <li
@@ -249,68 +257,23 @@ export default function ChallengePage() {
           </ul>
         </div>
 
-        {/* Form */}
-        <p
-          className="text-center mb-6"
+        {/* CTA */}
+        <a
+          href="https://let-life-be-the-regulator.circle.so/checkout/let-life-be-the-regulator-14-day-challenge"
+          className="block w-full py-4 text-center transition-opacity hover:opacity-90"
           style={{
             fontFamily: 'Inter, sans-serif',
-            color: colors.muted,
-            fontSize: '1.0625rem',
-            lineHeight: '1.85',
+            fontWeight: '500',
+            fontSize: '1rem',
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            backgroundColor: colors.olive,
+            color: colors.white,
+            textDecoration: 'none',
           }}
         >
-          Enter your email to be notified when registration opens.
-        </p>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-4 border focus:outline-none focus:ring-2"
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                borderColor: colors.creamDark,
-                backgroundColor: colors.white,
-                fontSize: '1rem',
-                borderRadius: '0',
-              }}
-              placeholder="Your email address"
-            />
-          </div>
-
-          {error && (
-            <p
-              className="mb-4 text-center"
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                color: colors.error,
-                fontSize: '0.9375rem',
-              }}
-            >
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full py-4 transition-opacity hover:opacity-90 disabled:opacity-50"
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: '500',
-              fontSize: '1rem',
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-              backgroundColor: colors.olive,
-              color: colors.white,
-              border: 'none',
-              cursor: submitting ? 'not-allowed' : 'pointer',
-            }}
-          >
-            {submitting ? 'Submitting...' : 'Notify me'}
-          </button>
-        </form>
+          Join the Challenge — $33
+        </a>
 
         {/* Closing */}
         <p
