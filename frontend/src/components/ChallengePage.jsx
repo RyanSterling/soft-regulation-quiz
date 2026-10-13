@@ -339,66 +339,78 @@ export default function ChallengePage() {
 
         {/* Countdown + CTA */}
         <div className="mt-10 text-center">
-          {!timeLeft.expired && (
-            <div className="mb-4">
-              <p
+          {!timeLeft.expired ? (
+            <>
+              <div className="mb-4">
+                <p
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '0.875rem',
+                    color: colors.muted,
+                    marginBottom: '8px',
+                  }}
+                >
+                  Enrollment closes in
+                </p>
+                <div className="flex justify-center gap-3">
+                  {[
+                    { value: timeLeft.hours, label: 'hrs' },
+                    { value: timeLeft.minutes, label: 'min' },
+                    { value: timeLeft.seconds, label: 'sec' },
+                  ].map((unit, i) => (
+                    <div key={i} className="text-center">
+                      <span
+                        style={{
+                          fontFamily: 'Cormorant Garamond, serif',
+                          fontSize: '2rem',
+                          fontWeight: '500',
+                          color: colors.black,
+                        }}
+                      >
+                        {String(unit.value).padStart(2, '0')}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: 'Inter, sans-serif',
+                          fontSize: '0.75rem',
+                          color: colors.muted,
+                          marginLeft: '2px',
+                        }}
+                      >
+                        {unit.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <a
+                href="https://let-life-be-the-regulator.circle.so/checkout/let-life-be-the-regulator-14-day-challenge"
+                className="block w-full py-4 text-center transition-opacity hover:opacity-90"
                 style={{
                   fontFamily: 'Inter, sans-serif',
-                  fontSize: '0.875rem',
-                  color: colors.muted,
-                  marginBottom: '8px',
+                  fontWeight: '500',
+                  fontSize: '1rem',
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                  backgroundColor: colors.olive,
+                  color: colors.white,
+                  textDecoration: 'none',
                 }}
               >
-                Enrollment closes in
-              </p>
-              <div className="flex justify-center gap-3">
-                {[
-                  { value: timeLeft.hours, label: 'hrs' },
-                  { value: timeLeft.minutes, label: 'min' },
-                  { value: timeLeft.seconds, label: 'sec' },
-                ].map((unit, i) => (
-                  <div key={i} className="text-center">
-                    <span
-                      style={{
-                        fontFamily: 'Cormorant Garamond, serif',
-                        fontSize: '2rem',
-                        fontWeight: '500',
-                        color: colors.black,
-                      }}
-                    >
-                      {String(unit.value).padStart(2, '0')}
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: 'Inter, sans-serif',
-                        fontSize: '0.75rem',
-                        color: colors.muted,
-                        marginLeft: '2px',
-                      }}
-                    >
-                      {unit.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+                Join the Challenge — $33
+              </a>
+            </>
+          ) : (
+            <p
+              style={{
+                fontFamily: 'Cormorant Garamond, serif',
+                fontSize: '1.5rem',
+                color: colors.muted,
+              }}
+            >
+              Enrollment is now closed
+            </p>
           )}
-          <a
-            href="https://let-life-be-the-regulator.circle.so/checkout/let-life-be-the-regulator-14-day-challenge"
-            className="block w-full py-4 text-center transition-opacity hover:opacity-90"
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: '500',
-              fontSize: '1rem',
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-              backgroundColor: colors.olive,
-              color: colors.white,
-              textDecoration: 'none',
-            }}
-          >
-            Join the Challenge — $33
-          </a>
         </div>
 
         {/* Closing */}
