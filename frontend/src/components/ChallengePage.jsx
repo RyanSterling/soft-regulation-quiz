@@ -14,15 +14,43 @@ const colors = {
   error: '#DC2626',
 };
 
+// Enrollment closes at midnight PST on October 13, 2026
+const ENROLLMENT_CLOSE_DATE = new Date('2026-10-14T00:00:00-07:00'); // midnight PST (PDT in Oct)
+
 export default function ChallengePage() {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [utmParams, setUtmParams] = useState({});
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0, expired: false });
 
   useEffect(() => {
     setUtmParams(getUtmParams());
+  }, []);
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const difference = ENROLLMENT_CLOSE_DATE - now;
+
+      if (difference <= 0) {
+        return { hours: 0, minutes: 0, seconds: 0, expired: true };
+      }
+
+      const hours = Math.floor(difference / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      return { hours, minutes, seconds, expired: false };
+    };
+
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const validateEmail = (email) => {
@@ -309,23 +337,69 @@ export default function ChallengePage() {
           </p>
         </div>
 
-        {/* CTA */}
-        <a
-          href="https://let-life-be-the-regulator.circle.so/checkout/let-life-be-the-regulator-14-day-challenge"
-          className="block w-full py-4 mt-10 text-center transition-opacity hover:opacity-90"
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: '500',
-            fontSize: '1rem',
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            backgroundColor: colors.olive,
-            color: colors.white,
-            textDecoration: 'none',
-          }}
-        >
-          Join the Challenge — $33
-        </a>
+        {/* Countdown + CTA */}
+        <div className="mt-10 text-center">
+          {!timeLeft.expired && (
+            <div className="mb-4">
+              <p
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.875rem',
+                  color: colors.muted,
+                  marginBottom: '8px',
+                }}
+              >
+                Enrollment closes in
+              </p>
+              <div className="flex justify-center gap-3">
+                {[
+                  { value: timeLeft.hours, label: 'hrs' },
+                  { value: timeLeft.minutes, label: 'min' },
+                  { value: timeLeft.seconds, label: 'sec' },
+                ].map((unit, i) => (
+                  <div key={i} className="text-center">
+                    <span
+                      style={{
+                        fontFamily: 'Cormorant Garamond, serif',
+                        fontSize: '2rem',
+                        fontWeight: '500',
+                        color: colors.black,
+                      }}
+                    >
+                      {String(unit.value).padStart(2, '0')}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '0.75rem',
+                        color: colors.muted,
+                        marginLeft: '2px',
+                      }}
+                    >
+                      {unit.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          <a
+            href="https://let-life-be-the-regulator.circle.so/checkout/let-life-be-the-regulator-14-day-challenge"
+            className="block w-full py-4 text-center transition-opacity hover:opacity-90"
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: '500',
+              fontSize: '1rem',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              backgroundColor: colors.olive,
+              color: colors.white,
+              textDecoration: 'none',
+            }}
+          >
+            Join the Challenge — $33
+          </a>
+        </div>
 
         {/* Closing */}
         <p
