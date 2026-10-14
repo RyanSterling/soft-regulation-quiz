@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Quiz from './components/Quiz';
 import RootCauseQuiz from './components/RootCauseQuiz';
 import CoachingQuiz from './components/CoachingQuiz';
@@ -11,6 +11,7 @@ import RSVPPage from './components/RSVPPage';
 import SuccessStoryForm from './components/SuccessStoryForm';
 import SuccessStoryAdmin from './components/SuccessStoryAdmin';
 import ChallengePage from './components/ChallengePage';
+import ClosedPage from './components/ClosedPage';
 import Privacy from './pages/Privacy';
 import Footer from './components/Footer';
 
@@ -75,9 +76,10 @@ function App() {
           </>
         } />
         <Route path="/success-story/admin" element={<SuccessStoryAdmin />} />
-        <Route path="/challenge" element={
+        <Route path="/challenge" element={<Navigate to="/closed" replace />} />
+        <Route path="/closed" element={
           <>
-            <ChallengePage />
+            <ClosedPage />
             <Footer />
           </>
         } />
