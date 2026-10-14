@@ -68,7 +68,7 @@ export default function ClosedPage() {
               textAlign: 'center',
             }}
           >
-            You missed this round, but there are still ways to work with me.
+            You missed this round, but you can still get started.
           </p>
         </div>
 
